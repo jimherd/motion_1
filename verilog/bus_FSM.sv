@@ -5,10 +5,11 @@
 //
 `include  "global_constants.sv"
 
-module bus_FSM(clk, reset, ack, bus_data_avail, RW, data_avail, read_word, write_word);
-input  logic  clk, reset, RW, bus_data_avail;
-output logic  ack;
-output logic  data_avail, read_word, write_word;
+module bus_FSM(   // clk, reset, ack, bus_data_avail, RW, data_avail, read_word, write_word);
+               input  logic  clk, reset, RW, bus_data_avail,
+               output logic  ack,
+               output logic  data_avail, read_word, write_word
+               );
 
 enum bit [2:0] {	IDLE,
                   READ_ADDRESS,

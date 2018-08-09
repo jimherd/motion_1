@@ -5,13 +5,14 @@
 //
 `include  "global_constants.sv"
 
-module pwm_channel #(parameter [`NOS_PWM_CHANNELS-1 : 0] PWM_UNIT = 0) (phase_clk, reset, reg_address, reg_in, reg_out, pwm_out);
-	input  logic [`NOS_CLOCKS-1:0] phase_clk;
-	input  logic reset;
-	input  logic [7:0]  reg_address;
-	input  logic [31:0] reg_in;
-   output logic [31:0] reg_out;
-	output  pwm_out;
+module pwm_channel #(parameter [`NOS_PWM_CHANNELS-1 : 0] PWM_UNIT = 0) (  // phase_clk, reset, reg_address, reg_in, reg_out, pwm_out
+                     input  logic [`NOS_CLOCKS-1:0] phase_clk,
+                     input  logic reset,
+                     input  logic [7:0]  reg_address,
+                     input  logic [31:0] reg_in,
+                     output logic [31:0] reg_out,
+                     output logic pwm_out
+                     );
 //
 // PWM subsystem registers
 //	
@@ -100,7 +101,6 @@ always_ff @(posedge phase_clk[0] or negedge reset) begin
       T_period   <= 0;
       T_on       <= 0;
       pwm_config <= 0;
-      pwm_status <= 0;
    end else begin
       if (read_word) begin
          if (reg_address == (`PWM_PERIOD + PWM_UNIT)) begin
@@ -112,8 +112,7 @@ always_ff @(posedge phase_clk[0] or negedge reset) begin
                if (reg_address == (`PWM_CONFIG + PWM_UNIT)) begin
                   pwm_config <= reg_in;
                end
-      end 
-         
+         end
    end
 end
 
@@ -122,7 +121,7 @@ end
 //
 always_latch begin
    if(write_word === 1'b1) begin
-      reg_out <= 32'hzzzzzzzz;
+ //     reg_out <= 32'hzzzzzzzz;
       case (reg_address)
          (`PWM_PERIOD  + PWM_UNIT)  : reg_out <= T_period;
          (`PWM_ON_TIME + PWM_UNIT)  : reg_out <= T_on;
@@ -132,6 +131,8 @@ always_latch begin
       endcase
    end
 end
+
+assign pwm_status = pwm_config;
 
 //assign register_out  =  (register_no == (`PWM_PERIOD + PWM_UNIT)) ? T_period : 32'hzzzzzzzz;
 //assign register_out  =  (register_no == (`PWM_ON_TIME + PWM_UNIT)) ? T_on : 32'hzzzzzzzz;

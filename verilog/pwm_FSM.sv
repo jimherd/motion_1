@@ -1,15 +1,16 @@
 //
 // pwm_FSM.sv : 
 //
-// State machine to run PWM signal. Moore machine
+// State machine to generate PWM signal. Moore machine
 //
 `include  "global_constants.sv"
 
-module pwm_FSM #(parameter PWM_UNIT = 0) (input clk, reset, 
-               input pwm_enable, T_on_zero, T_period_zero,
-               output dec_T_on, dec_T_period, reload_times, 
-               output pwm_out
-               );
+module pwm_FSM #(parameter PWM_UNIT = 0) (
+                     input  logic  clk, reset, 
+                     input  logic  pwm_enable, T_on_zero, T_period_zero,
+                     output logic  dec_T_on, dec_T_period, reload_times, 
+                     output logic  pwm_out
+                  );
                
 //
 // Set of FSM states
@@ -87,6 +88,6 @@ always_comb  begin: set_outputs
 	endcase	
 end: set_outputs
 
-assign PWMs[PWM_UNIT] = pwm_out;
+//assign PWMs[PWM_UNIT] = pwm_out;
 
 endmodule
