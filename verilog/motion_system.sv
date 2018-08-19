@@ -6,42 +6,53 @@
 
 import types::*;
 
-logic [`NOS_CLOCKS:0] phi_clk;
-
-register_t  reg_in, reg_out;     //logic [31:0] reg_in, reg_out;
-logic [7:0]  reg_address;
-
 logic [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
-   
+logic [`NOS_PWM_CHANNELS-1 : 0] quadrature_A;
+logic [`NOS_PWM_CHANNELS-1 : 0] quadrature_B;
+logic [`NOS_PWM_CHANNELS-1 : 0] quadrature_I;
+
 //
 // System structure
 //
 module motion_system(input logic CLOCK_50, reset, quad_A, quad_B, quad_I);
 
-	phase_clocks sys_clocks(
-         .clk(CLOCK_50),
-         .reset(reset), 
-         .phi_clk(phi_clk)
-         );
+IO_bus  intf();
+
+   uP_interface uP_interface_sys(
+                                 .clk(CLOCK_50),
+                                 .reset(reset),
+                                 .bus(intf)
+                                 );
          	
-	motion_channel #(.MOTION_UNIT(0)) motor_ch0(CLOCK_50, reset, quad_A, quad_B, quad_I, reg_address, reg_out);
-	motion_channel #(.MOTION_UNIT(1)) motor_ch1(CLOCK_50, reset, quad_A, quad_B, quad_I, reg_address, reg_out);
+   motion_channel #(.MOTION_UNIT(0)) motor_ch0 (
+                                       .clk(CLOCK_50),
+                                       .reset(reset),
+                                       .bus(intf),
+                                       .quad_A(quadrature_A[0]), 
+                                       .quad_B(quadrature_B[0]), 
+                                       .quad_I(quadrature_I[0])
+                                       );
+
+   motion_channel #(.MOTION_UNIT(1)) motor_ch1 (
+                                       .clk(CLOCK_50),
+                                       .reset(reset),
+                                       .bus(intf),
+                                       .quad_A(quadrature_A[1]), 
+                                       .quad_B(quadrature_B[1]), 
+                                       .quad_I(quadrature_I[1])
+);
 
 	pwm_channel #(.PWM_UNIT(0)) pwm_ch0(
-                                       .phase_clk(phi_clk[0]), 
-                                       .reset(reset), 
-                                       .reg_address(reg_address), 
-                                       .reg_in(reg_in), 
-                                       .reg_out(reg_out), 
+                                       .clk(CLOCK_50),
+                                       .reset(reset),
+                                       .bus(intf),
                                        .pwm_out(pwm_out[0])
                                        );
                                        
 	pwm_channel #(.PWM_UNIT(1)) pwm_ch1(
-                                       .phase_clk(phi_clk[0]), 
-                                       .reset(reset), 
-                                       .reg_address(reg_address), 
-                                       .reg_in(reg_in), 
-                                       .reg_out(reg_out), 
+                                       .clk(CLOCK_50), 
+                                       .reset(reset),
+                                       .bus(intf), 
                                        .pwm_out(pwm_out[1])
                                        );
 

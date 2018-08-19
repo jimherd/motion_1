@@ -4,14 +4,12 @@
 // Implement a PWM generation channel
 //
 `include  "global_constants.sv"
+`include  "interfaces.sv"
 
-module pwm_channel #(parameter [`NOS_PWM_CHANNELS-1 : 0] PWM_UNIT = 0) (  // phase_clk, reset, reg_address, reg_in, reg_out, pwm_out
-                     input  logic [`NOS_CLOCKS-1:0] phase_clk,
-                     input  logic reset,
-                     input  logic [7:0]  reg_address,
-                     input  logic [31:0] reg_in,
-                     output logic [31:0] reg_out,
-                     output logic pwm_out
+module pwm_channel #(parameter PWM_UNIT = 0) (
+                     input  logic  clk, reset,
+                     IO_bus.slave  bus,
+                     output logic  pwm_out
                      );
 //
 // PWM subsystem registers
@@ -29,24 +27,24 @@ int unsigned  T_on_temp;
 
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
-logic pwm_enable, bus_data_avail, ack, RW;
+logic pwm_enable, RW;
 logic data_avail, read_word, write_word;
 
 assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
 
 bus_FSM   bus_FSM_sys(
-	.clk(phase_clk[0]),
+	.clk(clk),
 	.reset(reset),
-   .ack(ack),
-   .bus_data_avail(bus_data_avail),
-   .RW(RW),
+   .handshake1_2(bus.handshake1_2),
+   .handshake1_1(bus.handshake1_1),
+   .RW(bus.RW),
    .data_avail(data_avail), 
    .read_word(read_word), 
    .write_word(write_word)
 	);
    
 pwm_FSM   pwm_FSM_sys(
-   .clk(phase_clk[0]),
+   .clk(clk),
    .reset(reset),
    .pwm_enable(pwm_enable),
    .T_on_zero(T_on_zero), 
@@ -60,7 +58,7 @@ pwm_FSM   pwm_FSM_sys(
 //
 // Data subsystem to calculate pulse edges
 //
-always_ff @(posedge phase_clk[0] or negedge reset) begin
+always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       T_on_temp = 0;
    end else begin
@@ -74,7 +72,7 @@ always_ff @(posedge phase_clk[0] or negedge reset) begin
    end
 end
  
-always_ff @(posedge phase_clk[0] or negedge reset) begin
+always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       T_period_temp = 0;
    end else begin
@@ -96,21 +94,21 @@ assign T_on_zero     =  (T_on_temp == 0)     ? 1'b1 : 1'b0;
 //
 // get data from bus
 //
-always_ff @(posedge phase_clk[0] or negedge reset) begin
+always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       T_period   <= 0;
       T_on       <= 0;
       pwm_config <= 0;
    end else begin
       if (read_word) begin
-         if (reg_address == (`PWM_PERIOD + PWM_UNIT)) begin
-            T_period <= reg_in;
+         if (bus.reg_address == (`PWM_PERIOD + PWM_UNIT)) begin
+            T_period <= bus.data_out;
          end else 
-            if (reg_address == (`PWM_ON_TIME + PWM_UNIT)) begin
-               T_on <= reg_in;
+            if (bus.reg_address == (`PWM_ON_TIME + PWM_UNIT)) begin
+               T_on <= bus.data_out;
             end else
-               if (reg_address == (`PWM_CONFIG + PWM_UNIT)) begin
-                  pwm_config <= reg_in;
+               if (bus.reg_address == (`PWM_CONFIG + PWM_UNIT)) begin
+                  pwm_config <= bus.data_out;
                end
          end
    end
@@ -121,13 +119,12 @@ end
 //
 always_latch begin
    if(write_word === 1'b1) begin
- //     reg_out <= 32'hzzzzzzzz;
-      case (reg_address)
-         (`PWM_PERIOD  + PWM_UNIT)  : reg_out <= T_period;
-         (`PWM_ON_TIME + PWM_UNIT)  : reg_out <= T_on;
-         (`PWM_CONFIG  + PWM_UNIT)  : reg_out <= pwm_config;
-         (`PWM_STATUS  + PWM_UNIT)  : reg_out <= pwm_status;
-         default                    : reg_out <= 32'hzzzzzzzz;
+      case (bus.reg_address)
+         (`PWM_PERIOD  + PWM_UNIT)  : bus.data_in <= T_period;
+         (`PWM_ON_TIME + PWM_UNIT)  : bus.data_in <= T_on;
+         (`PWM_CONFIG  + PWM_UNIT)  : bus.data_in <= pwm_config;
+         (`PWM_STATUS  + PWM_UNIT)  : bus.data_in <= pwm_status;
+         default                    : bus.data_in <= 32'hzzzzzzzz;
       endcase
    end
 end

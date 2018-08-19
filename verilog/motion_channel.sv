@@ -6,11 +6,12 @@
 `include  "global_constants.sv"
 
 
-module motion_channel #(MOTION_UNIT = 0) (phase_clk, reset, quad_A, quad_B, quad_I, reg_address, reg_value);
-	input  logic [`NOS_CLOCKS-1:0] phase_clk;
-	input  logic reset, quad_A, quad_B, quad_I;
-	input  logic [7:0]  reg_address;
-	input  logic [31:0] reg_value;
+module motion_channel #(MOTION_UNIT = 0) ( 
+                                          input  logic clk, reset,
+                                          IO_bus.slave  bus,
+                                          input  logic quad_A, quad_B, quad_I
+                                          );
+
 
 //
 // storage
@@ -22,7 +23,7 @@ logic direction, pulse, index;
 //
 // requied subunits
 //
-quadrature_enc QE(phase_clk[0], reset, quad_A, quad_B, quad_I, direction, pulse, index);
+quadrature_enc QE(clk, reset, quad_A, quad_B, quad_I, direction, pulse, index);
 
 //
 // encoder pulse counter (360 counts per revolution)
@@ -52,7 +53,7 @@ end
 //
 // Measure velocity
 //
-always_ff @(posedge phase_clk[0] or negedge reset)
+always_ff @(posedge clk or negedge reset)
 begin
 	if (!reset) begin
 		velocity[MOTION_UNIT] <= 0;
