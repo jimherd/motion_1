@@ -34,6 +34,12 @@
    `define ENCODER_CONFIG  `ENCODER_BASE + (3 * `NOS_ENCODER_CHANNELS)	
    `define ENCODER_STATUS  `ENCODER_BASE + (4 * `NOS_ENCODER_CHANNELS)	
    
+   //
+   // Number of bytes read from and written to uP
+   //
+   `define NOS_READ_BYTES     6
+   `define NOS_WRITE_BYTES    5
+   
    
 `endif    // _global_constants_sv_
 

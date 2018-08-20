@@ -9,7 +9,7 @@
 module pwm_channel #(parameter PWM_UNIT = 0) (
                      input  logic  clk, reset,
                      IO_bus.slave  bus,
-                     output logic  pwm_out
+                     output logic  pwm
                      );
 //
 // PWM subsystem registers
@@ -52,7 +52,7 @@ pwm_FSM   pwm_FSM_sys(
    .dec_T_on(dec_T_on), 
    .dec_T_period(dec_T_period), 
    .reload_times(reload_times),
-   .pwm_out(pwm_out) 
+   .pwm(pwm) 
    );
 
 //

@@ -13,7 +13,7 @@ module uP_interface(
                    
 logic start, ack, soft_reset;
 logic handshake2_1, handshake2_2;
-logic counter_zero, set_count_5, set_count_6, decrement_count;
+logic counter_zero, set_in_byte_count, set_out_byte_count, decrement_count;
 
 //logic [7:0] reg_add;
 
@@ -29,8 +29,8 @@ uP_interface_FSM uP_interface_sys(
                .handshake2_1(handshake2_1),
                .handshake2_2(handshake2_2),
                .counter_zero(counter_zero),
-               .set_count_5(set_count_5), 
-               .set_count_6(set_count_6), 
+               .set_in_byte_count(set_in_byte_count), 
+               .set_out_byte_count(set_out_byte_count), 
                .decrement_count(decrement_count)
                ); 
 

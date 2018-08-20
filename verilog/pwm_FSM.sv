@@ -9,7 +9,7 @@ module pwm_FSM #(parameter PWM_UNIT = 0) (
                      input  logic  clk, reset, 
                      input  logic  pwm_enable, T_on_zero, T_period_zero,
                      output logic  dec_T_on, dec_T_period, reload_times, 
-                     output logic  pwm_out
+                     output logic  pwm
                   );
                
 //
@@ -59,31 +59,31 @@ always_comb  begin: set_outputs
          dec_T_on       = 0;
          dec_T_period   = 0;
          reload_times   = 0;
-         pwm_out        = 0;
+         pwm            = 0;
       end
       CONFIG: begin
          dec_T_on       = 0;
          dec_T_period   = 0;
          reload_times   = 1;
-         pwm_out        = 0;
+         pwm            = 0;
       end
       CHECK_ON_TIME: begin
          dec_T_on       = 1;
          dec_T_period   = 1;
          reload_times   = 0;         
-         pwm_out        = 1;
+         pwm            = 1;
       end      
       CHECK_OFF_TIME: begin
          dec_T_on       = 0;
          dec_T_period   = 1;
          reload_times   = 0;
-         pwm_out        = 0;
+         pwm            = 0;
       end
 		default: begin
          dec_T_on       = 0;
          dec_T_period   = 0;
          reload_times   = 0;
-         pwm_out        = 0;
+         pwm            = 0;
       end
 	endcase	
 end: set_outputs

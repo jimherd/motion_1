@@ -46,14 +46,14 @@ IO_bus  intf();
                                        .clk(CLOCK_50),
                                        .reset(reset),
                                        .bus(intf),
-                                       .pwm_out(pwm_out[0])
+                                       .pwm(pwm_out[0])
                                        );
                                        
 	pwm_channel #(.PWM_UNIT(1)) pwm_ch1(
                                        .clk(CLOCK_50), 
                                        .reset(reset),
                                        .bus(intf), 
-                                       .pwm_out(pwm_out[1])
+                                       .pwm(pwm_out[1])
                                        );
 
    
