@@ -9,29 +9,29 @@ module uP_interface_FSM(
                input  logic  clk, reset, 
                output logic  RW, handshake1_1,
                input  logic  handshake1_2,
-               input  logic  handshake2_1, start, ack, soft_reset,
-               output logic  handshake2_2,
+               input  logic  handshake2_1, start, soft_reset,
+               output logic  handshake2_2, ack,
                
                input  logic  counter_zero,
-               output logic  set_in_byte_count, set_out_byte_count, decrement_count
+               output logic  set_in_byte_count, set_out_byte_count, increment_count
                );
 
 enum bit [5:0] {	S_M0, S_M1,
-                  S_R0, S_R1, S_R2, S_R3,
+                    S_R0, S_R1, S_R2, S_R3,
                   S_M2, S_M3,
-                  S_E0, S_E1, 
+                    S_E0, S_E1, 
                   S_M4, 
-                  S_W0, S_W1, S_W2, S_W3, S_W4,
+                    S_W0, S_W1, S_W2, S_W3, S_W4,
                   S_M5, S_M6, S_M7, S_M8
 					} state, next_state;
 	
 
-always_ff @(posedge clk or negedge reset)
-		if (!reset)	begin
+always_ff @(posedge clk or negedge reset) begin
+		if (!reset)
          state <= S_M0;
-      end
-		else
+      else
          state <= next_state;
+end
 		
 always_comb begin: set_next_state
 	next_state = state;	// default condition is next state is present state
@@ -83,13 +83,13 @@ end: set_next_state
 
 always_comb  begin: set_outputs
 	case (state)
-		S_M0, S_M3, S_M6, S_M8 : begin
+		S_M0, S_M3, S_M6, S_M8, S_R0, S_R1, S_R3, S_W0, S_W2, S_W3, S_W4 : begin
             RW = 0;
             handshake1_1         = 0;
             handshake2_2         = 0;
             set_in_byte_count    = 0;
             set_out_byte_count   = 0;
-            decrement_count      = 0;
+            increment_count      = 0;
          end
 		S_M1 : begin
             RW = 0;
@@ -97,7 +97,7 @@ always_comb  begin: set_outputs
             handshake2_2         = 0;
             set_in_byte_count    = 1;
             set_out_byte_count   = 0;
-            decrement_count      = 0;
+            increment_count      = 0;
          end
       S_M2, S_M5 : begin
             RW = 0;
@@ -105,7 +105,7 @@ always_comb  begin: set_outputs
             handshake2_2         = 0;
             set_in_byte_count    = 0;
             set_out_byte_count   = 0;
-            decrement_count      = 1;
+            increment_count      = 1;
          end
       S_M4 : begin
             RW = 0;
@@ -113,15 +113,23 @@ always_comb  begin: set_outputs
             handshake2_2         = 0;
             set_in_byte_count    = 0;
             set_out_byte_count   = 1;
-            decrement_count      = 0;
+            increment_count      = 0;
          end
+      S_R2, S_W1 : begin
+            RW = 0;
+            handshake1_1         = 0;
+            handshake2_2         = 1;
+            set_in_byte_count    = 0;
+            set_out_byte_count   = 0;
+            increment_count      = 0;
+         end   
 		default: begin
             RW = 0;
             handshake1_1         = 0;
             handshake2_2         = 0;
             set_in_byte_count    = 0;
             set_out_byte_count   = 0;
-            decrement_count      = 0;            
+            increment_count      = 0;            
          end
 	endcase	
 end: set_outputs

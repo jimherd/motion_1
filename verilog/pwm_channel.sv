@@ -118,7 +118,7 @@ end
 // put data onto bus
 //
 always_latch begin
-   if(write_word === 1'b1) begin
+   if(write_word == 1'b1) begin
       case (bus.reg_address)
          (`PWM_PERIOD  + PWM_UNIT)  : bus.data_in <= T_period;
          (`PWM_ON_TIME + PWM_UNIT)  : bus.data_in <= T_on;

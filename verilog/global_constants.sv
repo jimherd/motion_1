@@ -19,7 +19,9 @@
 	//
 	// Register map
 	//
-   `define PWM_BASE        0
+   `define GLOBAL_CONFIG   0
+   
+   `define PWM_BASE        1
    
    `define PWM_PERIOD      `PWM_BASE + (0 * `NOS_PWM_CHANNELS)
    `define PWM_ON_TIME     `PWM_BASE + (1 * `NOS_PWM_CHANNELS)

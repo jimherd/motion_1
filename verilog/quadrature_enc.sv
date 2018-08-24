@@ -5,9 +5,10 @@
 //
 `include  "global_constants.sv"
 
-module quadrature_enc(clk, reset, quadA_in, quadB_in, quadI_in, count_pulse, direction, index);
-input  logic clk, reset, quadA_in, quadB_in, quadI_in;
-output logic count_pulse, direction, index;
+module quadrature_enc(
+                     input  logic clk, reset, quadA_in, quadB_in, quadI_in,
+                     output logic count_pulse, direction, index
+                        );
 
 logic [2:0] quadA_delayed, quadB_delayed;
 logic [1:0] index_sync;

@@ -23,7 +23,16 @@ logic direction, pulse, index;
 //
 // requied subunits
 //
-quadrature_enc QE(clk, reset, quad_A, quad_B, quad_I, direction, pulse, index);
+quadrature_enc QE(
+                  .clk(clk), 
+                  .reset(reset), 
+                  .quadA_in(quad_A), 
+                  .quadB_in(quad_B), 
+                  .quadI_in(quad_I),
+                  .count_pulse(pulse),
+                  .direction(direction), 
+                  .index(index)
+                  );
 
 //
 // encoder pulse counter (360 counts per revolution)

@@ -1,0 +1,35 @@
+# Copyright (C) 2018  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details.
+
+# Quartus Prime Version 18.0.0 Build 614 04/24/2018 SJ Lite Edition
+# File: C:\jth\HW_new_robot\Quartus_projects\motion_1\motion_1.csv
+# Generated on: Wed Aug 22 12:30:59 2018
+
+# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
+
+To,Direction,Location,I/O Bank,VREF Group,Fitter Location,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Strict Preservation
+CLOCK_50,Input,,,,PIN_10,3.3-V LVTTL,,,,,
+quadrature_A[3],Input,,,,PIN_33,,,,,,
+quadrature_A[2],Input,,,,PIN_30,,,,,,
+quadrature_A[1],Input,,,,PIN_38,,,,,,
+quadrature_A[0],Input,,,,PIN_65,,,,,,
+quadrature_B[3],Input,,,,PIN_50,,,,,,
+quadrature_B[2],Input,,,,PIN_59,,,,,,
+quadrature_B[1],Input,,,,PIN_121,,,,,,
+quadrature_B[0],Input,,,,PIN_62,,,,,,
+quadrature_I[3],Input,,,,PIN_124,,,,,,
+quadrature_I[2],Input,,,,PIN_127,,,,,,
+quadrature_I[1],Input,,,,PIN_88,,,,,,
+quadrature_I[0],Input,,,,PIN_140,,,,,,
+reset,Input,,,,PIN_54,,,,,,

@@ -11,17 +11,35 @@ logic [`NOS_PWM_CHANNELS-1 : 0] quadrature_A;
 logic [`NOS_PWM_CHANNELS-1 : 0] quadrature_B;
 logic [`NOS_PWM_CHANNELS-1 : 0] quadrature_I;
 
+logic  uP_start, uP_ack, uP_handshake_1, uP_handshake_2, uP_soft_reset;
+byte_t uP_data_in, uP_data_out;
+
 //
 // System structure
 //
-module motion_system(input logic CLOCK_50, reset, quad_A, quad_B, quad_I);
+module motion_system( input  logic  clk, reset, 
+                      input  logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I,
+                      input  logic  uP_start, uP_handshake_1, uP_soft_reset,
+                      output logic  uP_ack, uP_handshake_2,
+                      input  byte_t uP_data_out,
+                      output byte_t uP_data_in
+                      );
 
 IO_bus  intf();
+
+//logic ack, handshake2_2;
 
    uP_interface uP_interface_sys(
                                  .clk(CLOCK_50),
                                  .reset(reset),
-                                 .bus(intf)
+                                 .bus(intf),
+                                 .uP_start(uP_start), 
+                                 .uP_handshake_1(uP_handshake_1), 
+                                 .uP_soft_reset(uP_soft_reset),
+                                 .uP_ack(uP_ack), 
+                                 .uP_handshake_2(uP_handshake_2),
+                                 .uP_data_out(uP_data_out),
+                                 .uP_data_in(uP_data_in)                              
                                  );
          	
    motion_channel #(.MOTION_UNIT(0)) motor_ch0 (

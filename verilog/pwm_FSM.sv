@@ -24,7 +24,7 @@ enum bit [1:0] {  IDLE,
 
 always_ff @(posedge clk or negedge reset) begin
 		if (!reset)	begin
-         state          <= IDLE;
+         state <= IDLE;
 		end else           
          state <= next_state;
 end
