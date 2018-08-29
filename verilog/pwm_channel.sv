@@ -9,7 +9,7 @@
 module pwm_channel #(parameter PWM_UNIT = 0) (
                      input  logic  clk, reset,
                      IO_bus.slave  bus,
-                     output logic  pwm
+                     output logic  pwm_signal
                      );
 //
 // PWM subsystem registers
@@ -29,6 +29,7 @@ logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
 logic pwm_enable, RW;
 logic data_avail, read_word, write_word;
+logic pwm;
 
 assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
 
@@ -54,6 +55,8 @@ pwm_FSM   pwm_FSM_sys(
    .reload_times(reload_times),
    .pwm(pwm) 
    );
+   
+assign pwm_signal = pwm;
 
 //
 // Data subsystem to calculate pulse edges

@@ -7,4 +7,6 @@ package types;
    typedef struct packed {logic [3:0] data_h;
                           logic [3:0] data_l;
                          } wdata_struct_t;
+                         
+
 endpackage: types

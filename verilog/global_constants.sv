@@ -41,6 +41,7 @@
    //
    `define NOS_READ_BYTES     6
    `define NOS_WRITE_BYTES    5
+  
    
    
 `endif    // _global_constants_sv_

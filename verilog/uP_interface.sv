@@ -16,7 +16,7 @@ module uP_interface(
                    );
                    
 
-logic counter_zero, set_in_byte_count, set_out_byte_count, increment_count;
+logic counter_zero, set_in_byte_count, set_out_byte_count, increment_count, read_byte, write_byte;
 
 logic ack, start, handshake2_1, handshake2_2;
 
@@ -29,18 +29,19 @@ byte_t output_packet[`NOS_WRITE_BYTES];
 uP_interface_FSM uP_interface_sys(
                .clk(clk), 
                .reset(reset), 
-               .RW(bus.RW), 
-               .handshake1_1(bus.handshake1_1),
-               .handshake1_2(bus.handshake1_2),
-               .start(uP_start), 
-               .ack(uP_ack),
+               .word_RW(bus.RW), 
+               .word_handshake_1(bus.handshake1_1),
+               .word_handshake_2(bus.handshake1_2),
+               .packet_start(uP_start), 
+               .packet_ack(uP_ack),
                .soft_reset(uP_soft_reset),
-               .handshake2_1(uP_handshake_1),
-               .handshake2_2(uP_handshake_2),
+               .byte_handshake_1(uP_handshake_1),
+               .byte_handshake_2(uP_handshake_2),
                .counter_zero(counter_zero),
                .set_in_byte_count(set_in_byte_count), 
                .set_out_byte_count(set_out_byte_count), 
-               .increment_count(increment_count)
+               .read_byte(read_byte), 
+               .write_byte(write_byte)
                ); 
 
 
@@ -48,24 +49,41 @@ always_ff @(posedge clk) begin
    if (!reset) begin
       counter <= 0; 
       target_count <= 0;;
-   end else begin
-   if (set_in_byte_count == 1'b1) begin
-      target_count <= `NOS_READ_BYTES;
-      counter <= 0;
-   end else 
-      if (set_out_byte_count == 1'b1) begin
-         target_count <= `NOS_WRITE_BYTES;
+   end 
+   else begin
+      if (set_in_byte_count == 1'b1) begin
+         target_count <= `NOS_READ_BYTES;
          counter <= 0;
+      end else begin
+         if (set_out_byte_count == 1'b1) begin
+            target_count <= `NOS_WRITE_BYTES;
+            counter <= 0;
+         end
+         else begin  
+            if (read_byte == 1'b1) begin
+               input_packet[counter] <= uP_data_out;
+               counter <= counter + 1'b1;
+               target_count <= target_count - 1'b1;
+            end
+            else begin
+               if (write_byte == 1'b1) begin
+                  uP_data_in <= output_packet[0];
+                  counter <= counter + 1'b1;
+                  target_count <= target_count - 1'b1;
+               end
+            end
+         end
       end
-      else if (increment_count == 1'b1) begin
-            counter <= counter + 1'b1;
-            target_count <= target_count - 1'b1;
-         end  
    end
 end
 
+
+
 assign  counter_zero = (counter == 0) ? 1'b1 : 1'b0;
 
-//assign  uP_ack = ack;
+assign  bus.reg_address = input_packet[1];
+assign  bus.data_out = {input_packet[5],input_packet[4],input_packet[3],input_packet[2]};
+
+assign 
               
 endmodule
