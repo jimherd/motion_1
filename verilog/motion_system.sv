@@ -19,7 +19,7 @@ import types::*;
 //
 module motion_system( input  logic  CLOCK_50, reset, 
                       input  logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I,
-                      input  logic  uP_start, uP_handshake_1, uP_soft_reset,
+                      input  logic  uP_start, uP_handshake_1, 
                       output logic  uP_ack, uP_handshake_2,
                       input  byte_t uP_data_out,
                       output byte_t uP_data_in,
@@ -35,7 +35,6 @@ IO_bus  intf();
                                  .bus(intf),
                                  .uP_start(uP_start), 
                                  .uP_handshake_1(uP_handshake_1), 
-                                 .uP_soft_reset(uP_soft_reset),
                                  .uP_ack(uP_ack), 
                                  .uP_handshake_2(uP_handshake_2),
                                  .uP_data_out(uP_data_out),

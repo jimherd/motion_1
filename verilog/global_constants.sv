@@ -5,11 +5,6 @@
 `define   _global_constants_sv_
 
 	//
-	// NOS_CLOCKS : Number of ring counter clocks
-	//
-	`define NOS_CLOCKS 5
-	
-	//
 	// system channels
 	//
 	`define NOS_ENCODER_CHANNELS   4
@@ -37,10 +32,34 @@
    `define ENCODER_STATUS  `ENCODER_BASE + (4 * `NOS_ENCODER_CHANNELS)	
    
    //
+   // number of 32-bit values to be read from slave
+   //
+   `define NOS_READ_WORDS     2
+   //
    // Number of bytes read from and written to uP
    //
-   `define NOS_READ_BYTES     6
+   `define NOS_READ_BYTES     (`NOS_READ_WORDS * 4)
    `define NOS_WRITE_BYTES    5
+
+   //
+   // named bytes in byte packet from uP
+   //
+   `define CMD_REG         0
+   `define UP_STATUS_REG   4
+   
+   //
+   // bit definitions
+   //
+   `define BIT0  0
+   `define BIT1  1
+   `define BIT2  2
+   `define BIT3  3
+   `define BIT4  4
+   `define BIT5  5
+   `define BIT6  6
+   `define BIT7  7
+   
+   `define RESET_CMD_DONE 2'hFF
   
    
    
