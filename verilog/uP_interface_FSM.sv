@@ -44,7 +44,7 @@ always_comb begin: set_next_state
 	next_state = state;	// default condition is next state is present state
 	unique case (state)
 		S_M0:
-			next_state = (uP_start) ? S_M1 : S_M2;
+			next_state = (uP_start) ? S_RuP0 : S_M0;
       //   
       // read a byte packet from uP and check for "soft_reset" command
       //    
@@ -59,9 +59,9 @@ always_comb begin: set_next_state
       S_RuP4 : 
          next_state = (uP_handshake_1 == 0) ? S_RuP5 : S_RuP4; 
       S_RuP5 :
-         next_state = (counter_zero == 0) ? S_WB0 : S_M1;
+         next_state = (counter_zero == 0) ? S_RuP1 : S_M1;
       S_M1   :
-         next_state = (uP_soft_reset == 0) ? S_WB0 : S_M2;
+         next_state = (uP_soft_reset == 1) ? S_M2 : S_WB0;
       S_M2   :
          next_state = S_WuP0;
       //

@@ -38,8 +38,8 @@
    //
    // Number of bytes read from and written to uP
    //
-   `define NOS_READ_BYTES     (`NOS_READ_WORDS * 4)
-   `define NOS_WRITE_BYTES    5
+   `define NOS_READ_BYTES     6
+   `define NOS_WRITE_BYTES    (`NOS_READ_WORDS * 4)
 
    //
    // named bytes in byte packet from uP
@@ -59,7 +59,7 @@
    `define BIT6  6
    `define BIT7  7
    
-   `define RESET_CMD_DONE 2'hFF
+   `define RESET_CMD_DONE 8'hFF
   
    
    

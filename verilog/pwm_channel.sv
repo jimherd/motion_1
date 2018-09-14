@@ -31,7 +31,8 @@ logic pwm_enable, RW;
 logic data_avail, read_word, write_word;
 logic pwm;
 
-assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
+logic [31:0] bus_data_in;
+
 
 bus_FSM   bus_FSM_sys(
 	.clk(clk),
@@ -133,6 +134,9 @@ always_latch begin
 end
 
 assign pwm_status = pwm_config;
+assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
+
+//assign bus.data_in = bus_data_in;
 
 //assign register_out  =  (register_no == (`PWM_PERIOD + PWM_UNIT)) ? T_period : 32'hzzzzzzzz;
 //assign register_out  =  (register_no == (`PWM_ON_TIME + PWM_UNIT)) ? T_on : 32'hzzzzzzzz;

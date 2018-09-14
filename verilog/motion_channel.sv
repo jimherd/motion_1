@@ -4,11 +4,12 @@
 // Implement a single encoder channel
 //
 `include  "global_constants.sv"
+`include  "interfaces.sv"
 
 
 module motion_channel #(MOTION_UNIT = 0) ( 
                                           input  logic clk, reset,
-                                          IO_bus.slave  bus,
+                                          IO_bus  bus,
                                           input  logic quad_A, quad_B, quad_I
                                           );
 

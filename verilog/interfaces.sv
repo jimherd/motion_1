@@ -7,7 +7,7 @@
 `include  "global_constants.sv"
 
 //
-// IO_BUS : Bus connection to PWM and servo subsystems
+// IO_BUS : Bus connection to multiple I/O subsystems
 //
 // 32-bit bus with individual input and output busses 
 //
