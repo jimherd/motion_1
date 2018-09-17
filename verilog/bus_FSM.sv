@@ -10,7 +10,7 @@ module bus_FSM(
                input  logic  RW, handshake1_1,
                output logic  handshake1_2,
                output logic  data_avail, 
-               output logic  read_word, write_word
+               output logic  read_word_from_BUS, write_word_to_BUS
                );
 
 enum bit [2:0] {	IDLE,
@@ -55,44 +55,44 @@ always_comb  begin: set_outputs
 		IDLE: begin
             handshake1_2 = 0;
             data_avail = 0;
-            read_word = 0;
-            write_word = 0;
+            read_word_from_BUS = 0;
+            write_word_to_BUS = 0;
          end
       READ_ADDRESS : begin
             handshake1_2 = 0;
             data_avail = 1;
-            read_word = 0;
-            write_word = 0;
+            read_word_from_BUS = 0;
+            write_word_to_BUS = 0;
          end
       SEND_ACK: begin
             handshake1_2 = 1;
             data_avail = 0;
-            read_word = 0;
-            write_word = 0;
+            read_word_from_BUS = 0;
+            write_word_to_BUS = 0;
          end
 		SEND_DATA: begin
             handshake1_2 = 1;
             data_avail = 0;
-            read_word = 0;
-            write_word = 1;
+            read_word_from_BUS = 0;
+            write_word_to_BUS = 1;
          end
       GET_DATA: begin
             handshake1_2 = 1;
             data_avail = 0;
-            read_word = 1;
-            write_word = 0;
+            read_word_from_BUS = 1;
+            write_word_to_BUS = 0;
          end
 		SEND_NACK: begin
             handshake1_2 = 0;
             data_avail = 0;
-            read_word = 0;
-            write_word = 0;
+            read_word_from_BUS = 0;
+            write_word_to_BUS = 0;
          end
 		default: begin
             handshake1_2 = 0;
             data_avail = 0;
-            read_word = 0;
-            write_word = 0;
+            read_word_from_BUS = 0;
+            write_word_to_BUS = 0;
          end
 	endcase	
 end: set_outputs

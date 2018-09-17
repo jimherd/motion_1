@@ -8,7 +8,7 @@
 	// system channels
 	//
 	`define NOS_ENCODER_CHANNELS   4
-	`define NOS_PWM_CHANNELS       4
+	`define NOS_PWM_CHANNELS       2
 	`define NOS_SERVO_CHANNELS     8
 
 	//
@@ -16,12 +16,13 @@
 	//
    `define GLOBAL_CONFIG   0
    
-   `define PWM_BASE        1
+   `define PWM_BASE            1
+   `define NOS_PWM_REGISTERS   4
    
-   `define PWM_PERIOD      `PWM_BASE + (0 * `NOS_PWM_CHANNELS)
-   `define PWM_ON_TIME     `PWM_BASE + (1 * `NOS_PWM_CHANNELS)
-   `define PWM_CONFIG      `PWM_BASE + (2 * `NOS_PWM_CHANNELS)
-   `define PWM_STATUS      `PWM_BASE + (3 * `NOS_PWM_CHANNELS)
+   `define PWM_PERIOD      `PWM_BASE + 0
+   `define PWM_ON_TIME     `PWM_BASE + 1
+   `define PWM_CONFIG      `PWM_BASE + 2
+   `define PWM_STATUS      `PWM_BASE + 3
    
    `define ENCODER_BASE    (4 * `NOS_PWM_CHANNELS)
    
@@ -45,7 +46,12 @@
    // named bytes in byte packet from uP
    //
    `define CMD_REG         0
+   `define REGISTER_NUMBER 1
    `define UP_STATUS_REG   4
+   //
+   `define RD_CMD  0
+   `define WR_CMD  1
+
    
    //
    // bit definitions

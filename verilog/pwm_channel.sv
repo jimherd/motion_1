@@ -27,8 +27,8 @@ int unsigned  T_on_temp;
 
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
-logic pwm_enable, RW;
-logic data_avail, read_word, write_word;
+logic pwm_enable;
+logic data_avail, read_word_from_BUS, write_word_to_BUS;
 logic pwm;
 
 logic [31:0] bus_data_in;
@@ -41,8 +41,8 @@ bus_FSM   bus_FSM_sys(
    .handshake1_1(bus.handshake1_1),
    .RW(bus.RW),
    .data_avail(data_avail), 
-   .read_word(read_word), 
-   .write_word(write_word)
+   .read_word_from_BUS(read_word_from_BUS), 
+   .write_word_to_BUS(write_word_to_BUS)
 	);
    
 pwm_FSM   pwm_FSM_sys(
@@ -104,7 +104,7 @@ always_ff @(posedge clk or negedge reset) begin
       T_on       <= 0;
       pwm_config <= 0;
    end else begin
-      if (read_word) begin
+      if (read_word_from_BUS == 1'b1) begin
          if (bus.reg_address == (`PWM_PERIOD + PWM_UNIT)) begin
             T_period <= bus.data_out;
          end else 
@@ -121,14 +121,14 @@ end
 //
 // put data onto bus
 //
-always_latch begin
-   if(write_word == 1'b1) begin
-      case (bus.reg_address)
-         (`PWM_PERIOD  + PWM_UNIT)  : bus.data_in <= T_period;
-         (`PWM_ON_TIME + PWM_UNIT)  : bus.data_in <= T_on;
-         (`PWM_CONFIG  + PWM_UNIT)  : bus.data_in <= pwm_config;
-         (`PWM_STATUS  + PWM_UNIT)  : bus.data_in <= pwm_status;
-         default                    : bus.data_in <= 32'hzzzzzzzz;
+always_ff @(posedge clk) begin
+   if(write_word_to_BUS == 1'b1) begin
+      case (bus.reg_address)  
+         (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= T_period;
+         (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= T_on;
+         (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= pwm_config;
+         (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= pwm_status;
+         default                                           : bus.data_in <= 32'hzzzzzzzz;
       endcase
    end
 end

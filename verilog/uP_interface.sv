@@ -53,7 +53,9 @@ uP_interface_FSM uP_interface_sys(
 always_ff @(posedge clk) begin
    if (!reset) begin
       counter <= 0; 
-      target_count <= 0;;
+      target_count <= 0;
+      input_packet[`CMD_REG] <= 0;
+      input_packet[`REGISTER_NUMBER] <= 0;
    end 
    else begin
       if (set_in_uP_byte_count == 1'b1) begin
@@ -61,7 +63,7 @@ always_ff @(posedge clk) begin
          counter <= 0;
       end else begin
          if (set_out_uP_byte_count == 1'b1) begin
-            target_count <= `NOS_WRITE_BYTES;
+            target_count <= byte_t'(`NOS_WRITE_BYTES);
             counter <= 0;
          end
          else begin  
