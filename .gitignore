@@ -82,3 +82,6 @@ transcript*
 sc_dpiheader.h
 vsim.dbg
 
+*.mti
+*.wlf
+*.qdb

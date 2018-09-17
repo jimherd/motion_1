@@ -31,8 +31,6 @@ logic pwm_enable;
 logic data_avail, read_word_from_BUS, write_word_to_BUS;
 logic pwm;
 
-logic [31:0] bus_data_in;
-
 
 bus_FSM   bus_FSM_sys(
 	.clk(clk),
@@ -105,13 +103,13 @@ always_ff @(posedge clk or negedge reset) begin
       pwm_config <= 0;
    end else begin
       if (read_word_from_BUS == 1'b1) begin
-         if (bus.reg_address == (`PWM_PERIOD + PWM_UNIT)) begin
+         if (bus.reg_address == (`PWM_PERIOD + (PWM_UNIT * `NOS_PWM_REGISTERS))) begin
             T_period <= bus.data_out;
          end else 
-            if (bus.reg_address == (`PWM_ON_TIME + PWM_UNIT)) begin
+            if (bus.reg_address == (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))) begin
                T_on <= bus.data_out;
             end else
-               if (bus.reg_address == (`PWM_CONFIG + PWM_UNIT)) begin
+               if (bus.reg_address == (`PWM_CONFIG + (PWM_UNIT * `NOS_PWM_REGISTERS))) begin
                   pwm_config <= bus.data_out;
                end
          end
@@ -128,18 +126,13 @@ always_ff @(posedge clk) begin
          (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= T_on;
          (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= pwm_config;
          (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= pwm_status;
-         default                                           : bus.data_in <= 32'hzzzzzzzz;
       endcase
-   end
+   end else
+      bus.data_in <= 32'hzzzzzzzz;
 end
 
 assign pwm_status = pwm_config;
 assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
-
-//assign bus.data_in = bus_data_in;
-
-//assign register_out  =  (register_no == (`PWM_PERIOD + PWM_UNIT)) ? T_period : 32'hzzzzzzzz;
-//assign register_out  =  (register_no == (`PWM_ON_TIME + PWM_UNIT)) ? T_on : 32'hzzzzzzzz;
 
 
 endmodule

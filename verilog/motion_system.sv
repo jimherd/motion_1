@@ -26,7 +26,7 @@ module motion_system( input  logic  CLOCK_50, reset,
                       output logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out
                       );
 
-IO_bus  intf(.*);
+IO_bus  intf(.clk(CLOCK_50));
 
 
    uP_interface uP_interface_sys(

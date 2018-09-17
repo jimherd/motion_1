@@ -20,6 +20,16 @@ logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
 
 byte_t input_packet[8];
 
+task do_write;
+    input [7:0] reg_address;
+    input [31:0] reg_data;
+    begin
+	end;
+endtask;
+
+task do_read;
+endtask;
+
 motion_system uut(
 				.CLOCK_50(clk), 
 				.reset(reset), 
@@ -49,7 +59,7 @@ initial begin
  //
  // write command C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv
  //
-  #100  uP_data_out = 0;	    
+  #100  uP_data_out = 1;	    
   #5   uP_handshake_1 = 1'b1;
   #5   wait(uut.uP_handshake_2 == 1'b1);
   #5   uP_handshake_1 = 1'b0;
@@ -57,7 +67,7 @@ initial begin
 //
 // Register number 
 //  
- #10  uP_data_out = 3;      	// PWM period register of channel 0
+ #10  uP_data_out = 2;      	// PWM period register of channel 0
   #5   uP_handshake_1 = 1;
   #5   wait(uut.uP_handshake_2 == 1'b1);
   #5   uP_handshake_1 = 0;

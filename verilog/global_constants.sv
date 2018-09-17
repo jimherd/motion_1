@@ -19,18 +19,18 @@
    `define PWM_BASE            1
    `define NOS_PWM_REGISTERS   4
    
-   `define PWM_PERIOD      `PWM_BASE + 0
-   `define PWM_ON_TIME     `PWM_BASE + 1
-   `define PWM_CONFIG      `PWM_BASE + 2
-   `define PWM_STATUS      `PWM_BASE + 3
+   `define PWM_PERIOD      0
+   `define PWM_ON_TIME     1
+   `define PWM_CONFIG      2
+   `define PWM_STATUS      3
    
    `define ENCODER_BASE    (4 * `NOS_PWM_CHANNELS)
    
-   `define COUNT_BUFFER    `ENCODER_BASE + (0 * `NOS_ENCODER_CHANNELS)	   
-   `define TURN_BUFFER     `ENCODER_BASE + (1 * `NOS_ENCODER_CHANNELS)	
-   `define VELOCITY_BUFFER `ENCODER_BASE + (2 * `NOS_ENCODER_CHANNELS)	
-   `define ENCODER_CONFIG  `ENCODER_BASE + (3 * `NOS_ENCODER_CHANNELS)	
-   `define ENCODER_STATUS  `ENCODER_BASE + (4 * `NOS_ENCODER_CHANNELS)	
+   `define COUNT_BUFFER    (`ENCODER_BASE + (0 * `NOS_ENCODER_CHANNELS))	   
+   `define TURN_BUFFER     (`ENCODER_BASE + (1 * `NOS_ENCODER_CHANNELS))
+   `define VELOCITY_BUFFER (`ENCODER_BASE + (2 * `NOS_ENCODER_CHANNELS))
+   `define ENCODER_CONFIG  (`ENCODER_BASE + (3 * `NOS_ENCODER_CHANNELS))
+   `define ENCODER_STATUS  (`ENCODER_BASE + (4 * `NOS_ENCODER_CHANNELS))
    
    //
    // number of 32-bit values to be read from slave

@@ -11,7 +11,7 @@
 //
 // 32-bit bus with individual input and output busses 
 //
-interface IO_bus;
+interface IO_bus (input clk);
    logic  [31:0]  data_in;     // 'in'  wrt master
    logic  [31:0]  data_out;    // 'out' wrt master
    logic  [7:0]   reg_address;

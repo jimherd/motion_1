@@ -25,6 +25,7 @@ add wave -label BUS_data_out -radix decimal -position end  sim:/motion_test_1_tb
 add wave -label BUS_data_in -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/data_in
 add wave -label BUS_handshake_1 -position end  sim:/motion_test_1_tb/uut/intf/handshake1_1
 add wave -label BUS_handshake_2 -position end  sim:/motion_test_1_tb/uut/intf/handshake1_2
+add wave -label write_word_to_BUS -position end  sim:/motion_test_1_tb/uut/pwm_ch0/bus_FSM_sys/write_word_to_BUS
 #
 # run simulation
 #
