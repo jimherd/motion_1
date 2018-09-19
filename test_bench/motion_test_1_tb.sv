@@ -9,7 +9,7 @@ import types::*;
 
 module motion_test_1_tb ();
 
-logic clk, reset;
+logic clk, reset; 
 logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I;
 logic  uP_start, uP_handshake_1;
 logic  uP_ack, uP_handshake_2;

@@ -32,8 +32,8 @@ byte_t output_packet[`NOS_WRITE_BYTES];
 uP_interface_FSM uP_interface_sys(
                .clk(clk), 
                .reset(reset),  
-               .bus_handshake_1(bus.handshake1_1),
-               .bus_handshake_2(bus.handshake1_2),
+               .bus_handshake_1(bus.handshake_1),
+               .bus_handshake_2(bus.handshake_2),
                .uP_start(uP_start), 
                .uP_ack(uP_ack),
                .uP_handshake_1(uP_handshake_1),

@@ -28,19 +28,22 @@ int unsigned  T_on_temp;
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
 logic pwm_enable;
-logic data_avail, read_word_from_BUS, write_word_to_BUS;
+logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
 logic pwm;
+logic subsystem_enable;
 
 
 bus_FSM   bus_FSM_sys(
 	.clk(clk),
 	.reset(reset),
-   .handshake1_2(bus.handshake1_2),
-   .handshake1_1(bus.handshake1_1),
+   .subsystem_enable(subsystem_enable),
+   .handshake_2(bus.handshake_2),
+   .handshake_1(bus.handshake_1),
    .RW(bus.RW),
    .data_avail(data_avail), 
    .read_word_from_BUS(read_word_from_BUS), 
-   .write_word_to_BUS(write_word_to_BUS)
+   .write_data_word_to_BUS(write_data_word_to_BUS),
+   .write_status_word_to_BUS(write_status_word_to_BUS)
 	);
    
 pwm_FSM   pwm_FSM_sys(
@@ -120,7 +123,7 @@ end
 // put data onto bus
 //
 always_ff @(posedge clk) begin
-   if(write_word_to_BUS == 1'b1) begin
+   if(write_data_word_to_BUS == 1'b1) begin
       case (bus.reg_address)  
          (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= T_period;
          (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= T_on;
@@ -134,5 +137,14 @@ end
 assign pwm_status = pwm_config;
 assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
 
+always_comb begin
+      case (bus.reg_address)  
+         (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
+         (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
+         (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
+         (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
+         default                                           : subsystem_enable = 0;
+      endcase
+end
 
 endmodule
