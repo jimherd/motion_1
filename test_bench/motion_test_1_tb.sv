@@ -7,7 +7,6 @@
 `include "../verilog/global_constants.sv"
 import types::*;
 
-
 module motion_test_1_tb ();
 
 logic clk, reset;
@@ -20,29 +19,61 @@ logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
 
 byte_t input_packet[8];
 
-task do_write;
-    input [7:0] reg_address;
-    input [31:0] reg_data;
-    begin
-	end;
+task do_start;
+  begin
+      clk = 0; reset = 1; uP_start = 0;
+      uP_handshake_1 = 1'b0;
+  #10 reset = 0;
+  #20 reset = 1;
+  #20 reset = 1;
+  #20 uP_start = 1;
+  end
 endtask;
 
-task do_read;
+task do_end;
+  begin
+    #5 wait(uut.uP_ack == 1);
+    #5 uP_start = 0;
+  end
+endtask
+
+task write_byte;
+  input byte_t data;
+  begin
+     #50   uP_data_out = data;	    
+     #20   uP_handshake_1 = 1'b1;
+     #20   wait(uut.uP_handshake_2 == 1'b1);
+     #20   uP_handshake_1 = 1'b0;
+     #20   wait(uut.uP_handshake_2 == 1'b0);
+  end
+endtask;
+
+task do_write;
+  input [7:0] reg_address;
+  input [31:0] reg_data;
+  begin
+    write_byte(1);
+    write_byte(reg_address);
+    write_byte(reg_data[7:0]);
+    write_byte(reg_data[15:8]);
+    write_byte(reg_data[23:16]);
+    write_byte(reg_data[31:24]);
+  end;
 endtask;
 
 motion_system uut(
-				.CLOCK_50(clk), 
-				.reset(reset), 
-                .quadrature_A(quadrature_A), 
-				.quadrature_B(quadrature_B), 
-				.quadrature_I(quadrature_I),
-                .uP_start(uP_start), 
-				.uP_handshake_1(uP_handshake_1), 
-                .uP_ack(uP_ack), 
-				.uP_handshake_2(uP_handshake_2),
-                .uP_data_out(uP_data_out),
-                .uP_data_in(uP_data_in),
-                .pwm_out(pwm_out)
+                  .CLOCK_50(clk), 
+                  .reset(reset), 
+                  .quadrature_A(quadrature_A), 
+                  .quadrature_B(quadrature_B), 
+                  .quadrature_I(quadrature_I),
+                  .uP_start(uP_start), 
+                  .uP_handshake_1(uP_handshake_1), 
+                  .uP_ack(uP_ack), 
+                  .uP_handshake_2(uP_handshake_2),
+                  .uP_data_out(uP_data_out),
+                  .uP_data_in(uP_data_in),
+                  .pwm_out(pwm_out)
  );
   
 initial begin
@@ -50,77 +81,26 @@ initial begin
   $dumpfile("dump.vcd");
   $dumpvars(1,motion_system);
   
-  clk = 0; reset = 1; uP_start = 0;
-  uP_handshake_1 = 1'b0;
-  #10 reset = 0;
-  #20 reset = 1;
-  #20 reset = 1;
-  #20 uP_start = 1;
- //
- // write command C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv
- //
-  #100  uP_data_out = 1;	    
-  #5   uP_handshake_1 = 1'b1;
-  #5   wait(uut.uP_handshake_2 == 1'b1);
-  #5   uP_handshake_1 = 1'b0;
-  #5   wait(uut.uP_handshake_2 == 1'b0);
-//
-// Register number 
-//  
- #10  uP_data_out = 2;      	// PWM period register of channel 0
-  #5   uP_handshake_1 = 1;
-  #5   wait(uut.uP_handshake_2 == 1'b1);
-  #5   uP_handshake_1 = 0;
-  #5   wait(uut.uP_handshake_2 == 1'b0);
-//
-// data byte 0
-//  
- #10   uP_data_out = 42;
-  #5   uP_handshake_1 = 1;
-  #5   wait(uut.uP_handshake_2 == 1'b1);
-  #5   uP_handshake_1 = 0;
-  #5   wait(uut.uP_handshake_2 == 1'b0);  
-//
-// data byte 1
-//  
- #10  uP_data_out = 0;
-  #5   uP_handshake_1 = 1;
-  #5   wait(uut.uP_handshake_2 == 1'b1);
-  #5   uP_handshake_1 = 0;
-  #5   wait(uut.uP_handshake_2 == 1'b0);    
-//
-// data byte 2
-//  
- #10  uP_data_out = 7;
-  #5   uP_handshake_1 = 1;
-  #5   wait(uut.uP_handshake_2 == 1'b1);
-  #5   uP_handshake_1 = 0;
-  #5   wait(uut.uP_handshake_2 == 1'b0);      
-//
-// data byte 3
-//  
- #10  uP_data_out = 5;
-  #5   uP_handshake_1 = 1;
-  #5   wait(uut.uP_handshake_2 == 1'b1);
-  #5   uP_handshake_1 = 0;
-  #5   wait(uut.uP_handshake_2 == 1'b0);  
+  do_start();
+  do_write(2, 32'h0506080B);
 //
 // Read returned data
 //
+//  do_read(0);
   #50   wait(uut.uP_handshake_2 == 1'b1);
   #5   input_packet[0] = uut.uP_data_in;
   #5   uP_handshake_1 = 1;
   #5   wait(uut.uP_handshake_2 == 1'b0);
   #5   uP_handshake_1 = 0;
-//
-// complete transaction
-//
-  #5 wait(uut.uP_ack == 1);
-  #5 uP_start = 1;
+  
+  do_end();
 
  // #100 $finish;
   
 end
+//
+// Initiate clock
+//
 always begin 
   #10 clk = ~clk; // 50MHz clock
 end
