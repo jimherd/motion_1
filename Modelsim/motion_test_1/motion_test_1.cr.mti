@@ -29,23 +29,6 @@ Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  
 Top level modules:
 	motion_test_1_tb
 
-} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/global_constants.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/global_constants.sv
-Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
-
-} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_FSM.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_FSM.sv
-Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
--- Compiling module pwm_FSM
-
-Top level modules:
-	pwm_FSM
-
-} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/types.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/types.sv
-Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
--- Compiling package types
-
-Top level modules:
-	--none--
-
 } {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
 -- Compiling interface IO_bus
@@ -56,12 +39,22 @@ Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  
 Top level modules:
 	uP_interface
 
-} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface_FSM.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface_FSM.sv
+} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/types.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/types.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
--- Compiling module uP_interface_FSM
+-- Compiling package types
 
 Top level modules:
-	uP_interface_FSM
+	--none--
+
+} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_FSM.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_FSM.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module pwm_FSM
+
+Top level modules:
+	pwm_FSM
+
+} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/global_constants.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/global_constants.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
 
 } {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
@@ -72,5 +65,12 @@ Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  
 
 Top level modules:
 	motion_system
+
+} {} {}} C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface_FSM.sv {1 {vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface_FSM.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module uP_interface_FSM
+
+Top level modules:
+	uP_interface_FSM
 
 } {} {}}

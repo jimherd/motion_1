@@ -134,8 +134,12 @@ always_ff @(posedge clk or negedge reset) begin
             (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= pwm_config;
             (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= pwm_status;
          endcase
-      end else
-         data_in_reg <= 'z;
+      end else begin
+         if(write_status_word_to_BUS == 1'b1) begin
+            data_in_reg <= pwm_status;
+         end else
+            data_in_reg <= 'z;
+      end
    end
 end
 

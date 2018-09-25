@@ -48,6 +48,17 @@ task write_byte;
   end
 endtask;
 
+task read_byte;
+  output byte_t data;
+  begin
+    #50  wait(uut.uP_handshake_2 == 1'b1);
+	#20   data = uut.uP_data_in;
+    #20   uP_handshake_1 = 1;
+    #20   wait(uut.uP_handshake_2 == 1'b0);
+    #20   uP_handshake_1 = 0;
+  end;
+endtask;
+
 task do_write;
   input [7:0] reg_address;
   input [31:0] reg_data;
@@ -58,6 +69,14 @@ task do_write;
     write_byte(reg_data[15:8]);
     write_byte(reg_data[23:16]);
     write_byte(reg_data[31:24]);
+  end;
+endtask;
+
+task do_read;
+  begin
+    for (int i=0; i < `NOS_WRITE_BYTES; i++) begin
+		read_byte(input_packet[i]);
+	end;
   end;
 endtask;
 
@@ -86,13 +105,7 @@ initial begin
 //
 // Read returned data
 //
-//  do_read(0);
-  #50   wait(uut.uP_handshake_2 == 1'b1);
-  #5   input_packet[0] = uut.uP_data_in;
-  #5   uP_handshake_1 = 1;
-  #5   wait(uut.uP_handshake_2 == 1'b0);
-  #5   uP_handshake_1 = 0;
-  
+  do_read();  
   do_end();
 
  // #100 $finish;
