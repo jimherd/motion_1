@@ -23,8 +23,8 @@ task do_start;
   begin
       clk = 0; reset = 1; uP_start = 0;
       uP_handshake_1 = 1'b0;
-  #10 reset = 0;
-  #20 reset = 1;
+  #15 reset = 0;
+  #62 reset = 1;
   #20 reset = 1;
   #20 uP_start = 1;
   end

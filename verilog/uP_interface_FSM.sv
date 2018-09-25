@@ -70,11 +70,11 @@ always_comb begin: set_next_state
       S_WB0 :
          next_state = S_WB1;
       S_WB1 :
-         next_state = (bus_handshake_1 == 1) ? S_WB2 : S_WB1; 
+         next_state = (bus_handshake_2 == 1) ? S_WB2 : S_WB1; 
       S_WB2 :
          next_state = S_WB3;
       S_WB3 : 
-         next_state = (bus_handshake_1 == 0) ? S_RB0 : S_WB3; 
+         next_state = (bus_handshake_2 == 0) ? S_RB0 : S_WB3; 
       //
       // read data from addressed slave
       //
@@ -83,11 +83,11 @@ always_comb begin: set_next_state
       S_RB1 :
          next_state = S_RB2;   
       S_RB2 :
-         next_state = (bus_handshake_1 == 1) ? S_RB3 : S_RB2; 
+         next_state = (bus_handshake_2 == 1) ? S_RB3 : S_RB2; 
       S_RB3 :
          next_state = S_RB4;
       S_RB4 : 
-         next_state = (bus_handshake_1 == 0) ? S_RB5 : S_RB4; 
+         next_state = (bus_handshake_2 == 0) ? S_RB5 : S_RB4; 
       S_RB5 :
          next_state = (counter_zero == 0) ? S_WuP0 : S_RB1;   
       //
@@ -100,11 +100,11 @@ always_comb begin: set_next_state
       S_WuP2:
          next_state = S_WuP3;
       S_WuP3: 
-         next_state = (uP_handshake_1 == 1) ? S_WuP4 : S_WuP3; 
+         next_state = (uP_handshake_2 == 1) ? S_WuP4 : S_WuP3; 
       S_WuP4:
          next_state = S_WuP5;
       S_WuP5: 
-         next_state = (uP_handshake_1 == 0) ? S_WuP6 : S_WuP5; 
+         next_state = (uP_handshake_2 == 0) ? S_WuP6 : S_WuP5; 
       S_WuP6 :
          next_state = (counter_zero == 0) ? S_M3 : S_WuP1;  
       //

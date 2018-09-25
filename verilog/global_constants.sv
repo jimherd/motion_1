@@ -19,10 +19,10 @@
    `define PWM_BASE            1
    `define NOS_PWM_REGISTERS   4
    
-   `define PWM_PERIOD      0
-   `define PWM_ON_TIME     1
-   `define PWM_CONFIG      2
-   `define PWM_STATUS      3
+   `define PWM_PERIOD      1
+   `define PWM_ON_TIME     2
+   `define PWM_CONFIG      3
+   `define PWM_STATUS      4
    
    `define ENCODER_BASE    (4 * `NOS_PWM_CHANNELS)
    

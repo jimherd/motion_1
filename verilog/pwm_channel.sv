@@ -8,22 +8,22 @@
 
 module pwm_channel #(parameter PWM_UNIT = 0) (
                      input  logic  clk, reset,
-                     IO_bus.slave  bus,
+                     IO_bus bus,
                      output logic  pwm_signal
                      );
 //
 // PWM subsystem registers
 //	
-int unsigned  T_period;    // in units of 100nS
-int unsigned  T_on;        // in units of 100nS
+logic [31:0]  T_period;    // in units of 100nS
+logic [31:0]  T_on;        // in units of 100nS
 logic [31:0]  pwm_config; 
 logic [31:0]  pwm_status;
 
 //
 // Local registers
 //
-int unsigned  T_period_temp;
-int unsigned  T_on_temp;
+logic [31:0]  T_period_temp;
+logic [31:0]  T_on_temp;
 
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
@@ -31,6 +31,8 @@ logic pwm_enable;
 logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
 logic pwm;
 logic subsystem_enable;
+
+logic [31:0] data_in_reg;
 
 
 bus_FSM   bus_FSM_sys(
@@ -40,7 +42,6 @@ bus_FSM   bus_FSM_sys(
    .handshake_2(bus.handshake_2),
    .handshake_1(bus.handshake_1),
    .RW(bus.RW),
-   .data_avail(data_avail), 
    .read_word_from_BUS(read_word_from_BUS), 
    .write_data_word_to_BUS(write_data_word_to_BUS),
    .write_status_word_to_BUS(write_status_word_to_BUS)
@@ -122,22 +123,29 @@ end
 //
 // put data onto bus
 //
-always_ff @(posedge clk) begin
-   if(write_data_word_to_BUS == 1'b1) begin
-      case (bus.reg_address)  
-         (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= T_period;
-         (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= T_on;
-         (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= pwm_config;
-         (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : bus.data_in <= pwm_status;
-      endcase
-   end else
-      bus.data_in <= 32'hzzzzzzzz;
+always_ff @(posedge clk or negedge reset) begin
+   if (!reset) begin
+      data_in_reg <= 'z;
+   end  else begin
+      if(write_data_word_to_BUS == 1'b1) begin
+         case (bus.reg_address)  
+            (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= T_period;
+            (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= T_on;
+            (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= pwm_config;
+            (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= pwm_status;
+         endcase
+      end else
+         data_in_reg <= 'z;
+   end
 end
+
+assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
 assign pwm_status = pwm_config;
 assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
 
 always_comb begin
+      subsystem_enable = 0;
       case (bus.reg_address)  
          (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
          (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;

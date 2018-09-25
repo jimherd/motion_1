@@ -8,8 +8,7 @@
 module bus_FSM( 
                input  logic  clk, reset, 
                input  logic  RW, subsystem_enable, handshake_1,
-               output logic  handshake_2,
-               output logic  data_avail, 
+               output wire   handshake_2,
                output logic  read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS
                );
 
@@ -21,7 +20,8 @@ enum bit [4:0] {
                   // section #3
                      S_WWS0, S_WWS1, S_WWS2, S_WWS3, S_WWS4 
 					} state, next_state;
-	
+
+logic handshake_2_reg; 
 
 always_ff @(posedge clk or negedge reset)
 		if (!reset)	begin
@@ -85,9 +85,19 @@ end: set_next_state
 assign read_word_from_BUS       =  (state == S_RW2);
 assign write_data_word_to_BUS   =  (state == S_WWD0);
 assign write_status_word_to_BUS =  (state == S_WWS0);
-assign handshake_2              = ((state == S_RW3)  || (state == S_RW4)  ||
-                                   (state == S_WWD1) || (state == S_WWD2) ||
-                                   (state == S_WWS1) || (state == S_WWS2));
-                                  
+
+always_comb
+begin
+   if ((state == S_RW3) || (state == S_RW4) || (state == S_WWD1) || (state == S_WWD2) ||
+                           (state == S_WWS1) || (state == S_WWS2)) 
+      handshake_2_reg = 1'b1;
+   else
+      if (subsystem_enable == 1'b1)
+         handshake_2_reg = 1'b0;
+      else
+         handshake_2_reg = 1'bz;
+end
+
+assign handshake_2 = handshake_2_reg;
 
 endmodule
