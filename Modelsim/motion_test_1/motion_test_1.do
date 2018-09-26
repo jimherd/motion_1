@@ -14,8 +14,10 @@ add wave -label RESET -position end  sim:/motion_test_1_tb/uut/reset
 add wave -label uP_start -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_start
 add wave -label uP_handshake_1 -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_handshake_1
 add wave -label uP_handshake_2 -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_handshake_2
+add wave -label write_byte_to_uP -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/write_uP_byte
 add wave -label uP_data_out -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_data_out
-add wave -label uP_data_in -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_data_in
+add wave -label data_in_reg -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/data_in_reg
+add wave -label uP_data_in -radix hexadecimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_data_in
 add wave -label uP_state -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_interface_sys/state
 add wave -label target_count -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/target_count
 add wave -label count -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/counter
@@ -31,10 +33,12 @@ add wave -label BUS_handshake_2 -position end  sim:/motion_test_1_tb/uut/intf/ha
 add wave -label read_word_from_BUS -position end  sim:/motion_test_1_tb/uut/pwm_ch0/bus_FSM_sys/read_word_from_BUS
 add wave -label write_word_to_BUS -position end  sim:/motion_test_1_tb/uut/pwm_ch0/bus_FSM_sys/write_data_word_to_BUS
 add wave -label T_ON_reg_CH0 -radix hexadecimal -position end  sim:/motion_test_1_tb/uut/pwm_ch0/T_on
+add wave -label output_packet -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/output_packet
+add wave -label read_bus_word -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/read_bus_word
 #
 # run simulation
 #
-run 2000ns
+run 3000ns
 wave zoom full
 
 

@@ -40,20 +40,20 @@ endtask
 task write_byte;
   input byte_t data;
   begin
-     #50   uP_data_out = data;	    
-     #20   uP_handshake_1 = 1'b1;
-     #20   wait(uut.uP_handshake_2 == 1'b1);
-     #20   uP_handshake_1 = 1'b0;
-     #20   wait(uut.uP_handshake_2 == 1'b0);
+    #50   uP_data_out = data;	    
+    #20   uP_handshake_1 = 1'b1;
+    #20   wait(uut.uP_handshake_2 == 1'b1);
+    #20   uP_handshake_1 = 1'b0;
+    #20   wait(uut.uP_handshake_2 == 1'b0);
   end
 endtask;
 
 task read_byte;
   output byte_t data;
   begin
-    #50  wait(uut.uP_handshake_2 == 1'b1);
+    #50   wait(uut.uP_handshake_2 == 1'b1);
 	#20   data = uut.uP_data_in;
-    #20   uP_handshake_1 = 1;
+    #20   uP_handshake_1 = 1;                 // send ack
     #20   wait(uut.uP_handshake_2 == 1'b0);
     #20   uP_handshake_1 = 0;
   end;

@@ -83,8 +83,8 @@ end: set_next_state
 // Moore outputs
 //
 assign read_word_from_BUS       =  (state == S_RW2);
-assign write_data_word_to_BUS   =  (state == S_WWD0);
-assign write_status_word_to_BUS =  (state == S_WWS0);
+assign write_data_word_to_BUS   =  (state == S_WWD0) || (state == S_WWD1) || (state == S_WWD2);
+assign write_status_word_to_BUS =  (state == S_WWS0) || (state == S_WWS1) || (state == S_WWS2);
 
 always_comb
 begin

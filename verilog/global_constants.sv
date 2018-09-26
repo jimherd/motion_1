@@ -35,12 +35,13 @@
    //
    // number of 32-bit values to be read from slave
    //
-   `define NOS_READ_WORDS     2
+   `define NOS_READ_WORDS_FROM_SLAVE     2
+   `define NOS_READ_BYTES_FROM_SLAVE     (4 * `NOS_READ_WORDS_FROM_SLAVE)
    //
    // Number of bytes read from and written to uP
    //
    `define NOS_READ_BYTES     6
-   `define NOS_WRITE_BYTES    (`NOS_READ_WORDS * 4)
+   `define NOS_WRITE_BYTES    (`NOS_READ_WORDS_FROM_SLAVE * 4)
 
    //
    // named bytes in byte packet from uP

@@ -59,7 +59,7 @@ always_comb begin: set_next_state
       S_RuP4 : 
          next_state = (uP_handshake_1 == 0) ? S_RuP5 : S_RuP4; 
       S_RuP5 :
-         next_state = (counter_zero == 0) ? S_RuP1 : S_M1;
+         next_state = (counter_zero) ? S_M1 : S_RuP1;
       S_M1   :
          next_state = (uP_soft_reset == 1) ? S_M2 : S_WB0;
       S_M2   :
@@ -89,7 +89,7 @@ always_comb begin: set_next_state
       S_RB4 : 
          next_state = (bus_handshake_2 == 0) ? S_RB5 : S_RB4; 
       S_RB5 :
-         next_state = (counter_zero == 0) ? S_WuP0 : S_RB1;   
+         next_state = (counter_zero) ? S_WuP0 : S_RB1;   
       //
       // send data packet to uP
       //
@@ -100,13 +100,13 @@ always_comb begin: set_next_state
       S_WuP2:
          next_state = S_WuP3;
       S_WuP3: 
-         next_state = (uP_handshake_2 == 1) ? S_WuP4 : S_WuP3; 
+         next_state = (uP_handshake_1 == 1) ? S_WuP4 : S_WuP3; 
       S_WuP4:
          next_state = S_WuP5;
       S_WuP5: 
-         next_state = (uP_handshake_2 == 0) ? S_WuP6 : S_WuP5; 
+         next_state = (uP_handshake_1 == 0) ? S_WuP6 : S_WuP5; 
       S_WuP6 :
-         next_state = (counter_zero == 0) ? S_M3 : S_WuP1;  
+         next_state = (counter_zero) ? S_M3 : S_WuP1;  
       //
       // complete data transaction with uP
       //
@@ -115,7 +115,7 @@ always_comb begin: set_next_state
       S_M4:
 			next_state = (uP_start == 0) ? S_M5 : S_M4; 
       S_M5:
-			next_state = S_M1; 
+			next_state = S_M0; 
 	endcase
 end: set_next_state
 
