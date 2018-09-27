@@ -145,7 +145,7 @@ end
 
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
-assign pwm_status = pwm_config;
+assign pwm_status = T_on;
 assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
 
 always_comb begin

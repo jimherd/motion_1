@@ -6,29 +6,36 @@
 
 import types::*;
 
-//logic  pwm_out[`NOS_PWM_CHANNELS-1 : 0];
-//logic  quadrature_A[`NOS_PWM_CHANNELS-1 : 0];
-//logic  quadrature_B[`NOS_PWM_CHANNELS-1 : 0];
-//logic  quadrature_I[`NOS_PWM_CHANNELS-1 : 0];
-
-//logic  uP_start, uP_ack, uP_handshake_1, uP_handshake_2, uP_soft_reset;
-//byte_t uP_data_in, uP_data_out;
-
 //
 // System structure
 //
 module motion_system( input  logic  CLOCK_50, reset, 
                       input  logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I,
-                      input  logic  uP_start, uP_handshake_1, 
+                      input  logic  async_uP_start, async_uP_handshake_1, 
                       output logic  uP_ack, uP_handshake_2,
                       input  byte_t uP_data_out,
                       output byte_t uP_data_in,
-                      output logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out
+                      output wire  [`NOS_PWM_CHANNELS-1 : 0] pwm_out
                       );
 
 IO_bus  intf(.clk(CLOCK_50));
+logic   uP_start, uP_handshake_1;
+                      
+   synchronizer sync1(
+                  .clk(CLOCK_50),
+                  .reset(reset),
+                  .async_in(async_uP_handshake_1),
+                  .sync_out(uP_handshake_1)
+                  );
 
+   synchronizer sync2(
+                  .clk(CLOCK_50),
+                  .reset(reset),
+                  .async_in(async_uP_start),
+                  .sync_out(uP_start)
+                  );                      
 
+                  
    uP_interface uP_interface_sys(
                                  .clk(CLOCK_50),
                                  .reset(reset),

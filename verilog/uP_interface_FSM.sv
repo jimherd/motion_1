@@ -129,7 +129,7 @@ assign uP_handshake_2        = ((state == S_RuP3) || (state == S_RuP4) || (state
 assign bus_handshake_1       = ((state == S_WB0)  || (state == S_WB1)  || (state == S_RB1)  ||
                                 (state == S_RB2)  || (state == S_RB3));
 assign set_out_uP_byte_count =  (state == S_WuP0);
-assign write_uP_byte         =  (state == S_WuP1); 
+assign write_uP_byte         =  (state == S_WuP1);
 assign uP_ack                = ((state == S_M3)   || (state == S_M4));
 assign clear_uP_packet       =  (state == S_M2);                           
 assign set_in_bus_word_count =  (state == S_RB0);

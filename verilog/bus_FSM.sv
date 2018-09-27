@@ -18,7 +18,7 @@ enum bit [4:0] {
                   // section #2
                      S_WWD0, S_WWD1, S_WWD2, S_WWD3, S_WWD4, 
                   // section #3
-                     S_WWS0, S_WWS1, S_WWS2, S_WWS3, S_WWS4 
+                     S_WWS0, S_WWS1, S_WWS2, S_WWS3, S_WWS4, S_WWS5 
 					} state, next_state;
 
 logic handshake_2_reg; 
@@ -75,7 +75,9 @@ always_comb begin: set_next_state
 		S_WWS3 :
 			next_state = S_WWS4; 
       S_WWS4 :
-         next_state = (handshake_1 == 1'b1) ? S_WWS4 : S_RW0; 
+         next_state = (handshake_1 == 1'b1) ? S_WWS4 : S_WWS5;
+      S_WWS5 :
+         next_state = (subsystem_enable == 0) ? S_RW0 : S_WWS5;
 	endcase
 end: set_next_state
 

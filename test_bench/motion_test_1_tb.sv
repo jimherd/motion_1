@@ -11,29 +11,30 @@ module motion_test_1_tb ();
 
 logic clk, reset; 
 logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I;
-logic  uP_start, uP_handshake_1;
+logic  async_uP_start, async_uP_handshake_1;
 logic  uP_ack, uP_handshake_2;
 byte_t uP_data_out;
 byte_t uP_data_in;
 logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
 
 byte_t input_packet[8];
+logic [31:0] status, data;
 
 task do_start;
   begin
-      clk = 0; reset = 1; uP_start = 0;
-      uP_handshake_1 = 1'b0;
+      clk = 0; reset = 1; async_uP_start = 0;
+      async_uP_handshake_1 = 1'b0;
   #15 reset = 0;
   #62 reset = 1;
   #20 reset = 1;
-  #20 uP_start = 1;
+  #17 async_uP_start = 1;
   end
 endtask;
 
 task do_end;
   begin
     #5 wait(uut.uP_ack == 1);
-    #5 uP_start = 0;
+    #5 async_uP_start = 0;
   end
 endtask
 
@@ -41,9 +42,9 @@ task write_byte;
   input byte_t data;
   begin
     #50   uP_data_out = data;	    
-    #20   uP_handshake_1 = 1'b1;
+    #22   async_uP_handshake_1 = 1'b1;
     #20   wait(uut.uP_handshake_2 == 1'b1);
-    #20   uP_handshake_1 = 1'b0;
+    #23   async_uP_handshake_1 = 1'b0;
     #20   wait(uut.uP_handshake_2 == 1'b0);
   end
 endtask;
@@ -53,17 +54,18 @@ task read_byte;
   begin
     #50   wait(uut.uP_handshake_2 == 1'b1);
 	#20   data = uut.uP_data_in;
-    #20   uP_handshake_1 = 1;                 // send ack
+    #20   async_uP_handshake_1 = 1;                 // send ack
     #20   wait(uut.uP_handshake_2 == 1'b0);
-    #20   uP_handshake_1 = 0;
+    #20   async_uP_handshake_1 = 0;
   end;
 endtask;
 
 task do_write;
+  input [7:0] command;
   input [7:0] reg_address;
   input [31:0] reg_data;
   begin
-    write_byte(1);
+    write_byte(command);
     write_byte(reg_address);
     write_byte(reg_data[7:0]);
     write_byte(reg_data[15:8]);
@@ -80,14 +82,30 @@ task do_read;
   end;
 endtask;
 
+task automatic do_transaction;
+  input  [7:0] command;
+  input  [7:0] reg_address;
+  input  [31:0] reg_data;
+  ref [31:0] data;
+  ref [31:0] status;
+  begin
+    do_start();
+	do_write(command, reg_address, reg_data);
+	do_read();
+	do_end();
+	data = {input_packet[3], input_packet[2], input_packet[1], input_packet[0]};
+	status  = {input_packet[7], input_packet[6], input_packet[5], input_packet[4]};
+  end;
+endtask;
+
 motion_system uut(
                   .CLOCK_50(clk), 
                   .reset(reset), 
                   .quadrature_A(quadrature_A), 
                   .quadrature_B(quadrature_B), 
                   .quadrature_I(quadrature_I),
-                  .uP_start(uP_start), 
-                  .uP_handshake_1(uP_handshake_1), 
+                  .async_uP_start(async_uP_start), 
+                  .async_uP_handshake_1(async_uP_handshake_1), 
                   .uP_ack(uP_ack), 
                   .uP_handshake_2(uP_handshake_2),
                   .uP_data_out(uP_data_out),
@@ -95,20 +113,20 @@ motion_system uut(
                   .pwm_out(pwm_out)
  );
   
+logic [31:0] input_value;
+ 
 initial begin
   // init inputs
   $dumpfile("dump.vcd");
   $dumpvars(1,motion_system);
   
-  do_start();
-  do_write(2, 32'h0506080B);
-//
-// Read returned data
-//
-  do_read();  
-  do_end();
-
- // #100 $finish;
+  input_value = $urandom();
+  
+  do_transaction(1,2,input_value, data, status);
+  
+  $display("input value = %h", input_value);
+  $display("data = %h", data);
+  $display("status = %h", status);
   
 end
 //
@@ -119,7 +137,7 @@ always begin
 end
 
 assign uut.uP_data_out = uP_data_out;
-assign uut.uP_handshake_1 = uP_handshake_1;
-assign uut.uP_start = uP_start;
+assign uut.async_uP_handshake_1 = async_uP_handshake_1;
+assign uut.async_uP_start = async_uP_start;
 
 endmodule

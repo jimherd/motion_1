@@ -49,7 +49,7 @@ uP_interface_FSM uP_interface_sys(
                .read_bus_word(read_bus_word),
                .clear_uP_packet(clear_uP_packet)
                ); 
-
+               
 
 always_ff @(posedge clk) begin
    if (!reset) begin
@@ -81,6 +81,7 @@ always_ff @(posedge clk) begin
                      data_in_reg <= output_packet[counter];   // uP_data_in
                      counter <= counter + 1'b1;
                      target_count <= target_count - 1'b1;
+                     input_packet[`REGISTER_NUMBER] <= 0;  // clear register address
                   end
                   else begin
                      if (read_bus_word == 1'b1) begin
