@@ -35,10 +35,11 @@ add wave -label write_word_to_BUS -position end  sim:/motion_test_1_tb/uut/pwm_c
 add wave -label T_ON_reg_CH0 -radix hexadecimal -position end  sim:/motion_test_1_tb/uut/pwm_ch0/T_on
 add wave -label output_packet -radix hexadecimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/output_packet
 add wave -label read_bus_word -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/read_bus_word
+add wave -label PWM_ch0 -position end  sim:/motion_test_1_tb/uut/pwm_ch0/pwm
 #
 # run simulation
 #
-run 3500ns
+run 12000ns
 wave zoom full
 
 

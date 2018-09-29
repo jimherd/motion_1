@@ -7,6 +7,10 @@
 `include "../verilog/global_constants.sv"
 import types::*;
 
+`define TEST_NUMBER         2
+`define READ_REGISTER_CMD   0
+`define WRITE_REGISTER_CMD  1
+
 module motion_test_1_tb ();
 
 logic clk, reset; 
@@ -17,17 +21,23 @@ byte_t uP_data_out;
 byte_t uP_data_in;
 logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
 
-byte_t input_packet[8];
+byte_t input_packet[`NOS_WRITE_BYTES];
 logic [31:0] status, data;
+
+task do_init();
+  begin
+        clk = 0; reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0;
+    #20 reset = 0;
+    #62 reset = 1;
+    #20 reset = 1;
+  end
+endtask;
 
 task do_start;
   begin
-      clk = 0; reset = 1; async_uP_start = 0;
-      async_uP_handshake_1 = 1'b0;
-  #15 reset = 0;
-  #62 reset = 1;
-  #20 reset = 1;
-  #17 async_uP_start = 1;
+    #17 async_uP_start = 1;
+    #20 async_uP_handshake_1 = 1'b0;
+    #20 async_uP_start = 0;
   end
 endtask;
 
@@ -75,9 +85,10 @@ task do_write;
 endtask;
 
 task do_read;
+  output byte_t packet[`NOS_WRITE_BYTES];
   begin
     for (int i=0; i < `NOS_WRITE_BYTES; i++) begin
-		read_byte(input_packet[i]);
+		read_byte(packet[i]);
 	end;
   end;
 endtask;
@@ -91,7 +102,7 @@ task automatic do_transaction;
   begin
     do_start();
 	do_write(command, reg_address, reg_data);
-	do_read();
+	do_read(input_packet);
 	do_end();
 	data = {input_packet[3], input_packet[2], input_packet[1], input_packet[0]};
 	status  = {input_packet[7], input_packet[6], input_packet[5], input_packet[4]};
@@ -119,15 +130,25 @@ initial begin
   // init inputs
   $dumpfile("dump.vcd");
   $dumpvars(1,motion_system);
-  
-  input_value = $urandom();
-  
-  do_transaction(1,2,input_value, data, status);
-  
-  $display("input value = %h", input_value);
-  $display("data = %h", data);
-  $display("status = %h", status);
-  
+  do_init();
+  // select test sequence
+  case(`TEST_NUMBER)
+    1 : begin   // simple single transaction test
+            input_value = $urandom();
+            do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), input_value, data, status);
+            $display("input value = %h", input_value);
+            $display("data = %h", data);
+            $display("status = %h", status);
+        end
+    2 : begin    // simple PWM test
+          #20 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), 100, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_ON_TIME), 25, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_CONFIG), 1, data, status);
+        end
+    default :
+        $display("Test select number %d is  unknown", `TEST_NUMBER);
+   endcase;
+     
 end
 //
 // Initiate clock

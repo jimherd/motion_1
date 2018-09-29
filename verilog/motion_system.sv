@@ -47,7 +47,7 @@ logic   uP_start, uP_handshake_1;
                                  .uP_data_out(uP_data_out),
                                  .uP_data_in(uP_data_in)                              
                                  );
-         	
+   
  /*  motion_channel #(.MOTION_UNIT(0)) motor_ch0 (
                                  .clk(CLOCK_50),
                                  .reset(reset),
@@ -66,14 +66,14 @@ logic   uP_start, uP_handshake_1;
                                        .quad_I(quadrature_I[1])
 );
 */
-	pwm_channel #(.PWM_UNIT(0)) pwm_ch0(
+   pwm_channel #(.PWM_UNIT(0)) pwm_ch0(
                                        .clk(CLOCK_50),
                                        .reset(reset),
                                        .bus(intf.slave),
                                        .pwm_signal(pwm_out[0])
                                        );
                                        
-	pwm_channel #(.PWM_UNIT(1)) pwm_ch1(
+   pwm_channel #(.PWM_UNIT(1)) pwm_ch1(
                                        .clk(CLOCK_50), 
                                        .reset(reset),
                                        .bus(intf.slave), 

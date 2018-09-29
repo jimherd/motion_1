@@ -4,29 +4,35 @@
 `ifndef   _global_constants_sv_
 `define   _global_constants_sv_
 
-	//
-	// system channels
-	//
-	`define NOS_ENCODER_CHANNELS   4
-	`define NOS_PWM_CHANNELS       2
-	`define NOS_SERVO_CHANNELS     8
+   //
+   // system channels
+   //
+   `define NOS_ENCODER_CHANNELS   4
+   `define NOS_PWM_CHANNELS       2
+   `define NOS_SERVO_CHANNELS     8
 
-	//
-	// Register map
-	//
+   //
+   // Register map
+   //
    `define GLOBAL_CONFIG   0
    
    `define PWM_BASE            1
    `define NOS_PWM_REGISTERS   4
+
+   `define PWM_0        (`PWM_BASE + (0 * `NOS_PWM_REGISTERS))
+   `define PWM_1        (`PWM_BASE + (1 * `NOS_PWM_REGISTERS))
+   `define PWM_2        (`PWM_BASE + (2 * `NOS_PWM_REGISTERS))
+   `define PWM_3        (`PWM_BASE + (3 * `NOS_PWM_REGISTERS))
    
-   `define PWM_PERIOD      1
-   `define PWM_ON_TIME     2
-   `define PWM_CONFIG      3
-   `define PWM_STATUS      4
+   // register indexes
+   `define PWM_PERIOD      0
+   `define PWM_ON_TIME     1
+   `define PWM_CONFIG      2
+   `define PWM_STATUS      3
    
    `define ENCODER_BASE    (4 * `NOS_PWM_CHANNELS)
    
-   `define COUNT_BUFFER    (`ENCODER_BASE + (0 * `NOS_ENCODER_CHANNELS))	   
+   `define COUNT_BUFFER    (`ENCODER_BASE + (0 * `NOS_ENCODER_CHANNELS))      
    `define TURN_BUFFER     (`ENCODER_BASE + (1 * `NOS_ENCODER_CHANNELS))
    `define VELOCITY_BUFFER (`ENCODER_BASE + (2 * `NOS_ENCODER_CHANNELS))
    `define ENCODER_CONFIG  (`ENCODER_BASE + (3 * `NOS_ENCODER_CHANNELS))
@@ -53,7 +59,6 @@
    `define RD_CMD  0
    `define WR_CMD  1
 
-   
    //
    // bit definitions
    //

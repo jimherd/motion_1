@@ -18,15 +18,15 @@ logic  count_enable, count_direction;
 
   always_ff @(posedge clk or negedge reset) begin 
     if (!reset) begin
-      	quadA_delayed <= 0;
-      	quadB_delayed <= 0;
+         quadA_delayed <= 0;
+         quadB_delayed <= 0;
       index_sync <= 0;
     end else begin
-		quadA_delayed <= {quadA_delayed[1:0], quadA_in};
-		quadB_delayed <= {quadB_delayed[1:0], quadB_in};
+      quadA_delayed <= {quadA_delayed[1:0], quadA_in};
+      quadB_delayed <= {quadB_delayed[1:0], quadB_in};
 
-		index_sync[0] <= quadI_in;
-		index_sync[1] <= index_sync[0];
+      index_sync[0] <= quadI_in;
+      index_sync[1] <= index_sync[0];
     end
   end
 

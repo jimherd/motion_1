@@ -19,42 +19,42 @@ enum bit [1:0] {  IDLE,
                   CONFIG,
                   CHECK_ON_TIME,
                   CHECK_OFF_TIME
-					} state, next_state;
-	
+               } state, next_state;
+ 
 
 always_ff @(posedge clk or negedge reset) begin
-		if (!reset)	begin
+      if (!reset)   begin
          state <= IDLE;
-		end else           
+      end else           
          state <= next_state;
 end
-		
+
 always_comb begin: set_next_state
-	unique case (state)
-		IDLE:
-			if (!pwm_enable)
-				next_state = IDLE;
+   unique case (state)
+      IDLE:
+         if (!pwm_enable)
+            next_state = IDLE;
          else
             next_state = CONFIG;
       CONFIG :
             next_state = CHECK_ON_TIME;
-		CHECK_ON_TIME:
-			if (T_on_zero)
+      CHECK_ON_TIME:
+         if (T_on_zero)
             next_state = CHECK_OFF_TIME;
          else
             next_state = CHECK_ON_TIME; 
-		CHECK_OFF_TIME:
-			if (T_period_zero)
+      CHECK_OFF_TIME:
+         if (T_period_zero)
             next_state = IDLE; 
          else
             next_state = CHECK_OFF_TIME;
       default :
-         next_state = state;	// default condition - next state is present state
-	endcase
+         next_state = state;   // default condition - next state is present state
+   endcase
 end: set_next_state
 
 always_comb  begin: set_outputs
-	case (state) 
+   case (state) 
       IDLE: begin
          dec_T_on       = 0;
          dec_T_period   = 0;
@@ -79,13 +79,13 @@ always_comb  begin: set_outputs
          reload_times   = 0;
          pwm            = 0;
       end
-		default: begin
+      default: begin
          dec_T_on       = 0;
          dec_T_period   = 0;
          reload_times   = 0;
          pwm            = 0;
       end
-	endcase	
+   endcase   
 end: set_outputs
 
 //assign PWMs[PWM_UNIT] = pwm_out;

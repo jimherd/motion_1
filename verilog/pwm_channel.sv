@@ -13,7 +13,7 @@ module pwm_channel #(parameter PWM_UNIT = 0) (
                      );
 //
 // PWM subsystem registers
-//	
+//   
 logic [31:0]  T_period;    // in units of 100nS
 logic [31:0]  T_on;        // in units of 100nS
 logic [31:0]  pwm_config; 
@@ -36,8 +36,8 @@ logic [31:0] data_in_reg;
 
 
 bus_FSM   bus_FSM_sys(
-	.clk(clk),
-	.reset(reset),
+   .clk(clk),
+   .reset(reset),
    .subsystem_enable(subsystem_enable),
    .handshake_2(bus.handshake_2),
    .handshake_1(bus.handshake_1),
@@ -45,7 +45,7 @@ bus_FSM   bus_FSM_sys(
    .read_word_from_BUS(read_word_from_BUS), 
    .write_data_word_to_BUS(write_data_word_to_BUS),
    .write_status_word_to_BUS(write_status_word_to_BUS)
-	);
+   );
    
 pwm_FSM   pwm_FSM_sys(
    .clk(clk),
@@ -107,13 +107,13 @@ always_ff @(posedge clk or negedge reset) begin
       pwm_config <= 0;
    end else begin
       if (read_word_from_BUS == 1'b1) begin
-         if (bus.reg_address == (`PWM_PERIOD + (PWM_UNIT * `NOS_PWM_REGISTERS))) begin
+         if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
             T_period <= bus.data_out;
          end else 
-            if (bus.reg_address == (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))) begin
+            if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                T_on <= bus.data_out;
             end else
-               if (bus.reg_address == (`PWM_CONFIG + (PWM_UNIT * `NOS_PWM_REGISTERS))) begin
+               if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                   pwm_config <= bus.data_out;
                end
          end
@@ -129,10 +129,10 @@ always_ff @(posedge clk or negedge reset) begin
    end  else begin
       if(write_data_word_to_BUS == 1'b1) begin
          case (bus.reg_address)  
-            (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= T_period;
-            (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= T_on;
-            (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= pwm_config;
-            (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : data_in_reg <= pwm_status;
+            (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_period;
+            (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_on;
+            (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_config;
+            (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_status;
          endcase
       end else begin
          if(write_status_word_to_BUS == 1'b1) begin
@@ -151,11 +151,11 @@ assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
 always_comb begin
       subsystem_enable = 0;
       case (bus.reg_address)  
-         (`PWM_PERIOD  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
-         (`PWM_ON_TIME + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
-         (`PWM_CONFIG  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
-         (`PWM_STATUS  + (PWM_UNIT * `NOS_PWM_REGISTERS))  : subsystem_enable = 1;
-         default                                           : subsystem_enable = 0;
+         (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+         (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+         (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+         (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+         default                                                         : subsystem_enable = 0;
       endcase
 end
 

@@ -18,7 +18,7 @@ module uP_interface_FSM(
 //
 // set of FSM states
 //
-enum bit [6:0] {	// section #1
+enum bit [6:0] {   // section #1
                      S_M0, 
                      S_RuP0, S_RuP1, S_RuP2, S_RuP3, S_RuP4, S_RuP5,
                   // section #2
@@ -30,21 +30,21 @@ enum bit [6:0] {	// section #1
                   // section #5 
                      S_M1, S_M2,
                      S_M3, S_M4, S_M5 
-					} state, next_state;
-	
+               } state, next_state;
+   
 
 always_ff @(posedge clk or negedge reset) begin
-		if (!reset)
+      if (!reset)
          state <= S_M0;
       else
          state <= next_state;
 end
-		
+      
 always_comb begin: set_next_state
-	next_state = state;	// default condition is next state is present state
-	unique case (state)
-		S_M0:
-			next_state = (uP_start) ? S_RuP0 : S_M0;
+   next_state = state;   // default condition is next state is present state
+   unique case (state)
+      S_M0:
+         next_state = (uP_start) ? S_RuP0 : S_M0;
       //   
       // read a byte packet from uP and check for "soft_reset" command
       //    
@@ -111,12 +111,12 @@ always_comb begin: set_next_state
       // complete data transaction with uP
       //
       S_M3:
-			next_state = S_M4;
+         next_state = S_M4;
       S_M4:
-			next_state = (uP_start == 0) ? S_M5 : S_M4; 
+         next_state = (uP_start == 0) ? S_M5 : S_M4; 
       S_M5:
-			next_state = S_M0; 
-	endcase
+         next_state = S_M0; 
+   endcase
 end: set_next_state
 
 //
