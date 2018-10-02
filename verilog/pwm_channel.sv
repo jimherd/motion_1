@@ -59,8 +59,6 @@ pwm_FSM   pwm_FSM_sys(
    .pwm(pwm) 
    );
    
-assign pwm_signal = pwm;
-
 //
 // Data subsystem to calculate pulse edges
 //
@@ -143,11 +141,17 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
-assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
+assign pwm_signal = pwm;   // set pwm signal value
 
-assign pwm_status = T_on;
+//
+// create status word
+//
+assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
 assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
 
+//
+// assess if registers numbers refer to this subsystem
+//
 always_comb begin
       subsystem_enable = 0;
       case (bus.reg_address)  
@@ -158,5 +162,10 @@ always_comb begin
          default                                                         : subsystem_enable = 0;
       endcase
 end
+
+//
+// define 32-bit value to be written to bus
+//
+assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
 endmodule

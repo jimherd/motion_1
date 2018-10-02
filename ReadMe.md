@@ -16,13 +16,14 @@ Robot motion control board uses an Altera MAX 10 device to provide low level fea
 * Intel/Altera - MAX10M08
 * ST Microelectronics - STM32F302
 
-## Language 
+## Languages
 * SystemVerilog
 * MBED C/C++
 
 ## Built With
 
-* Quartus Prime 17.1
+* Quartus Prime Lite 17.1
+* ModelSim Starter Edition 10.5b
 * MBED
 
 ## Authors
