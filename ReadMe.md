@@ -8,17 +8,22 @@ Robot motion control board uses an Altera MAX 10 device to provide low level fea
 
 * encoder pulse counting from A/B/I encoders
 * velocity measurement
-* PWM generation
+* Independent PWM generation in range 1Khz to 500kHz
+* Standard RC servo control channels
+* On-board ARM M4 controller to provide higher level features
 
-Also provides a number of RC servo generators
+## Devices 
+* Intel/Altera - MAX10M08
+* ST Microelectronics - STM32F302
 
-Device is a MAX 10 device - MAX10
-
-## language - Verilog
+## Language 
+* SystemVerilog
+* MBED C/C++
 
 ## Built With
 
 * Quartus Prime 17.1
+* MBED
 
 ## Authors
 
