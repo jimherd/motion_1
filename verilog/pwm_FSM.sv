@@ -53,41 +53,15 @@ always_comb begin: set_next_state
    endcase
 end: set_next_state
 
-always_comb  begin: set_outputs
-   case (state) 
-      IDLE: begin
-         dec_T_on       = 0;
-         dec_T_period   = 0;
-         reload_times   = 0;
-         pwm            = 0;
-      end
-      CONFIG: begin
-         dec_T_on       = 0;
-         dec_T_period   = 0;
-         reload_times   = 1;
-         pwm            = 0;
-      end
-      CHECK_ON_TIME: begin
-         dec_T_on       = 1;
-         dec_T_period   = 1;
-         reload_times   = 0;         
-         pwm            = 1;
-      end      
-      CHECK_OFF_TIME: begin
-         dec_T_on       = 0;
-         dec_T_period   = 1;
-         reload_times   = 0;
-         pwm            = 0;
-      end
-      default: begin
-         dec_T_on       = 0;
-         dec_T_period   = 0;
-         reload_times   = 0;
-         pwm            = 0;
-      end
-   endcase   
-end: set_outputs
-
-//assign PWMs[PWM_UNIT] = pwm_out;
+//
+// set Moore outputs
+//
+assign dec_T_on     = (state == CHECK_ON_TIME);
+assign dec_T_period = (state == CHECK_ON_TIME) || (state == CHECK_OFF_TIME);
+assign reload_times = (state == CONFIG);
+assign pwm          = (state == CHECK_ON_TIME);
 
 endmodule
+
+
+

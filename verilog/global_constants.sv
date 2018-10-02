@@ -48,7 +48,6 @@
    //
    `define NOS_READ_BYTES     6
    `define NOS_WRITE_BYTES    (`NOS_READ_WORDS_FROM_SLAVE * 4)
-
    //
    // named bytes in byte packet from uP
    //

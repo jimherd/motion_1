@@ -5,6 +5,7 @@ project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_
 #
 # uses "-permissive" to downgrade some interface port errors
 #
+quit -sim
 vsim -voptargs=\"+acc\" -permissive work.motion_system work.motion_test_1_tb
 #
 # setup waves to be viewed
@@ -39,7 +40,7 @@ add wave -label PWM_ch0 -position end  sim:/motion_test_1_tb/uut/pwm_ch0/pwm
 #
 # run simulation
 #
-run 12000ns
+run 15000ns
 wave zoom full
 
 
