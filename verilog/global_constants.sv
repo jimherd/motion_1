@@ -29,6 +29,11 @@
    `define PWM_ON_TIME     1
    `define PWM_CONFIG      2
    `define PWM_STATUS      3
+//
+// adjustments to PWM timing values to give exact timing
+//
+   `define T_PERIOD_ADJUSTMENT  3
+   `define T_ON_ADJUSTMENT      1
    
    `define ENCODER_BASE    (4 * `NOS_PWM_CHANNELS)
    

@@ -106,10 +106,10 @@ always_ff @(posedge clk or negedge reset) begin
    end else begin
       if (read_word_from_BUS == 1'b1) begin
          if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-            T_period <= bus.data_out;
+            T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;
          end else 
             if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-               T_on <= bus.data_out;
+               T_on <= bus.data_out - `T_PERIOD_ADJUSTMENT;
             end else
                if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                   pwm_config <= bus.data_out;

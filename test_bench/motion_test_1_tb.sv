@@ -144,6 +144,8 @@ initial begin
           #20 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), 100, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_ON_TIME), 25, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_CONFIG), 1, data, status);
+          #50 do_transaction(`READ_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), 100, data, status);
+          $display("PWM period = %d", data);
         end
     default :
         $display("Test select number %d is  unknown", `TEST_NUMBER);

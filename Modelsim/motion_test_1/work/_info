@@ -10,7 +10,7 @@ cModel Technology
 dC:/intelFPGA_lite/18.0
 vbus_FSM
 Z0 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
-Z1 !s110 1538511362
+Z1 !s110 1538585998
 !i10b 1
 !s100 HUZQ0H@aM^Wl^V1GR6=TY2
 I4^?kT`UDdz@kU>nmz=jhC1
@@ -26,7 +26,7 @@ Z4 OV;L;10.5b;63
 r1
 !s85 0
 31
-Z5 !s108 1538511362.000000
+Z5 !s108 1538585998.000000
 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/bus_FSM.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/bus_FSM.sv|
 !i113 1
@@ -35,32 +35,32 @@ Z7 tCvgOpt 0
 nbus_@f@s@m
 YIO_bus
 R0
-R1
+Z8 !s110 1538586210
 !i10b 1
 !s100 5?CPIkg7_8;nOl>a@`X?K2
 I1lZGnRz77fUNQa?jK:2df0
 R2
-Z8 !s105 motion_system_sv_unit
+Z9 !s105 pwm_channel_sv_unit
 S1
 R3
 w1537893416
 8C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv
-Z9 FC:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv
-Z10 L0 14
+Z10 FC:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv
+Z11 L0 14
 R4
 r1
 !s85 0
 31
-R5
-Z11 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv|C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv|
-Z12 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv|
+Z12 !s108 1538586210.000000
+Z13 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv|C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_channel.sv|
+Z14 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_channel.sv|
 !i113 1
 R6
 R7
 n@i@o_bus
 vmotion_system
 R0
-Z13 DXx4 work 5 types 0 22 7IT<JcK?_P:IYo81iHR403
+Z15 DXx4 work 5 types 0 22 7IT<JcK?_P:IYo81iHR403
 DXx4 work 21 motion_system_sv_unit 0 22 ?9fbQ]O^8^=lz5ngcP6EO1
 R2
 r1
@@ -69,23 +69,23 @@ r1
 !i10b 1
 !s100 0[GdEf^VE4YVfX2A7BGiN3
 I>P:>jGNLDDR4SoFhC5mQ?3
-R8
+!s105 motion_system_sv_unit
 S1
 R3
 w1538175118
-Z14 8C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv
-Z15 FC:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv
-Z16 L0 12
+Z16 8C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv
+Z17 FC:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv
+Z18 L0 12
 R4
-R5
-R11
-R12
+Z19 !s108 1538585999.000000
+Z20 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv|C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv|
+Z21 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/motion_system.sv|
 !i113 1
 R6
 R7
 Xmotion_system_sv_unit
 R0
-R13
+R15
 V?9fbQ]O^8^=lz5ngcP6EO1
 r1
 !s85 0
@@ -96,80 +96,80 @@ I?9fbQ]O^8^=lz5ngcP6EO1
 !i103 1
 S1
 R3
-Z17 w1538358985
-R14
-R15
-Z18 FC:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv
-R9
+Z22 w1538358985
+R16
+R17
+Z23 FC:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv
+R10
 L0 7
 R4
-R5
-R11
-R12
+R19
+R20
+R21
 !i113 1
 R6
 R7
 vmotion_test_1_tb
 R0
-R13
-DXx4 work 24 motion_test_1_tb_sv_unit 0 22 ]AOEhHO4U3Q<KkGJB;RVj2
+R15
+DXx4 work 24 motion_test_1_tb_sv_unit 0 22 n:FzNz_BK]o0C:Q2;OoYC0
 R2
 r1
 !s85 0
 31
 !i10b 1
-!s100 Jlc2gX`RVDQlm>c<1HQ[B1
-ITbz8:Fm@[cK@nP?A7h[=A0
+!s100 ha`mf8hYmLGJgDaiG^[0^2
+I5H_71?G[?B<72ZSzA^zJ]0
 !s105 motion_test_1_tb_sv_unit
 S1
 R3
-w1538171640
-Z19 8C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv
-Z20 FC:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv
-R10
+Z24 w1538568812
+Z25 8C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv
+Z26 FC:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv
+R11
 R4
-R5
-Z21 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\test_bench\..\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv|
-Z22 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv|
+R19
+Z27 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\test_bench\..\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv|
+Z28 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/test_bench/motion_test_1_tb.sv|
 !i113 1
 R6
 R7
 Xmotion_test_1_tb_sv_unit
 R0
-R13
-V]AOEhHO4U3Q<KkGJB;RVj2
+R15
+Vn:FzNz_BK]o0C:Q2;OoYC0
 r1
 !s85 0
 31
 !i10b 1
-!s100 ZSBimIzfdhBP=QM@NO5EY2
-I]AOEhHO4U3Q<KkGJB;RVj2
+!s100 2QAMH4J=dBhIg2HP@jPD[1
+In:FzNz_BK]o0C:Q2;OoYC0
 !i103 1
 S1
 R3
-R17
-R19
-R20
+R24
+R25
+R26
 FC:\jth\HW_new_robot\Quartus_projects\motion_1\test_bench\..\verilog\global_constants.sv
 L0 8
 R4
-R5
-R21
-R22
+R19
+R27
+R28
 !i113 1
 R6
 R7
 vpwm_channel
 R0
-R1
+R8
 !i10b 1
-!s100 AV5bkY;alY?9h=`S>GgAI3
-Ija?lQ2:G1JGW]:[_:c11A1
+!s100 3ka5=L6YCb`0?Y2W3nBoW3
+I73zES?mHlJ0^BMjTY4RoZ3
 R2
-!s105 pwm_channel_sv_unit
+R9
 S1
 R3
-w1538511250
+w1538586152
 8C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_channel.sv
 FC:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_channel.sv
 L0 9
@@ -177,9 +177,9 @@ R4
 r1
 !s85 0
 31
-R5
-!s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv|C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_channel.sv|
-!s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/pwm_channel.sv|
+R12
+R13
+R14
 !i113 1
 R6
 R7
@@ -210,7 +210,7 @@ R7
 npwm_@f@s@m
 vsynchronizer
 R0
-!s110 1538511363
+!s110 1538585999
 !i10b 1
 !s100 Um=EW=HnAJPXz5U4PN@ZJ1
 IzN[4=:A?V[M3Ra2VXMm7C1
@@ -226,7 +226,7 @@ R4
 r1
 !s85 0
 31
-!s108 1538511363.000000
+R19
 !s107 C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/synchronizer.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/synchronizer.sv|
 !i113 1
@@ -234,7 +234,7 @@ R6
 R7
 Xtypes
 R0
-!s110 1538511361
+R1
 !i10b 1
 !s100 ANEo5T[nG@Yc0KPdM1PAU0
 I7IT<JcK?_P:IYo81iHR403
@@ -249,7 +249,7 @@ R4
 r1
 !s85 0
 31
-Z23 !s108 1538511361.000000
+!s108 1538585997.000000
 !s107 C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/types.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/types.sv|
 !i113 1
@@ -257,7 +257,7 @@ R6
 R7
 vuP_interface
 R0
-R13
+R15
 DXx4 work 20 uP_interface_sv_unit 0 22 k2`Y]YiN>a@P3RmJ5J^fJ3
 R2
 r1
@@ -270,13 +270,13 @@ IC=fVc]F4f`77IWk0Yl8oE3
 S1
 R3
 w1538079045
-Z24 8C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv
-Z25 FC:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv
-R16
+Z29 8C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv
+Z30 FC:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv
+R18
 R4
 R5
-Z26 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv|C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv|
-Z27 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv|
+Z31 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\interfaces.sv|C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv|
+Z32 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface.sv|
 !i113 1
 R6
 R7
@@ -299,7 +299,7 @@ R4
 r1
 !s85 0
 31
-R23
+R5
 !s107 C:\jth\HW_new_robot\Quartus_projects\motion_1\verilog\global_constants.sv|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface_FSM.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/uP_interface_FSM.sv|
 !i113 1
@@ -308,7 +308,7 @@ R7
 nu@p_interface_@f@s@m
 XuP_interface_sv_unit
 R0
-R13
+R15
 Vk2`Y]YiN>a@P3RmJ5J^fJ3
 r1
 !s85 0
@@ -319,16 +319,16 @@ Ik2`Y]YiN>a@P3RmJ5J^fJ3
 !i103 1
 S1
 R3
-R17
-R24
-R25
-R18
-R9
+R22
+R29
+R30
+R23
+R10
 L0 10
 R4
 R5
-R26
-R27
+R31
+R32
 !i113 1
 R6
 R7
