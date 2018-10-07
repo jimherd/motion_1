@@ -3,6 +3,8 @@
 //
 // Implement a PWM generation channel
 //
+// Timings are in units of 20nS.
+//
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
@@ -14,8 +16,8 @@ module pwm_channel #(parameter PWM_UNIT = 0) (
 //
 // PWM subsystem registers
 //   
-logic [31:0]  T_period;    // in units of 100nS
-logic [31:0]  T_on;        // in units of 100nS
+logic [31:0]  T_period;    // in units of 20nS
+logic [31:0]  T_on;        // in units of 20nS
 logic [31:0]  pwm_config; 
 logic [31:0]  pwm_status;
 
@@ -100,16 +102,16 @@ assign T_on_zero     =  (T_on_temp == 0)     ? 1'b1 : 1'b0;
 //
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
-      T_period   <= 0;
-      T_on       <= 0;
-      pwm_config <= 0;
+      T_period   <= 250;
+      T_on       <= 150;
+      pwm_config <= 1;
    end else begin
       if (read_word_from_BUS == 1'b1) begin
          if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-            T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;
+            T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;   // tweak to meet exact timing
          end else 
             if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-               T_on <= bus.data_out - `T_PERIOD_ADJUSTMENT;
+               T_on <= bus.data_out - `T_PERIOD_ADJUSTMENT;    // tweak to meet exact timing
             end else
                if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                   pwm_config <= bus.data_out;

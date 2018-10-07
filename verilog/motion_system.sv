@@ -15,11 +15,18 @@ module motion_system( input  logic  CLOCK_50, reset,
                       output logic  uP_ack, uP_handshake_2,
                       input  byte_t uP_data_out,
                       output byte_t uP_data_in,
-                      output wire  [`NOS_PWM_CHANNELS-1 : 0] pwm_out
+                      output wire  [`NOS_PWM_CHANNELS-1 : 0] pwm_out,
+                      output        led
                       );
 
 IO_bus  intf(.clk(CLOCK_50));
 logic   uP_start, uP_handshake_1;
+
+   I_am_alive flash(
+                  .clk(CLOCK_50),
+                  .reset(reset),
+                  .led(led)
+                  );
                       
    synchronizer sync1(
                   .clk(CLOCK_50),
