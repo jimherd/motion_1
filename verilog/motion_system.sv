@@ -1,6 +1,10 @@
 //
 // Top level system file
 //
+//
+// Notes
+//    * Connection to uP changed to shared 8-bit bus
+
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
