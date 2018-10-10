@@ -28,26 +28,35 @@ always_ff @(posedge clk or negedge reset) begin
       end else           
          state <= next_state;
 end
-
+//
+// If PWM_enable signal goes low during pulse generation then
+// abort generation.  
+//
 always_comb begin: set_next_state
    unique case (state)
       IDLE:
-         if (!pwm_enable)
+         if (pwm_enable == 0)
             next_state = IDLE;
          else
             next_state = CONFIG;
       CONFIG :
             next_state = CHECK_ON_TIME;
       CHECK_ON_TIME:
-         if (T_on_zero)
-            next_state = CHECK_OFF_TIME;
-         else
-            next_state = CHECK_ON_TIME; 
+         if (pwm_enable == 0)
+            next_state = IDLE;
+         else 
+            if (T_on_zero)
+               next_state = CHECK_OFF_TIME;
+            else
+               next_state = CHECK_ON_TIME; 
       CHECK_OFF_TIME:
-         if (T_period_zero)
-            next_state = IDLE; 
+         if (pwm_enable == 0)
+            next_state = IDLE;
          else
-            next_state = CHECK_OFF_TIME;
+            if (T_period_zero)
+               next_state = IDLE; 
+            else
+               next_state = CHECK_OFF_TIME;
       default :
          next_state = state;   // default condition - next state is present state
    endcase

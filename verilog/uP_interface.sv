@@ -4,6 +4,8 @@
 // Implement an 8-bit interface to control microcontroller to the internal
 // 32-bit bus to slave subsystems.
 //
+// All the hardwork is done in the state machine.
+//
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
@@ -12,10 +14,9 @@ import types::*;
 module uP_interface(
                      input  logic   clk, reset,
                      IO_bus.master  bus,
-                     input  logic   uP_start, uP_handshake_1,
+                     input  logic   uP_start, uP_handshake_1, uP_RW,
                      output logic   uP_ack, uP_handshake_2,
-                     input  byte_t  uP_data_out,
-                     output wire [7:0]  uP_data_in
+                     inout  [7:0]  uP_data
                    );
                    
 
@@ -24,7 +25,7 @@ logic  read_bus_word, clear_uP_packet, uP_soft_reset;
 logic  set_in_bus_word_count, set_out_bus_word_count;
 
 byte_t counter, target_count, data_out;
-byte_t data_in_reg;
+byte_t data_in;
 
 byte_t input_packet[`NOS_READ_BYTES];
 byte_t output_packet[`NOS_READ_BYTES_FROM_SLAVE];
@@ -72,13 +73,13 @@ always_ff @(posedge clk) begin
                counter <= 0;
             end else begin  
                if (read_uP_byte == 1'b1) begin
-                  input_packet[counter] <= data_out;   // uP_data_out
+                  input_packet[counter] <= uP_data;   // uP_data_out
                   counter <= counter + 1'b1;
                   target_count <= target_count - 1'b1;
                end
                else begin
                   if (write_uP_byte == 1'b1) begin
-                     data_in_reg <= output_packet[counter];   // uP_data_in
+                     data_out <= output_packet[counter];   // uP_data_in
                      counter <= counter + 1'b1;
                      target_count <= target_count - 1'b1;
                      input_packet[`REGISTER_NUMBER] <= 0;  // clear register address
@@ -116,8 +117,6 @@ assign  bus.RW          = input_packet[`CMD_REG][`BIT0];
 assign  bus.reg_address = input_packet[1];
 assign  bus.data_out    = {input_packet[5],input_packet[4],input_packet[3],input_packet[2]};
 
-assign  data_out = uP_data_out;
-assign  uP_data_in = data_in_reg;
+assign  uP_data = (uP_RW == 0) ? data_out : 'z;
 
-              
 endmodule

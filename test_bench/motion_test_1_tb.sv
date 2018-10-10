@@ -15,18 +15,19 @@ module motion_test_1_tb ();
 
 logic clk, reset; 
 logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I;
-logic  async_uP_start, async_uP_handshake_1;
+logic  async_uP_start, async_uP_handshake_1, async_RW;
 logic  uP_ack, uP_handshake_2;
-byte_t uP_data_out;
-byte_t uP_data_in;
+logic [7:0] uP_data_out;
+wire [7:0] uP_data;
 logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
+logic  led;
 
 byte_t input_packet[`NOS_WRITE_BYTES];
 logic [31:0] status, data;
 
 task do_init();
   begin
-        clk = 0; reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0;
+        clk = 0; reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0; async_RW = 0;
     #20 reset = 0;
     #62 reset = 1;
     #20 reset = 1;
@@ -49,23 +50,27 @@ task do_end;
 endtask
 
 task write_byte;
-  input byte_t data;
+  input [7:0] data;
   begin
-    #50   uP_data_out = data;	    
+    #50   uP_data_out = data;	
+        #20 async_RW = 1;    
     #22   async_uP_handshake_1 = 1'b1;
     #20   wait(uut.uP_handshake_2 == 1'b1);
     #23   async_uP_handshake_1 = 1'b0;
+        #20 async_RW = 0;        
     #20   wait(uut.uP_handshake_2 == 1'b0);
   end
 endtask;
 
 task read_byte;
-  output byte_t data;
+  output [7:0] data;
   begin
     #50   wait(uut.uP_handshake_2 == 1'b1);
-	#20   data = uut.uP_data_in;
+        #20 async_RW = 0;      
+	#20   data = uut.uP_data;
     #20   async_uP_handshake_1 = 1;                 // send ack
     #20   wait(uut.uP_handshake_2 == 1'b0);
+        #20 async_RW = 0;  
     #20   async_uP_handshake_1 = 0;
   end;
 endtask;
@@ -117,11 +122,12 @@ motion_system uut(
                   .quadrature_I(quadrature_I),
                   .async_uP_start(async_uP_start), 
                   .async_uP_handshake_1(async_uP_handshake_1), 
+                  .async_uP_RW(async_uP_RW),
                   .uP_ack(uP_ack), 
                   .uP_handshake_2(uP_handshake_2),
-                  .uP_data_out(uP_data_out),
-                  .uP_data_in(uP_data_in),
-                  .pwm_out(pwm_out)
+                  .uP_data(uP_data),
+                  .pwm_out(pwm_out),
+                  .led(led)
  );
   
 logic [31:0] input_value;
@@ -159,7 +165,8 @@ always begin
   #10 clk = ~clk; // 50MHz clock
 end
 
-assign uut.uP_data_out = uP_data_out;
+assign uut.uP_data = (async_uP_RW == 1) ? uP_data_out : 'z;
+assign uut.async_uP_RW = async_RW;
 assign uut.async_uP_handshake_1 = async_uP_handshake_1;
 assign uut.async_uP_start = async_uP_start;
 
