@@ -15,7 +15,7 @@ module motion_test_1_tb ();
 
 logic clk, reset; 
 logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I;
-logic  async_uP_start, async_uP_handshake_1, async_RW;
+logic  async_uP_start, async_uP_handshake_1, async_uP_RW;
 logic  uP_ack, uP_handshake_2;
 logic [7:0] uP_data_out;
 wire [7:0] uP_data;
@@ -27,7 +27,7 @@ logic [31:0] status, data;
 
 task do_init();
   begin
-        clk = 0; reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0; async_RW = 0;
+        clk = 0; reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0; async_uP_RW = 0;
     #20 reset = 0;
     #62 reset = 1;
     #20 reset = 1;
@@ -53,11 +53,11 @@ task write_byte;
   input [7:0] data;
   begin
     #50   uP_data_out = data;	
-        #20 async_RW = 1;    
+        #20 async_uP_RW = 1;    
     #22   async_uP_handshake_1 = 1'b1;
     #20   wait(uut.uP_handshake_2 == 1'b1);
     #23   async_uP_handshake_1 = 1'b0;
-        #20 async_RW = 0;        
+        #20 async_uP_RW = 0;        
     #20   wait(uut.uP_handshake_2 == 1'b0);
   end
 endtask;
@@ -66,11 +66,11 @@ task read_byte;
   output [7:0] data;
   begin
     #50   wait(uut.uP_handshake_2 == 1'b1);
-        #20 async_RW = 0;      
+        #20 async_uP_RW = 0;      
 	#20   data = uut.uP_data;
     #20   async_uP_handshake_1 = 1;                 // send ack
     #20   wait(uut.uP_handshake_2 == 1'b0);
-        #20 async_RW = 0;  
+        #20 async_uP_RW = 0;  
     #20   async_uP_handshake_1 = 0;
   end;
 endtask;
@@ -116,7 +116,7 @@ endtask;
 
 motion_system uut(
                   .CLOCK_50(clk), 
-                  .reset(reset), 
+                  .async_uP_reset(async_uP_reset), 
                   .quadrature_A(quadrature_A), 
                   .quadrature_B(quadrature_B), 
                   .quadrature_I(quadrature_I),
@@ -166,7 +166,7 @@ always begin
 end
 
 assign uut.uP_data = (async_uP_RW == 1) ? uP_data_out : 'z;
-assign uut.async_uP_RW = async_RW;
+assign uut.async_uP_RW = async_uP_RW;
 assign uut.async_uP_handshake_1 = async_uP_handshake_1;
 assign uut.async_uP_start = async_uP_start;
 

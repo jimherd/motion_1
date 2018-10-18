@@ -13,7 +13,7 @@ vsim -voptargs=\"+acc\" -permissive work.motion_system work.motion_test_1_tb
 add wave -label CLOCK -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/clk
 add wave -label RESET -position end  sim:/motion_test_1_tb/uut/reset
 add wave -label uP_start -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_start
-add wave -label uP_RW -position end  sim:/motion_test_1_tb/async_RW
+add wave -label uP_RW -position end  sim:/motion_test_1_tb/async_uP_RW
 add wave -label uP_handshake_1 -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_handshake_1
 add wave -label uP_handshake_2 -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_handshake_2
 add wave -label write_byte_to_uP -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/write_uP_byte

@@ -13,22 +13,25 @@ import types::*;
 //
 // System structure
 //
-module motion_system( input  logic  CLOCK_50, reset, 
+module motion_system( input  logic  CLOCK_50,
                       input  logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I,
-                      input  logic  async_uP_start, async_uP_handshake_1, async_uP_RW, 
+                      input  logic  async_uP_start, async_uP_handshake_1, async_uP_RW, async_uP_reset, 
                       output logic  uP_ack, uP_handshake_2,
                       inout  wire [7:0] uP_data,
                       output wire   [`NOS_PWM_CHANNELS-1 : 0] pwm_out,
-                      output        led
+                      output        led1, led2
                       );
 
 IO_bus  intf(.clk(CLOCK_50));
-logic   uP_start, uP_handshake_1, uP_RW;
+logic   uP_start, uP_handshake_1, uP_RW, uP_reset, reset;
+
+assign reset = async_uP_reset;
+assign led2 = !reset;
 
    I_am_alive flash(
                   .clk(CLOCK_50),
                   .reset(reset),
-                  .led(led)
+                  .led(led1)
                   );
                       
    synchronizer sync_handshake_1(
@@ -50,8 +53,15 @@ logic   uP_start, uP_handshake_1, uP_RW;
                   .reset(reset),
                   .async_in(async_uP_start),
                   .sync_out(uP_start)
-                  );                      
+                  );
 
+//   synchronizer sync_uP_reset(
+//                  .clk(CLOCK_50),
+//                  .reset(reset),
+//                  .async_in(async_uP_reset),
+//                  .sync_out(uP_reset)
+//                  );                     
+                  
                   
    uP_interface uP_interface_sys(
                                  .clk(CLOCK_50),

@@ -52,7 +52,7 @@ uP_interface_FSM uP_interface_sys(
                ); 
                
 
-always_ff @(posedge clk) begin
+always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       counter <= 0; 
       target_count <= 0;
