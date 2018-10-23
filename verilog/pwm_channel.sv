@@ -174,4 +174,6 @@ end
 //
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
+//assign motion_system.test_pt1 = subsystem_enable;
+
 endmodule

@@ -19,7 +19,8 @@ module motion_system( input  logic  CLOCK_50,
                       output logic  uP_ack, uP_handshake_2,
                       inout  wire [7:0] uP_data,
                       output wire   [`NOS_PWM_CHANNELS-1 : 0] pwm_out,
-                      output        led1, led2
+                      output        led1, led2, led3, led4, led5,
+                      output        test_pt1, test_pt2, test_pt3, test_pt4
                       );
 
 IO_bus  intf(.clk(CLOCK_50));
