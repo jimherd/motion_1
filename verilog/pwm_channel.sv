@@ -98,20 +98,24 @@ assign T_on_zero     =  (T_on_temp == 0)     ? 1'b1 : 1'b0;
 //
 // data subsystem to talk to bus interface
 //
-// get data from bus
+// get data from bus. If read command then ignore data word.
+// Clear PWM_enable signal if period or on timings are changed otherwise
+// system can get into an infinite loop.
 //
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
-      T_period   <= 250;
-      T_on       <= 150;
-      pwm_config <= 1;
+      T_period   <= 0;
+      T_on       <= 0;
+      pwm_config <= 0;
    end else begin
-      if (read_word_from_BUS == 1'b1) begin
+      if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
          if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
             T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;   // tweak to meet exact timing
+            pwm_config[0] = 1'b0;   // clear enable signal
          end else 
             if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-               T_on <= bus.data_out - `T_PERIOD_ADJUSTMENT;    // tweak to meet exact timing
+               T_on <= bus.data_out - `T_ON_ADJUSTMENT;    // tweak to meet exact timing
+               pwm_config[0] = 1'b0;   // clear enable signal
             end else
                if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                   pwm_config <= bus.data_out;
@@ -169,5 +173,7 @@ end
 // define 32-bit value to be written to bus
 //
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
+
+//assign motion_system.test_pt1 = subsystem_enable;
 
 endmodule

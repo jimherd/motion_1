@@ -84,4 +84,8 @@ vsim.dbg
 
 *.mti
 *.qdb
+_info
+dump.vcd
+
+
 
