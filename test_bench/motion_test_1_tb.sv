@@ -13,24 +13,25 @@ import types::*;
 
 module motion_test_1_tb ();
 
-logic clk, reset; 
+logic clk;  //  reset; 
 logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I;
-logic  async_uP_start, async_uP_handshake_1, async_uP_RW;
+logic  async_uP_start, async_uP_handshake_1, async_uP_RW, async_uP_reset;
 logic  uP_ack, uP_handshake_2;
-logic [7:0] uP_data_out;
-wire [7:0] uP_data;
+logic  [7:0] uP_data_out;
+wire   [7:0] uP_data;
 logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
-logic  led;
+logic  led1, led2, led3, led4, led5;
+logic  test_pt1, test_pt2, test_pt3, test_pt4;
 
 byte_t input_packet[`NOS_WRITE_BYTES];
 logic [31:0] status, data;
 
 task do_init();
   begin
-        clk = 0; reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0; async_uP_RW = 0;
-    #20 reset = 0;
-    #62 reset = 1;
-    #20 reset = 1;
+        clk = 0; async_uP_reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0; async_uP_RW = 0;
+    #20 async_uP_reset = 0;
+    #62 async_uP_reset = 1;
+    #20 async_uP_reset = 1;
   end
 endtask;
 
@@ -127,7 +128,15 @@ motion_system uut(
                   .uP_handshake_2(uP_handshake_2),
                   .uP_data(uP_data),
                   .pwm_out(pwm_out),
-                  .led(led)
+                  .led1(led1),
+                  .led2(led2),
+                  .led3(led3),
+                  .led4(led4),
+                  .led5(led5),
+                  .test_pt1(test_pt1),
+                  .test_pt2(test_pt2),
+                  .test_pt3(test_pt3),
+                  .test_pt4(test_pt4)
  );
   
 logic [31:0] input_value;

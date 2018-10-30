@@ -76,8 +76,17 @@
    `define BIT7  7
    
    `define RESET_CMD_DONE 8'hFF
-  
-   
-   
+	
+//	`define  MODE_PWM_DIR_CONTROL   1
+//	`define  MODE_PWM_CONTROL       0
+	
+	enum bit {MODE_PWM_CONTROL=1'b0, MODE_PWM_DIR_CONTROL=1'b1} H_bridge_interface_types;
+
+//   `define  MOTOR_OFF			0
+
+	enum bit [1:0] {MOTOR_COAST=2'b00, MOTOR_FORWARD=2'b01, MOTOR_BACKWARD=2'b10, MOTOR_BRAKE=2'b11} motor_commands;	
+	enum bit       {PWM_BRAKE_DWELL=1'b0, PWM_COAST_DWELL=1'b1} PWM_dwell_modes;
+	enum bit       {BACKWARD=1'b0, FORWARD=1'b1} motor_directions;
+
 `endif    // _global_constants_sv_
 

@@ -112,8 +112,8 @@ end
 assign  counter_zero = (target_count == 0) ? 1'b1 : 1'b0;
 
 assign  uP_soft_reset   = input_packet[`CMD_REG][`BIT7];
-
 assign  bus.RW          = input_packet[`CMD_REG][`BIT0];
+
 assign  bus.reg_address = input_packet[1];
 assign  bus.data_out    = {input_packet[5],input_packet[4],input_packet[3],input_packet[2]};
 

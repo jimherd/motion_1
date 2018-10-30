@@ -11,7 +11,8 @@
 module pwm_channel #(parameter PWM_UNIT = 0) (
                      input  logic  clk, reset,
                      IO_bus bus,
-                     output logic  pwm_signal
+                     output logic  pwm_signal,
+							output logic  H_bridge_1, H_bridge_2
                      );
 //
 // PWM subsystem registers
@@ -20,6 +21,7 @@ logic [31:0]  T_period;    // in units of 20nS
 logic [31:0]  T_on;        // in units of 20nS
 logic [31:0]  pwm_config; 
 logic [31:0]  pwm_status;
+logic [31:0]  H_bridge_config;
 
 //
 // Local registers
@@ -60,6 +62,16 @@ pwm_FSM   pwm_FSM_sys(
    .reload_times(reload_times),
    .pwm(pwm) 
    );
+	
+H_bridge  H_bridge_sys( 
+   .PWM_signal(pwm),
+	.enable(H_bridge_config[0]), 
+	.mode(H_bridge_config[1]), 
+	.pwm_dwell(H_bridge_config[4]),
+	.command(H_bridge_config[3:2]), 
+	.H_bridge_1(H_bridge_1), 
+	.H_bridge_2(H_bridge_2)
+);
    
 //
 // Data subsystem to calculate pulse edges
@@ -107,6 +119,7 @@ always_ff @(posedge clk or negedge reset) begin
       T_period   <= 0;
       T_on       <= 0;
       pwm_config <= 0;
+		H_bridge_config <= 0;
    end else begin
       if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
          if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
