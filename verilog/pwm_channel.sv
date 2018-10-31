@@ -8,7 +8,7 @@
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
-module pwm_channel #(parameter PWM_UNIT = 0) (
+module pwm_channel  #(parameter PWM_UNIT = 0)  (
                      input  logic  clk, reset,
                      IO_bus bus,
                      output logic  pwm_signal,

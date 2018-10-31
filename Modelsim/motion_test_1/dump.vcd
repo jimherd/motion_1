@@ -1,5 +1,5 @@
 $date
-	Tue Oct 30 16:40:46 2018
+	Wed Oct 31 17:02:48 2018
 $end
 $version
 	ModelSim Version 10.5b
@@ -32,10 +32,10 @@ $var wire 1 4 uP_data [1] $end
 $var wire 1 5 uP_data [0] $end
 $var wire 1 6 pwm_out [1] $end
 $var wire 1 7 pwm_out [0] $end
-$var wire 1 8 H_bridge [3] $end
-$var wire 1 9 H_bridge [2] $end
-$var wire 1 : H_bridge [1] $end
-$var wire 1 ; H_bridge [0] $end
+$var wire 1 8 H_bridge_1 [1] $end
+$var wire 1 9 H_bridge_1 [0] $end
+$var wire 1 : H_bridge_2 [1] $end
+$var wire 1 ; H_bridge_2 [0] $end
 $var wire 1 < led1 $end
 $var wire 1 = led2 $end
 $var wire 1 > led3 $end
@@ -50,6 +50,14 @@ $var reg 1 F uP_handshake_1 $end
 $var reg 1 G uP_RW $end
 $var reg 1 H uP_reset $end
 $var reg 1 I reset $end
+
+$scope begin PWM_H_bridge[1] $end
+$var parameter 32 J PWM_unit $end
+$upscope $end
+
+$scope begin PWM_H_bridge[0] $end
+$var parameter 32 K PWM_unit $end
+$upscope $end
 $upscope $end
 $enddefinitions $end
 #0
@@ -61,6 +69,8 @@ xF
 xG
 xH
 zI
+b0 K
+b1 J
 z!
 z#
 z"
@@ -82,10 +92,10 @@ x/
 x.
 07
 06
-0;
-0:
 09
 08
+0;
+0:
 x<
 x=
 z>

@@ -19,7 +19,7 @@ logic  async_uP_start, async_uP_handshake_1, async_uP_RW, async_uP_reset;
 logic  uP_ack, uP_handshake_2;
 logic  [7:0] uP_data_out;
 wire   [7:0] uP_data;
-logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out;
+logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out, H_bridge_1, H_bridge_2;
 logic  led1, led2, led3, led4, led5;
 logic  test_pt1, test_pt2, test_pt3, test_pt4;
 
@@ -128,6 +128,8 @@ motion_system uut(
                   .uP_handshake_2(uP_handshake_2),
                   .uP_data(uP_data),
                   .pwm_out(pwm_out),
+                  .H_bridge_1(H_bridge_1),
+                  .H_bridge_2(H_bridge_2),
                   .led1(led1),
                   .led2(led2),
                   .led3(led3),
