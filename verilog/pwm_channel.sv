@@ -119,7 +119,7 @@ always_ff @(posedge clk or negedge reset) begin
       T_period   <= 0;
       T_on       <= 0;
       pwm_config <= 0;
-		H_bridge_config <= 0;
+//		H_bridge_config <= 0;
    end else begin
       if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
          if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
@@ -178,7 +178,7 @@ always_comb begin
          (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
          (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
          (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-         default                                                         : subsystem_enable = 0;
+         default                                                         : subsystem_enable = 0; 
       endcase
 end
 

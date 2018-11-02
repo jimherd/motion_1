@@ -1,5 +1,5 @@
 $date
-	Wed Oct 31 17:02:48 2018
+	Fri Nov 02 00:17:45 2018
 $end
 $version
 	ModelSim Version 10.5b
@@ -50,14 +50,6 @@ $var reg 1 F uP_handshake_1 $end
 $var reg 1 G uP_RW $end
 $var reg 1 H uP_reset $end
 $var reg 1 I reset $end
-
-$scope begin PWM_H_bridge[1] $end
-$var parameter 32 J PWM_unit $end
-$upscope $end
-
-$scope begin PWM_H_bridge[0] $end
-$var parameter 32 K PWM_unit $end
-$upscope $end
 $upscope $end
 $enddefinitions $end
 #0
@@ -69,8 +61,6 @@ xF
 xG
 xH
 zI
-b0 K
-b1 J
 z!
 z#
 z"

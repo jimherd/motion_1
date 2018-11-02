@@ -95,28 +95,32 @@ assign led2 = !reset;
 );
 */
 
-genvar PWM_unit;
-generate
-	for (PWM_unit=0; PWM_unit<`NOS_PWM_CHANNELS; PWM_unit=PWM_unit+1) begin : PWM_H_bridge
-		pwm_channel #(.PWM_UNIT(PWM_unit)) pwm_ch(
-				.clk(CLOCK_50),
-				.reset(reset),
-				.bus(intf.slave),
-				.pwm_signal(pwm_out[PWM_unit]),
-				.H_bridge_1(H_bridge_1[PWM_unit]),
-				.H_bridge_2(H_bridge_2[PWM_unit])
-		);
-  end
-endgenerate
 
-/*
+`ifdef USE_PWM_GENERATE
+
+	genvar PWM_unit;
+	generate
+		for (PWM_unit=0; PWM_unit < `NOS_PWM_CHANNELS; PWM_unit=PWM_unit+1) begin : PWM_H_bridge
+			pwm_channel #(.PWM_UNIT(PWM_unit)) pwm_ch(
+					.clk(CLOCK_50),
+					.reset(reset),
+					.bus(intf.slave),
+					.pwm_signal(pwm_out[PWM_unit]),
+					.H_bridge_1(H_bridge_1[PWM_unit]),
+					.H_bridge_2(H_bridge_2[PWM_unit])
+			);
+		end
+	endgenerate
+
+`else
+
    pwm_channel #(.PWM_UNIT(0)) pwm_ch0(
                                        .clk(CLOCK_50),
                                        .reset(reset),
                                        .bus(intf.slave),
                                        .pwm_signal(pwm_out[0]),
-													.H_bridge_1(H_bridge[0]),
-													.H_bridge_2(H_bridge[1])
+													.H_bridge_1(H_bridge_1[0]),
+													.H_bridge_2(H_bridge_2[0])
                                        );
                                        
    pwm_channel #(.PWM_UNIT(1)) pwm_ch1(
@@ -124,9 +128,10 @@ endgenerate
                                        .reset(reset),
                                        .bus(intf.slave), 
                                        .pwm_signal(pwm_out[1]),
-													.H_bridge_1(H_bridge[2]),
-													.H_bridge_2(H_bridge[3])
+													.H_bridge_1(H_bridge_1[1]),
+													.H_bridge_2(H_bridge_2[1])
                                        );
-*/
+
+`endif
    
 endmodule

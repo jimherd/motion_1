@@ -4,6 +4,16 @@
 `ifndef   _global_constants_sv_
 `define   _global_constants_sv_
 
+//
+// System compilation directives
+// =============================
+//
+// Uncomment if you want to create PWM subsystems by a "generate" construct.
+// (As of Nov 2018 this feature does not work)
+//
+// `define USE_PWM_GENERATE
+
+
    //
    // system channels
    //
