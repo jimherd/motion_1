@@ -21,13 +21,20 @@ logic [31:0]  T_period;    // in units of 20nS
 logic [31:0]  T_on;        // in units of 20nS
 logic [31:0]  pwm_config; 
 logic [31:0]  pwm_status;
-logic [31:0]  H_bridge_config;
 
 //
 // Local registers
 //
 logic [31:0]  T_period_temp;
 logic [31:0]  T_on_temp;
+
+logic         H_bridge_int_enable;
+logic         H_bridge_ext_enable;
+logic  [2:0]  H_bridge_cmd;
+logic  [1:0]  H_bridge_mode;
+logic         H_bridge_swap;
+logic         H_bridge_dwell_mode;
+logic  [1:0]  H_bridge_invert_mode;
 
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
@@ -65,10 +72,11 @@ pwm_FSM   pwm_FSM_sys(
 	
 H_bridge  H_bridge_sys( 
    .PWM_signal(pwm),
-	.enable(H_bridge_config[0]), 
-	.mode(H_bridge_config[1]), 
-	.pwm_dwell(H_bridge_config[4]),
-	.command(H_bridge_config[3:2]), 
+	.int_enable(H_bridge_int_enable), 
+	.ext_enable(H_bridge_ext_enable), 
+	.mode(H_bridge_mode), 
+	.pwm_dwell(H_bridge_dwell_mode),
+	.command(H_bridge_cmd), 
 	.H_bridge_1(H_bridge_1), 
 	.H_bridge_2(H_bridge_2)
 );
@@ -137,6 +145,16 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
+assign  pwm_enable           = pwm_config[`PWM_ENABLE];
+
+assign  H_bridge_int_enable  = pwm_config[`H_BRIDGE_INT_ENABLE];
+assign  H_bridge_ext_enable  = pwm_config[`H_BRIDGE_EXT_ENABLE];
+assign  H_bridge_cmd         = pwm_config[(`H_BRIDGE_COMMAND + 2) : `H_BRIDGE_COMMAND];
+assign  H_bridge_mode        = pwm_config[(`H_BRIDGE_MODE + 1) : `H_BRIDGE_MODE];
+assign  H_bridge_swap        = pwm_config[`PWM_ENABLE];
+assign  H_bridge_dwell_mode  = pwm_config[`H_BRIDGE_DWELL_MODE];
+assign  H_bridge_invert_mode = pwm_config[(`H_BRIDGE_INVERT_PINS + 1) : `H_BRIDGE_INVERT_PINS];
+
 //
 // put data onto bus
 //
@@ -166,7 +184,7 @@ assign pwm_signal = pwm;   // set pwm signal value
 // create status word
 //
 assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
-assign pwm_enable = pwm_config[0];   // bit 0 is PWM enable bit
+
 
 //
 // assess if registers numbers refer to this subsystem

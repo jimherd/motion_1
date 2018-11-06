@@ -13,6 +13,10 @@
 //
 // `define USE_PWM_GENERATE
 
+//
+// System constants
+// ================
+//
 
    //
    // system channels
@@ -97,6 +101,19 @@
 	enum bit [1:0] {MOTOR_COAST=2'b00, MOTOR_FORWARD=2'b01, MOTOR_BACKWARD=2'b10, MOTOR_BRAKE=2'b11} motor_commands;	
 	enum bit       {PWM_BRAKE_DWELL=1'b0, PWM_COAST_DWELL=1'b1} PWM_dwell_modes;
 	enum bit       {BACKWARD=1'b0, FORWARD=1'b1} motor_directions;
+	
+//
+// bit definitions for PWM/H-bridge configuaration register
+//
+	`define	PWM_ENABLE			 	 0
+	//
+	`define	H_BRIDGE_INT_ENABLE	16		// 1 bit
+	`define	H_BRIDGE_EXT_ENABLE	17		// 1 bit
+	`define	H_BRIDGE_COMMAND		18		// 3 bits
+	`define	H_BRIDGE_MODE  		21		// 2 bits
+	`define	H_BRIDGE_SWAP			22		// 1 bit
+	`define	H_BRIDGE_DWELL_MODE	23		// 1 bit
+	`define	H_BRIDGE_INVERT_PINS	24		// 2 bits
 
 `endif    // _global_constants_sv_
 
