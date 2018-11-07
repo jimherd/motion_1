@@ -9,8 +9,8 @@
 
 module H_bridge ( 
                   input  logic PWM_signal,
-						input  logic int_enable, ext_enable, pwm_dwell,
-						input  [1:0] mode,
+						input  logic int_enable, ext_enable, pwm_dwell, swap,
+						input  [1:0] mode, invert,
 						input  [2:0] command,
 						output logic H_bridge_1, H_bridge_2
 						);
@@ -71,7 +71,29 @@ begin
 	end
 end
 
+//
+// Post processing of H-bridge signals to provide INVERT, SWAP and ENABLE
+// features.
+//
+always_comb
+begin
+	H_bridge_1 = 0;
+	if (int_enable == 1'b1)
+		if (swap == 1'b0) 
+			H_bridge_1 = (invert[0] == 1'b0) ? H_bridge_1_tmp : !H_bridge_1_tmp;
+		else 
+			H_bridge_1 = (invert[0] == 1'b0) ? H_bridge_2_tmp : !H_bridge_2_tmp;
+end
 
+always_comb
+begin
+	H_bridge_2 = 0;
+	if (int_enable == 1'b1)
+		if (swap == 1'b0) 
+			H_bridge_2 = (invert[1] == 1'b0) ? H_bridge_2_tmp : !H_bridge_2_tmp;
+		else 
+			H_bridge_2 = (invert[1] == 1'b0) ? H_bridge_1_tmp : !H_bridge_1_tmp;
+end
 
 endmodule
 

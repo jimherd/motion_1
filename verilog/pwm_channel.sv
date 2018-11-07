@@ -74,9 +74,11 @@ H_bridge  H_bridge_sys(
    .PWM_signal(pwm),
 	.int_enable(H_bridge_int_enable), 
 	.ext_enable(H_bridge_ext_enable), 
-	.mode(H_bridge_mode), 
-	.pwm_dwell(H_bridge_dwell_mode),
 	.command(H_bridge_cmd), 
+	.mode(H_bridge_mode), 
+	.swap(H_bridge_swap),
+	.pwm_dwell(H_bridge_dwell_mode),
+	.invert(H_bridge_invert_mode),
 	.H_bridge_1(H_bridge_1), 
 	.H_bridge_2(H_bridge_2)
 );
@@ -89,7 +91,7 @@ always_ff @(posedge clk or negedge reset) begin
       T_on_temp = 0;
    end else begin
       if (dec_T_on) begin
-         T_on_temp = T_on_temp -1;
+         T_on_temp = T_on_temp - 1;
       end else begin 
          if (reload_times) begin
             T_on_temp = T_on;
@@ -103,7 +105,7 @@ always_ff @(posedge clk or negedge reset) begin
       T_period_temp = 0;
    end else begin
       if (dec_T_period) begin
-         T_period_temp = T_period_temp -1;
+         T_period_temp = T_period_temp - 1;
       end else begin 
          if (reload_times) begin
             T_period_temp = T_period;
@@ -127,7 +129,6 @@ always_ff @(posedge clk or negedge reset) begin
       T_period   <= 0;
       T_on       <= 0;
       pwm_config <= 0;
-//		H_bridge_config <= 0;
    end else begin
       if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
          if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
