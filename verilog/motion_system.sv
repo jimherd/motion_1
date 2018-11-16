@@ -76,16 +76,16 @@ assign led2 = !reset;
                                  .uP_data(uP_data)
                                  );
    
- /*  motion_channel #(.MOTION_UNIT(0)) motor_ch0 (
+   QE_channel #(.QE_UNIT(0)) QE_ch0 (
                                  .clk(CLOCK_50),
                                  .reset(reset),
                                  .bus(intf.slave),
-                                 .quad_A(quadrature_A[0]), 
-                                 .quad_B(quadrature_B[0]), 
-                                 .quad_I(quadrature_I[0])
+                                 .async_ext_QE_A(quadrature_A[0]), 
+                                 .async_ext_QE_B(quadrature_B[0]), 
+                                 .async_ext_QE_I(quadrature_I[0])
                                  );
 
-   motion_channel #(.MOTION_UNIT(1)) motor_ch1 (
+/*   motion_channel #(.MOTION_UNIT(1)) motor_ch1 (
                                        .clk(CLOCK_50),
                                        .reset(reset),
                                        .bus(intf.slave),
