@@ -55,7 +55,7 @@ end: set_next_state
 
 assign inc_counters				= (state ==  S_QE_GEN0);
 assign clear_phase_counter		= (state ==  S_QE_GEN2); 
-assign clear_pulse_counter	= (state ==  S_QE_GEN4);
+assign clear_pulse_counter		= (state ==  S_QE_GEN4);
 assign load_phase_timer			= (state ==  S_QE_GEN5);
 assign decrement_phase_timer	= (state ==  S_QE_GEN6);
 

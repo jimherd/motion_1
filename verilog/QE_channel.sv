@@ -20,7 +20,7 @@ module QE_channel #(QE_UNIT = 0) (
 //   
 uint32_t  QE_count_buffer;
 uint32_t  QE_turns_buffer;
-uint32_t  QE_velocity_buffer;
+uint32_t  QE_speed_buffer;
 uint32_t  QE_sim_phase_time;
 uint32_t  QE_counts_per_rev;
 uint32_t  QE_config;
@@ -31,7 +31,7 @@ logic subsystem_enable;
 
 // internal registers
 //   
-uint32_t  turns, count, velocity;
+uint32_t  turns, count, speed;
 
 // local signals
 //
@@ -64,6 +64,7 @@ bus_FSM   bus_FSM_sys(
 // Clear PWM_enable signal if period or on timings are changed otherwise
 // system can get into an infinite loop.
 //
+
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
 		QE_sim_phase_time		<= 0;
@@ -86,7 +87,6 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
-
 //
 // put data onto bus
 //
@@ -98,7 +98,7 @@ always_ff @(posedge clk or negedge reset) begin
          case (bus.reg_address)  
             (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_count_buffer;
             (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_turns_buffer;
-            (`QE_VELOCITY_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_velocity_buffer;
+            (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_speed_buffer;
             (`QE_SIM_PHASE_TIME  + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_sim_phase_time;
             (`QE_COUNTS_PER_REV 	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_counts_per_rev;
             (`QE_CONFIG  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_config;
@@ -117,12 +117,13 @@ end
 //
 // assess if registers numbers refer to this subsystem
 //
+
 always_comb begin
       subsystem_enable = 0;
       case (bus.reg_address)  
          (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
          (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
-         (`QE_VELOCITY_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
+         (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
          (`QE_SIM_PHASE_TIME  + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
          (`QE_COUNTS_PER_REV 	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))	: subsystem_enable = 1;
          (`QE_CONFIG  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
@@ -159,7 +160,6 @@ logic [2:0] QE_sim_phase_counter;
 uint32_t    QE_sim_pulse_counter;
 uint32_t    QE_sim_phase_timer;
 
-//logic  int_QE_A, int_QE_B, int_QE_I;
 logic  phase_cnt_4, index_cnt, timer_cnt_0;
 
 always_ff @(posedge pulse or negedge reset)
@@ -327,6 +327,48 @@ quadrature_enc QE(
 //    uP software can detect each of these cases.
 //   2. The diameter of the wheel could be a settable constant.
 //
+
+QE_speed_measure_FSM  QE_speed_measure_FSM_sys( 
+               .clk(clk), 
+					.reset(reset), 
+               .QE_A_sig(QE_A), 
+					.max_count(max_count),
+               .clear_all(clear_all), 
+					.increment_speed_counter(increment_speed_counter), 
+					.load_speed_buffer(load_speed_buffer), 
+					.clear_speed_counter(clear_speed_counter)
+               );
+					
+logic clear_all, increment_speed_counter, load_speed_buffer, clear_speed_counter;
+logic  max_count;
+
+always_ff @(posedge pulse or negedge reset)
+begin
+   if (!reset) begin
+      speed 			<= 0;
+		QE_speed_buffer	<= 0;
+   end  else begin
+		if (increment_speed_counter == 1'b1) begin
+			speed <= speed + 1;
+		end else begin
+			if (load_speed_buffer == 1'b1) begin
+				QE_speed_buffer <= speed;
+			end else begin
+				if (clear_speed_counter == 1'b1) begin
+					speed <= 0;
+				end else begin
+					if (clear_all == 1'b1) begin
+						speed				<= 0;
+						QE_speed_buffer	<= 0;
+					end
+				end
+			end
+		end
+	end
+end
+
+assign max_count = (speed > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
+	
 always_ff @(posedge pulse or negedge reset)
 begin
    if (!reset) begin
@@ -340,51 +382,9 @@ begin
 end
 
 //
-// Measure velocity and ensure that value stays within a set range
-//
-// Counts are made while QE_A is high
-//
-
-always_ff @(posedge clk or negedge reset)
-begin
-   if (!reset) begin
-      velocity <= 0;
-   end else begin
-		if (QE_A == 1'b1) begin
-			if(velocity < 23387412) begin
-				velocity <= velocity + 1; 
-			end else begin
-				if (velocity > 0) begin
-					velocity <= velocity - 1;
-				end
-			end
-		end
-	end
-end
-
-//
-// save current copy of velocity.
-// Be aware of the difference clock/anticlockwise movement
-//
-always_ff @(posedge QE_B or negedge QE_B)   
-begin   
-   if (QE_B == 1'b1) begin
-		if (QE_A == 1'b0) begin
-			QE_velocity_buffer   <= velocity;
-			velocity   				<= 0;
-		end 
-	end else begin
-		if (QE_A == 1'b0) begin
-			QE_velocity_buffer   <= velocity;
-			velocity   				<= 0;
-		end 
-	end
-end
-
-
-//
 // Count index pulses (1 per revolution)
 //
+
 always_ff @(posedge index or negedge reset)   
 begin   
    if (!reset) begin

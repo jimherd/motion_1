@@ -61,7 +61,7 @@
    
    `define QE_COUNT_BUFFER    	0   
    `define QE_TURN_BUFFER     	1
-   `define QE_VELOCITY_BUFFER 	2
+   `define QE_SPEED_BUFFER 	   2
 	`define QE_SIM_PHASE_TIME		3
 	`define QE_COUNTS_PER_REV		4
 	`define QE_CONFIG  				5
@@ -138,6 +138,8 @@
 	
 	enum bit {QE_INTERNAL, QE_EXTERNAL} QE_encoder_source;
 	enum bit {QE_CW, QE_CCW} rotational_direction;
+	
+	`define MAX_SPEED_COUNT 2000000
 
 `endif    // _global_constants_sv_
 
