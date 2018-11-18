@@ -26,8 +26,7 @@ uint32_t  QE_counts_per_rev;
 uint32_t  QE_config;
 uint32_t  QE_status;
 //
-logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
-logic subsystem_enable;
+
 
 // internal registers
 //   
@@ -36,7 +35,6 @@ uint32_t  turns, count, speed;
 // local signals
 //
 logic direction, pulse, index;
-logic inc_counters, clear_phase_counter, clear_pulse_counter, load_phase_timer, decrement_phase_timer;
 logic QE_A, QE_B, QE_I;
 
 logic [31:0] data_in_reg;
@@ -44,6 +42,9 @@ logic [31:0] data_in_reg;
 /////////////////////////////////////////////////
 //
 // Connection to internal system 32-bit bus
+
+logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
+logic subsystem_enable;
 
 bus_FSM   bus_FSM_sys(
 		.clk(clk),
@@ -143,6 +144,7 @@ assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 //
 // Subsystem to organise generation of simulated quadrature encoder signals
 	
+logic inc_counters, clear_phase_counter, clear_pulse_counter, load_phase_timer , decrement_phase_timer;
 logic  phase_cnt_4, index_cnt, timer_cnt_0;
 	
 quad_enc_generator_FSM  quad_enc_generator_FSM_sys( 
@@ -166,19 +168,16 @@ logic [2:0] QE_sim_phase_counter;
 uint32_t    QE_sim_pulse_counter;
 uint32_t    QE_sim_phase_timer;
 
-
-
-always_ff @(posedge pulse or negedge reset)
+always_ff @(posedge clk or negedge reset)
 begin
    if (!reset) begin
       QE_sim_phase_counter <= 0;
 		QE_sim_pulse_counter <= 0;
-		QE_sim_phase_timer   <= 0;
+		QE_sim_phase_timer   <= 10;
    end  else begin
 		if (inc_counters == 1'b1) begin
-			QE_sim_phase_counter <= QE_sim_phase_counter + 2'b01;
+			QE_sim_phase_counter <= QE_sim_phase_counter + 1'b1;
 			QE_sim_pulse_counter <= QE_sim_pulse_counter + 1;
-			QE_sim_phase_timer   <= QE_sim_phase_timer + 1;
 		end else begin
 			if (clear_phase_counter == 1'b1) begin
 				QE_sim_phase_counter <= 0;
@@ -189,7 +188,7 @@ begin
 					int_QE_I <= 1;
 				end else begin
 					if (load_phase_timer == 1'b1) begin
-						QE_sim_pulse_counter <= 0;
+						QE_sim_phase_timer <= QE_sim_phase_time;
 					end else begin
 						if (decrement_phase_timer == 1'b1) begin
 							QE_sim_phase_timer <= QE_sim_phase_timer - 1;
@@ -347,10 +346,7 @@ QE_speed_measure_FSM  QE_speed_measure_FSM_sys(
 					.clear_speed_counter(clear_speed_counter)
                );
 					
-//logic clear_all, increment_speed_counter, load_speed_buffer, clear_speed_counter;
-//logic  max_count;
-
-always_ff @(posedge pulse or negedge reset)
+always_ff @(posedge clk or negedge reset)
 begin
    if (!reset) begin
       speed 			<= 0;
@@ -366,7 +362,7 @@ begin
 					speed <= 0;
 				end else begin
 					if (clear_all == 1'b1) begin
-						speed				<= 0;
+						speed					<= 0;
 						QE_speed_buffer	<= 0;
 					end
 				end

@@ -17,8 +17,6 @@ enum bit [4:0] {
                      S_QE_GEN5, S_QE_GEN6, S_QE_GEN7
                } state, next_state;
 
-//logic inc_counters, clear_phase_counter, clear_degree_counter, load_phase_timer, decrement_phase_timer;			
-
 
 always_ff @(posedge clk or negedge reset)
       if (!reset)   begin
@@ -33,7 +31,7 @@ always_comb begin: set_next_state
       S_QE_GEN0 :
          next_state = S_QE_GEN1;   
       S_QE_GEN1 :
-         next_state = (phase_cnt_4 == 1'b1) ? S_QE_GEN3 : S_QE_GEN4;  
+         next_state = (phase_cnt_4 == 1'b1) ? S_QE_GEN2 : S_QE_GEN3;  
 		S_QE_GEN2 :
          next_state = S_QE_GEN3;
 		S_QE_GEN3 :
@@ -53,10 +51,10 @@ end: set_next_state
 // Moore outputs
 //
 
-assign inc_counters				= (state ==  S_QE_GEN0);
-assign clear_phase_counter		= (state ==  S_QE_GEN2); 
-assign clear_pulse_counter		= (state ==  S_QE_GEN4);
-assign load_phase_timer			= (state ==  S_QE_GEN5);
-assign decrement_phase_timer	= (state ==  S_QE_GEN6);
+assign inc_counters				= (state == S_QE_GEN0);
+assign clear_phase_counter		= (state == S_QE_GEN2); 
+assign clear_pulse_counter		= (state == S_QE_GEN4);
+assign load_phase_timer			= (state == S_QE_GEN5);
+assign decrement_phase_timer	= (state == S_QE_GEN6);
 
 endmodule

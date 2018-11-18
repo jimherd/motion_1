@@ -9,7 +9,7 @@ import types::*;
 
 enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0} test_set;
 
-`define TEST        PWM_TEST_1
+`define TEST        QE_TEST_0
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -168,9 +168,9 @@ initial begin
           $display("PWM period = %d", data);
         end
     QE_TEST_0 : begin    // simple Quadrature Encoder test
-          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_COUNTS_PER_REV), 100, data, status);
-          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_CONFIG), 25, data, status);
-          $display("PWM period = %d", data);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_COUNTS_PER_REV), 360, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_SIM_PHASE_TIME), 10, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_CONFIG), 0, data, status);
         end
     default :
         $display("Test select number %d is  unknown", `TEST);
