@@ -35,20 +35,23 @@
 	
    `define PWM_BASE            	`BASE_REGISTER_ADDRESS
    `define NOS_PWM_REGISTERS   	(`PWM_STATUS + 1)
+//
+// used in testbench files
 
    `define PWM_0        (`PWM_BASE + (0 * `NOS_PWM_REGISTERS))
    `define PWM_1        (`PWM_BASE + (1 * `NOS_PWM_REGISTERS))
    `define PWM_2        (`PWM_BASE + (2 * `NOS_PWM_REGISTERS))
    `define PWM_3        (`PWM_BASE + (3 * `NOS_PWM_REGISTERS))
-   
-   // register indexes - status should always be last
+//   
+// register indexes - status should always be last
+
    `define PWM_PERIOD      0
    `define PWM_ON_TIME     1
    `define PWM_CONFIG      2
    `define PWM_STATUS      3
 //
 // adjustments to PWM timing values to give exact timing
-//
+
    `define T_PERIOD_ADJUSTMENT  3
    `define T_ON_ADJUSTMENT      1
 
@@ -67,11 +70,14 @@
 	`define QE_CONFIG  				5
    `define QE_STATUS  				6
 
-   `define QE_1	(`QE_BASE + (0 * `NOS_QE_CHANNELS))      
-   `define QE_2	(`QE_BASE + (1 * `NOS_QE_CHANNELS))
-   `define QE_3 	(`QE_BASE + (2 * `NOS_QE_CHANNELS))
-   `define QE_4 	(`QE_BASE + (3 * `NOS_QE_CHANNELS))
-   `define QE_5 	(`QE_BASE + (4 * `NOS_QE_CHANNELS))
+//
+// used in testbench files
+//
+   `define QE_0	(`QE_BASE + (0 * `NOS_QE_CHANNELS))      
+   `define QE_1	(`QE_BASE + (1 * `NOS_QE_CHANNELS))
+   `define QE_2 	(`QE_BASE + (2 * `NOS_QE_CHANNELS))
+   `define QE_3 	(`QE_BASE + (3 * `NOS_QE_CHANNELS))
+   `define QE_4 	(`QE_BASE + (4 * `NOS_QE_CHANNELS))
 
 
    

@@ -142,7 +142,9 @@ assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 /////////////////////////////////////////////////
 //
 // Subsystem to organise generation of simulated quadrature encoder signals
-		
+	
+logic  phase_cnt_4, index_cnt, timer_cnt_0;
+	
 quad_enc_generator_FSM  quad_enc_generator_FSM_sys( 
 			.clk(clk),
 			.reset(reset),
@@ -156,11 +158,15 @@ quad_enc_generator_FSM  quad_enc_generator_FSM_sys(
 			.decrement_phase_timer(decrement_phase_timer)
       );
 //
+
+logic int_QE_A, int_QE_B, int_QE_I, QE_source;
+logic ext_QE_A, ext_QE_B, ext_QE_I;
+
 logic [2:0] QE_sim_phase_counter;
 uint32_t    QE_sim_pulse_counter;
 uint32_t    QE_sim_phase_timer;
 
-logic  phase_cnt_4, index_cnt, timer_cnt_0;
+
 
 always_ff @(posedge pulse or negedge reset)
 begin
@@ -199,8 +205,7 @@ assign phase_cnt_4 = (QE_sim_phase_counter == 4) ? 1'b1 : 1'b0;
 assign index_cnt   = (QE_sim_pulse_counter == QE_counts_per_rev) ? 1'b1 : 1'b0;
 assign timer_cnt_0 = (QE_sim_phase_timer == 0) ? 1'b1 : 1'b0;
 
-logic int_QE_A, int_QE_B, int_QE_I, QE_source;
-logic ext_QE_A, ext_QE_B, ext_QE_I;
+
 
 always_comb
 begin
@@ -328,6 +333,9 @@ quadrature_enc QE(
 //   2. The diameter of the wheel could be a settable constant.
 //
 
+logic clear_all, increment_speed_counter, load_speed_buffer, clear_speed_counter;
+logic  max_count;
+
 QE_speed_measure_FSM  QE_speed_measure_FSM_sys( 
                .clk(clk), 
 					.reset(reset), 
@@ -339,8 +347,8 @@ QE_speed_measure_FSM  QE_speed_measure_FSM_sys(
 					.clear_speed_counter(clear_speed_counter)
                );
 					
-logic clear_all, increment_speed_counter, load_speed_buffer, clear_speed_counter;
-logic  max_count;
+//logic clear_all, increment_speed_counter, load_speed_buffer, clear_speed_counter;
+//logic  max_count;
 
 always_ff @(posedge pulse or negedge reset)
 begin

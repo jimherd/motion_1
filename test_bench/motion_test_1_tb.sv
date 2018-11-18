@@ -7,7 +7,10 @@
 `include "../verilog/global_constants.sv"
 import types::*;
 
-`define TEST_NUMBER         2
+enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0} test_set;
+
+`define TEST        PWM_TEST_1
+
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
 
@@ -29,24 +32,24 @@ logic [31:0] status, data;
 task do_init();
   begin
         clk = 0; async_uP_reset = 1; async_uP_start = 0; async_uP_handshake_1 = 1'b0; async_uP_RW = 0;
-    #20 async_uP_reset = 0;
+    #50 async_uP_reset = 0;
     #62 async_uP_reset = 1;
-    #20 async_uP_reset = 1;
+    #50 async_uP_reset = 1;
   end
 endtask;
 
 task do_start;
   begin
     #17 async_uP_start = 1;
-    #20 async_uP_handshake_1 = 1'b0;
-    #20 async_uP_start = 0;
+    #50 async_uP_handshake_1 = 1'b0;
+    #50 async_uP_start = 0;
   end
 endtask;
 
 task do_end;
   begin
-    #5 wait(uut.uP_ack == 1);
-    #5 async_uP_start = 0;
+    #50 wait(uut.uP_ack == 1);
+    #50 async_uP_start = 0;
   end
 endtask
 
@@ -54,12 +57,12 @@ task write_byte;
   input [7:0] data;
   begin
     #50   uP_data_out = data;	
-        #20 async_uP_RW = 1;    
-    #22   async_uP_handshake_1 = 1'b1;
-    #20   wait(uut.uP_handshake_2 == 1'b1);
-    #23   async_uP_handshake_1 = 1'b0;
-        #20 async_uP_RW = 0;        
-    #20   wait(uut.uP_handshake_2 == 1'b0);
+        #50 async_uP_RW = 1;    
+    #52   async_uP_handshake_1 = 1'b1;
+    #50   wait(uut.uP_handshake_2 == 1'b1);
+    #53   async_uP_handshake_1 = 1'b0;
+        #50 async_uP_RW = 0;        
+    #50   wait(uut.uP_handshake_2 == 1'b0);
   end
 endtask;
 
@@ -67,12 +70,12 @@ task read_byte;
   output [7:0] data;
   begin
     #50   wait(uut.uP_handshake_2 == 1'b1);
-        #20 async_uP_RW = 0;      
-	#20   data = uut.uP_data;
-    #20   async_uP_handshake_1 = 1;                 // send ack
+        #50 async_uP_RW = 0;      
+	#50   data = uut.uP_data;
+    #50   async_uP_handshake_1 = 1;                 // send ack
     #20   wait(uut.uP_handshake_2 == 1'b0);
-        #20 async_uP_RW = 0;  
-    #20   async_uP_handshake_1 = 0;
+        #50 async_uP_RW = 0;  
+    #50   async_uP_handshake_1 = 0;
   end;
 endtask;
 
@@ -149,23 +152,28 @@ initial begin
   $dumpvars(1,motion_system);
   do_init();
   // select test sequence
-  case(`TEST_NUMBER)
-    1 : begin   // simple single transaction test
+  case(`TEST)
+    PWM_TEST_0 : begin   // simple single transaction test
             input_value = $urandom();
             do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), input_value, data, status);
             $display("input value = %h", input_value);
             $display("data = %h", data);
             $display("status = %h", status);
         end
-    2 : begin    // simple PWM test
-          #20 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), 100, data, status);
+    PWM_TEST_1 : begin    // simple PWM test
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), 100, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_ON_TIME), 25, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_CONFIG), 1, data, status);
-          #50 do_transaction(`READ_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), 101, data, status);
+          #50 do_transaction(`READ_REGISTER_CMD,  (`PWM_0 + `PWM_PERIOD), 101, data, status);
+          $display("PWM period = %d", data);
+        end
+    QE_TEST_0 : begin    // simple Quadrature Encoder test
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_COUNTS_PER_REV), 100, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_CONFIG), 25, data, status);
           $display("PWM period = %d", data);
         end
     default :
-        $display("Test select number %d is  unknown", `TEST_NUMBER);
+        $display("Test select number %d is  unknown", `TEST);
    endcase;
      
 end
