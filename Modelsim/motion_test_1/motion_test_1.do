@@ -55,10 +55,12 @@ switch $TEST {
 		add wave -divider "QE subsystem"
 		add wave -label QE0_subsystem_enable -position end  sim:/motion_test_1_tb/uut/QE_ch0/subsystem_enable
 		add wave -label speed_measure_state -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_speed_measure_FSM_sys/state
-		add wave -label QE_sim_state -position end  sim:/motion_test_1_tb/uut/QE_ch0/quad_enc_generator_FSM_sys/state
-		add wave -label QE_sim_phase_cnt -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_counter
-		add wave -label QE_sim_phase_timer -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_timer
-		add wave -label QE_sim_pulse_cnt -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_pulse_counter
+		add wave -label QE_sim_state -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_generator_FSM_sys/state
+		add wave -label QE_sim_phase_cnt -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_counter
+		add wave -label QE_dec_phase_time  -radix decimal -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_time
+		add wave -label QE_dec_phase_timer -position end  sim:/motion_test_1_tb/uut/QE_ch0/decrement_phase_timer
+		add wave -label QE_sim_phase_timer -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_timer
+		add wave -label QE_sim_pulse_cnt -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_pulse_counter
 		add wave -label QE_A -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_A
 		add wave -label QE_B -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_B
 		add wave -label QE_I -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_I

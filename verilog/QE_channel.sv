@@ -75,11 +75,9 @@ always_ff @(posedge clk or negedge reset) begin
       if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
          if (bus.reg_address == (`QE_SIM_PHASE_TIME + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
             QE_sim_phase_time <= bus.data_out;
-//            QE_config[0] = 1'b0;   // clear enable signal
          end else 
             if (bus.reg_address == (`QE_COUNTS_PER_REV + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
                QE_counts_per_rev <= bus.data_out;
-//               QE_config[0] = 1'b0;   // clear enable signal
             end else
                if (bus.reg_address == (`QE_CONFIG + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
                   QE_config <= bus.data_out;
@@ -87,6 +85,11 @@ always_ff @(posedge clk or negedge reset) begin
          end
    end
 end
+
+logic  QE_source, QE_sim_enable;
+
+assign QE_source     = QE_config[`QE_SOURCE];
+assign QE_sim_enable = QE_config[`QE_SIM_ENABLE];
 
 //
 // put data onto bus
@@ -147,9 +150,10 @@ assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 logic inc_counters, clear_phase_counter, clear_pulse_counter, load_phase_timer , decrement_phase_timer;
 logic  phase_cnt_4, index_cnt, timer_cnt_0;
 	
-quad_enc_generator_FSM  quad_enc_generator_FSM_sys( 
+QE_generator_FSM  QE_generator_FSM_sys( 
 			.clk(clk),
 			.reset(reset),
+			.QE_sim_enable(QE_sim_enable),
 			.phase_cnt_4(phase_cnt_4), 
 			.index_cnt(index_cnt), 
 			.timer_cnt_0(timer_cnt_0),
@@ -161,7 +165,7 @@ quad_enc_generator_FSM  quad_enc_generator_FSM_sys(
       );
 //
 
-logic int_QE_A, int_QE_B, int_QE_I, QE_source;
+logic int_QE_A, int_QE_B, int_QE_I;
 logic ext_QE_A, ext_QE_B, ext_QE_I;
 
 logic [2:0] QE_sim_phase_counter;
@@ -259,7 +263,6 @@ begin
 	end	
 end
 
-assign QE_source = QE_config[`QE_SOURCE];
 
 always_comb
 begin
