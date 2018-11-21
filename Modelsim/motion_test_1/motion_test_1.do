@@ -61,8 +61,10 @@ switch $TEST {
 		add wave -label QE_dec_phase_timer -position end  sim:/motion_test_1_tb/uut/QE_ch0/decrement_phase_timer
 		add wave -label QE_sim_phase_timer -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_timer
 		add wave -label QE_sim_pulse_cnt -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_pulse_counter
-		add wave -label speed -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/speed
-		add wave -label QE_speed_measure -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_speed_buffer
+		add wave -label speed -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_speed
+		add wave -label QE_speed_measure -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_speed_buffer
+		add wave -label QE_pulse_count -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_count_buffer
+		add wave -label QE_rev_count -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_turns_buffer
 		add wave -label QE_A -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_A
 		add wave -label QE_B -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_B
 		add wave -label QE_I -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_I

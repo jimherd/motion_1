@@ -30,11 +30,11 @@ uint32_t  QE_status;
 
 // internal registers
 //   
-uint32_t  turns, count, speed;
+uint32_t  QE_speed;
 
 // local signals
 //
-logic direction, pulse, index;
+logic QE_direction, QE_pulse, index;
 logic QE_A, QE_B, QE_I;
 
 logic [31:0] data_in_reg;
@@ -323,14 +323,14 @@ quadrature_decoder QE(
 		.quadA_in(QE_A), 
 		.quadB_in(QE_B), 
 		.quadI_in(QE_I),
-		.count_pulse(pulse),
-		.direction(direction), 
+		.count_pulse(QE_pulse),
+		.direction(QE_direction), 
 		.index(index)
 		);
 		
 /////////////////////////////////////////////////
 //
-// encoder pulse counter (360 counts per revolution)
+// encoder pulse counter 
 //
 // Notes :
 //   1. If motor has stopped during a quad_A pulses then it could be 
@@ -360,20 +360,20 @@ QE_speed_measure_FSM  QE_speed_measure_FSM_sys(
 always_ff @(posedge clk or negedge reset)
 begin
    if (!reset) begin
-      speed 			<= 0;
+      QE_speed 			<= 0;
 		QE_speed_buffer	<= 0;
    end  else begin
 		if (increment_speed_counter == 1'b1) begin
-			speed <= speed + 1;
+			QE_speed <= QE_speed + 1;
 		end else begin
 			if (load_speed_buffer == 1'b1) begin
-				QE_speed_buffer <= speed;
+				QE_speed_buffer <= QE_speed;
 			end else begin
 				if (clear_speed_counter == 1'b1) begin
-					speed <= 0;
+					QE_speed <= 0;
 				end else begin
 					if (clear_all == 1'b1) begin
-						speed					<= 0;
+						QE_speed				<= 0;
 						QE_speed_buffer	<= 0;
 					end
 				end
@@ -382,17 +382,17 @@ begin
 	end
 end
 
-assign max_count = (speed > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
+assign max_count = (QE_speed > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
 	
-always_ff @(posedge pulse or negedge reset)
+always_ff @(posedge QE_pulse or negedge reset)
 begin
    if (!reset) begin
-      count <= 0;
+      QE_count_buffer <= 0;
    end  else begin
-      if (direction)
-         count<=count + 1; 
+      if (QE_direction)
+         QE_count_buffer<=QE_count_buffer + 1; 
       else
-         count<=count - 1;
+         QE_count_buffer<=QE_count_buffer - 1;
    end
 end
 
@@ -403,12 +403,12 @@ end
 always_ff @(posedge index or negedge reset)   
 begin   
    if (!reset) begin
-      turns <= 0;
+      QE_turns_buffer <= 0;
    end else begin
-      if(direction)
-         turns<=turns + 1; 
+      if(QE_direction)
+         QE_turns_buffer <= QE_turns_buffer + 1; 
       else
-         turns<=turns - 1;
+         QE_turns_buffer <= QE_turns_buffer - 1;
    end
 end
 

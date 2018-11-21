@@ -22,7 +22,7 @@
    // number of subsystems 
    //
 	`define NOS_PWM_CHANNELS      	2
-	`define NOS_QE_CHANNELS  			1
+	`define NOS_QE_CHANNELS  			2
    `define NOS_SERVO_CHANNELS    	8
 	
 	`define BASE_REGISTER_ADDRESS   	1

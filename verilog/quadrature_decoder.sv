@@ -3,6 +3,8 @@
 // Generates a single pulse for each edge of A and B signals.
 // Gives 360 pulses for AS5134 encoder
 //
+// No need to synchronise as this is done on input
+//
 `include  "global_constants.sv"
 
 module quadrature_decoder(
@@ -10,8 +12,8 @@ module quadrature_decoder(
                      output logic count_pulse, direction, index
                         );
 
-logic [2:0] quadA_delayed, quadB_delayed;
-logic [1:0] index_sync;
+logic  quadA_delayed, quadB_delayed, index_sync;
+
 
 logic  count_enable, count_direction;
 
@@ -20,21 +22,16 @@ logic  count_enable, count_direction;
       if (!reset) begin
          quadA_delayed <= 0;
          quadB_delayed <= 0;
-      index_sync <= 0;
+			index_sync    <= 0;
       end else begin
-         quadA_delayed <= {quadA_delayed[1:0], quadA_in};
-         quadB_delayed <= {quadB_delayed[1:0], quadB_in};
-         index_sync[0] <= quadI_in;
-         index_sync[1] <= index_sync[0];
+         quadA_delayed <=  quadA_in;
+         quadB_delayed <=  quadB_in;
+         index_sync    <=  quadI_in;
       end
    end
 
-assign index         = index_sync[1];
-
-assign count_enable = quadA_delayed[1] ^ quadA_delayed[2] ^ quadB_delayed[1] ^ quadB_delayed[2];
-assign count_direction = quadA_delayed[1] ^ quadB_delayed[2];
-
-assign count_pulse = count_enable;
-assign direction   = count_direction;
+assign index         = index_sync;
+assign count_pulse   = quadA_in ^ quadA_delayed ^ quadB_in ^ quadB_delayed;
+assign direction     = quadA_in ^ quadB_delayed;
 
 endmodule
