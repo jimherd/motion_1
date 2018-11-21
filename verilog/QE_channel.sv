@@ -86,11 +86,12 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
-logic  QE_source, QE_sim_enable, QE_sim_direction;
+logic  QE_source, QE_sim_enable, QE_sim_direction, QE_flip_AB;
 
 assign QE_source        = QE_config[`QE_SOURCE];
 assign QE_sim_enable    = QE_config[`QE_SIM_ENABLE];
 assign QE_sim_direction = QE_config[`QE_SIM_DIRECTION];
+assign QE_flip_AB       = QE_config[`QE_FLIP_AB];
 
 //
 // put data onto bus
@@ -265,22 +266,27 @@ begin
 	end	
 end
 
+logic  QE_A_tmp, QE_B_tmp, QE_I_tmp;
 
 always_comb
 begin
-	QE_A = 1'b0;
-	QE_B = 1'b0;
-	QE_I = 1'b0;
+	QE_A_tmp = 1'b0;
+	QE_B_tmp = 1'b0;
+	QE_I     = 1'b0;
 	if (QE_source == QE_INTERNAL) begin
-		QE_A = int_QE_A;
-		QE_B = int_QE_B;
+		QE_A_tmp = int_QE_A;
+		QE_B_tmp = int_QE_B;
 		QE_I = int_QE_I;
 	end else begin
-		QE_A = ext_QE_A;
-		QE_B = ext_QE_B;
+		QE_A_tmp = ext_QE_A;
+		QE_B_tmp = ext_QE_B;
 		QE_I = ext_QE_I;	
 	end
 end
+
+assign QE_A = (QE_flip_AB == NO) ? QE_A_tmp : QE_B_tmp;
+assign QE_B = (QE_flip_AB == NO) ? QE_B_tmp : QE_A_tmp;
+
 
 /////////////////////////////////////////////////
 //
@@ -311,7 +317,7 @@ synchronizer sync_QE_I(
 //
 // decode quadrature signals
 
-quadrature_enc QE(
+quadrature_decoder QE(
 		.clk(clk), 
 		.reset(reset), 
 		.quadA_in(QE_A), 

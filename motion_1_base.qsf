@@ -146,6 +146,7 @@ set_location_assignment PIN_114 -to test_pt3
 set_location_assignment PIN_123 -to test_pt4
 set_location_assignment PIN_58 -to H_bridge_1[0]
 set_location_assignment PIN_60 -to H_bridge_2[0]
+set_global_assignment -name SYSTEMVERILOG_FILE verilog/quadrature_decoder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/QE_generator_FSM.sv
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/synchronizer.sv
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/uP_interface_FSM.sv
@@ -154,7 +155,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE verilog/interfaces.sv
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/pwm_FSM.sv
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/bus_FSM.sv
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/motion_system.sv
-set_global_assignment -name SYSTEMVERILOG_FILE verilog/quadrature_enc.sv
 set_global_assignment -name SDC_FILE motion_1.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/global_constants.sv
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/pwm_channel.sv

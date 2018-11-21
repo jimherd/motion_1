@@ -141,10 +141,12 @@
 //
 	`define  QE_SOURCE		       1		// 1 bit : external or internal signals
 	`define  QE_SIM_ENABLE         2    // 1 bit : enable quadrature encoder simulatorsimulator
-	`define  QE_SIM_DIRECTION      3    // 1 bit : flip CW and CCW
+	`define  QE_SIM_DIRECTION      3    // 1 bit : flip simulated A/B signals
+	`define  QE_FLIP_AB            4    // 1 bit : flip AB signals to quadrature decoder
 	
 	enum bit {QE_INTERNAL, QE_EXTERNAL} QE_encoder_source;
 	enum bit {QE_CW, QE_CCW} rotational_direction;
+	enum bit {NO, YES} condition;
 	
 	`define MAX_SPEED_COUNT 2000000
 
