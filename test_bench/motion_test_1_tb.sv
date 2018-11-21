@@ -168,7 +168,7 @@ initial begin
           $display("PWM period = %d", data);
         end
     QE_TEST_0 : begin    // simple Quadrature Encoder test
-          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_COUNTS_PER_REV), 360, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_COUNTS_PER_REV), 8, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_SIM_PHASE_TIME), 10, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_CONFIG), 4, data, status);
         end

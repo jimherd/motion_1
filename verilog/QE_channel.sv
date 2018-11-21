@@ -86,10 +86,11 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
-logic  QE_source, QE_sim_enable;
+logic  QE_source, QE_sim_enable, QE_sim_direction;
 
-assign QE_source     = QE_config[`QE_SOURCE];
-assign QE_sim_enable = QE_config[`QE_SIM_ENABLE];
+assign QE_source        = QE_config[`QE_SOURCE];
+assign QE_sim_enable    = QE_config[`QE_SIM_ENABLE];
+assign QE_sim_direction = QE_config[`QE_SIM_DIRECTION];
 
 //
 // put data onto bus
@@ -182,10 +183,11 @@ begin
 		if (inc_counters == 1'b1) begin
 			QE_sim_phase_counter <= QE_sim_phase_counter + 1'b1;
 			QE_sim_pulse_counter <= QE_sim_pulse_counter + 1;
+			int_QE_I <= 0;
 		end else begin
 			if (clear_phase_counter == 1'b1) begin
 				QE_sim_phase_counter <= 0;
-				int_QE_I <= 1;
+				int_QE_I <= 0;
 			end else begin
 				if (clear_pulse_counter == 1'b1) begin
 					QE_sim_pulse_counter <= 0;
@@ -214,7 +216,7 @@ always_comb
 begin
 	int_QE_A = 1'b0;
 	int_QE_B = 1'b0;
-	if (QE_config[2] == QE_CW) begin
+	if (QE_sim_direction == QE_CW) begin
 		case (QE_sim_phase_counter)
 			2'b00 : 	begin
 							int_QE_A = 1'b0;

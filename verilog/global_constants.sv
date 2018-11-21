@@ -139,9 +139,9 @@
 //
 // bit definitions for PWM/H-bridge configuaration register
 //
-	`define  QE_SOURCE		1		// 1 bit : external or internal signals
-	`define  QE_SIM_ENABLE  2     // 1 bit : enable quadrature encoder simulatorsimulator
-	`define  QE_INVERT      3     // 1 bit : flip CW and CCW
+	`define  QE_SOURCE		       1		// 1 bit : external or internal signals
+	`define  QE_SIM_ENABLE         2    // 1 bit : enable quadrature encoder simulatorsimulator
+	`define  QE_SIM_DIRECTION      3    // 1 bit : flip CW and CCW
 	
 	enum bit {QE_INTERNAL, QE_EXTERNAL} QE_encoder_source;
 	enum bit {QE_CW, QE_CCW} rotational_direction;

@@ -13,8 +13,8 @@ module QE_generator_FSM(
                );
 
 enum bit [4:0] {  
-                     S_QE_GEN0, S_QE_GEN1, S_QE_GEN2, S_QE_GEN3, S_QE_GEN4,
-                     S_QE_GEN5, S_QE_GEN6, S_QE_GEN7, S_QE_GEN8
+						S_QE_GEN0, S_QE_GEN1, S_QE_GEN2, S_QE_GEN3, S_QE_GEN4,
+						S_QE_GEN5, S_QE_GEN6, S_QE_GEN7, S_QE_GEN8
                } state, next_state;
 
 
