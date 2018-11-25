@@ -18,24 +18,32 @@
 // ================
 //
 
-   //
-   // number of subsystems 
-   //
+///////////////////////////////////////////////////
+//
+// number of subsystems 
+//
 	`define NOS_PWM_CHANNELS      	2
 	`define NOS_QE_CHANNELS  			2
-   `define NOS_SERVO_CHANNELS    	8
-	
+   `define NOS_RC_SERVO_CHANNELS    8
+
+///////////////////////////////////////////////////
+//
+// Register address map
+//	
 	`define BASE_REGISTER_ADDRESS   	1
+	`define PWM_BASE            	   `BASE_REGISTER_ADDRESS
+	`define NOS_PWM_REGISTERS   	   (`PWM_STATUS + 1)
+	`define QE_BASE            		((`NOS_PWM_REGISTERS * `NOS_PWM_CHANNELS) + `PWM_BASE)
+   `define NOS_QE_REGISTERS   		(`QE_STATUS + 1)
+	`define RC_BASE                  ((`NOS_QE_REGISTERS * `NOS_QE_CHANNELS) + `QE_BASE)
+	`define NOS_RC_REGISTERS         (3 + `NOS_RC_SERVO_CHANNELS)
+	`define RC_ON_TIME_BASE          (`RC_BASE + 3)
+	`define NXT_BASE                 (3 + `NOS_RC_SERVO_CHANNELS) + RC_BASE)
 
 ///////////////////////////////////////////////////
 //
 // PWM subsystem
-//
-	`define NOS_PWM_CHANNELS      2
-	
-   `define PWM_BASE            	`BASE_REGISTER_ADDRESS
-   `define NOS_PWM_REGISTERS   	(`PWM_STATUS + 1)
-//
+//	
 // used in testbench files
 
    `define PWM_0        (`PWM_BASE + (0 * `NOS_PWM_REGISTERS))
@@ -59,9 +67,7 @@
 //
 // Quadrature encoder subsystem
 //
-   `define QE_BASE            ((`NOS_PWM_REGISTERS * `NOS_PWM_CHANNELS) + `PWM_BASE)
-   `define NOS_QE_REGISTERS   (`QE_STATUS + 1)
-   
+
    `define QE_COUNT_BUFFER    	0   
    `define QE_TURN_BUFFER     	1
    `define QE_SPEED_BUFFER 	   2
@@ -72,15 +78,29 @@
 
 //
 // used in testbench files
-//
+
    `define QE_0	(`QE_BASE + (0 * `NOS_QE_CHANNELS))      
    `define QE_1	(`QE_BASE + (1 * `NOS_QE_CHANNELS))
    `define QE_2 	(`QE_BASE + (2 * `NOS_QE_CHANNELS))
    `define QE_3 	(`QE_BASE + (3 * `NOS_QE_CHANNELS))
-   `define QE_4 	(`QE_BASE + (4 * `NOS_QE_CHANNELS))
 
+///////////////////////////////////////////////////
+//
+// RC Servo subsystem
+//
+   `define RC_SERVO_PERIOD    	0   
+   `define RC_SERVO_CONFIG     	1
+	`define RC_SERVO_STATUS     	2
 
-   
+	//
+	// definition of configuration register bits
+	
+	`define RC_SERVO_ENABLE       0		// 1 bit 
+
+///////////////////////////////////////////////////
+//
+// Interface constants
+
    //
    // number of 32-bit values to be read from slave
    //
