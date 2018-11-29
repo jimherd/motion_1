@@ -19,7 +19,7 @@ module motion_system( input  logic  CLOCK_50,
                       output logic  uP_ack, uP_handshake_2,
                       inout  wire [7:0] uP_data,
                       output wire   [`NOS_QE_CHANNELS-1 : 0] pwm_out, H_bridge_1, H_bridge_2,
-							 output wire   [`NOS_RC_SERVO_CHANNELS-1:0] RC_servo,
+							 output wire   [`NOS_RC_SERVO_CHANNELS-1 : 0] RC_servo,
                       output        led1, led2, led3, led4, led5,
                       output        test_pt1, test_pt2, test_pt3, test_pt4
                       );
@@ -132,14 +132,15 @@ assign led2 = !reset;
 													.H_bridge_1(H_bridge_1[1]),
 													.H_bridge_2(H_bridge_2[1])
                                        );
-													
+							
+
+`endif
+
 	RC_servo  RC_servo_sys( 
 					.clk(CLOCK_50), 
 					.reset(reset),
 					.bus(intf.slave),
 					.RC_servo(RC_servo)
 					);
-
-`endif
    
 endmodule

@@ -3,9 +3,9 @@
 #
 set RUN_TIME  25000ns
 
-# options : PWM_TEST_0, PWM_TEST_1, QE_TEST_0
+# options : PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0
 
-set     TEST     QE_TEST_0
+set     TEST     RC_SERVO_TEST_0
 
 project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_1
 #
@@ -69,11 +69,26 @@ switch $TEST {
 		add wave -label QE_B -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_B
 		add wave -label QE_I -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_I
 	}
+	RC_SERVO_TEST_0 {
+		add wave -divider "RC Servo subsystem"
+		add wave -label Servo_0 -position end {sim:/motion_test_1_tb/uut/RC_servo_sys/RC_servo[0]}
+		add wave -label RC_FSM_state -position end  {sim:/motion_test_1_tb/uut/RC_servo_sys/Servos[0]/RC_servo_channel_FSM_sys/state}
+		add wave -label ON_time -radix decimal -position end  {sim:/motion_test_1_tb/uut/RC_servo_sys/RC_on_times[0]}
+		add wave -label ON_count -position end -radix decimal  {sim:/motion_test_1_tb/uut/RC_servo_sys/tmp_RC_on_time_counter[0]}
+		add wave -label period_count -radix decimal -position end  sim:/motion_test_1_tb/uut/RC_servo_sys/tmp_period_counter
+	}
 }
 #
 # run simulation
 #
-run $RUN_TIME
+switch $TEST {
+	RC_SERVO_TEST_0 {
+		run 1ms
+	}
+	default {
+		run $RUN_TIME
+	}
+}
 wave zoom full
 
 

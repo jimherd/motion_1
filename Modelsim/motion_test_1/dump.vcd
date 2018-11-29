@@ -1,5 +1,5 @@
 $date
-	Wed Nov 21 17:21:00 2018
+	Thu Nov 29 20:48:35 2018
 $end
 $version
 	ModelSim Version 10.5b
@@ -36,31 +36,39 @@ $var wire 1 8 H_bridge_1 [1] $end
 $var wire 1 9 H_bridge_1 [0] $end
 $var wire 1 : H_bridge_2 [1] $end
 $var wire 1 ; H_bridge_2 [0] $end
-$var wire 1 < led1 $end
-$var wire 1 = led2 $end
-$var wire 1 > led3 $end
-$var wire 1 ? led4 $end
-$var wire 1 @ led5 $end
-$var wire 1 A test_pt1 $end
-$var wire 1 B test_pt2 $end
-$var wire 1 C test_pt3 $end
-$var wire 1 D test_pt4 $end
-$var reg 1 E uP_start $end
-$var reg 1 F uP_handshake_1 $end
-$var reg 1 G uP_RW $end
-$var reg 1 H uP_reset $end
-$var reg 1 I reset $end
+$var wire 1 < RC_servo [7] $end
+$var wire 1 = RC_servo [6] $end
+$var wire 1 > RC_servo [5] $end
+$var wire 1 ? RC_servo [4] $end
+$var wire 1 @ RC_servo [3] $end
+$var wire 1 A RC_servo [2] $end
+$var wire 1 B RC_servo [1] $end
+$var wire 1 C RC_servo [0] $end
+$var wire 1 D led1 $end
+$var wire 1 E led2 $end
+$var wire 1 F led3 $end
+$var wire 1 G led4 $end
+$var wire 1 H led5 $end
+$var wire 1 I test_pt1 $end
+$var wire 1 J test_pt2 $end
+$var wire 1 K test_pt3 $end
+$var wire 1 L test_pt4 $end
+$var reg 1 M uP_start $end
+$var reg 1 N uP_handshake_1 $end
+$var reg 1 O uP_RW $end
+$var reg 1 P uP_reset $end
+$var reg 1 Q reset $end
 $upscope $end
 $enddefinitions $end
 #0
 $dumpvars
 0,
 0-
-xE
-xF
-xG
-xH
-zI
+xM
+xN
+xO
+xP
+zQ
 z!
 z#
 z"
@@ -86,13 +94,21 @@ x.
 08
 0;
 0:
-x<
+xC
+xB
+xA
+x@
+x?
+x>
 x=
-z>
-z?
-z@
-zA
-zB
-zC
-zD
+x<
+xD
+xE
+zF
+zG
+zH
+zI
+zJ
+zK
+zL
 $end

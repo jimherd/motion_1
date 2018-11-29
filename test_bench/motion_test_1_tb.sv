@@ -7,9 +7,9 @@
 `include "../verilog/global_constants.sv"
 import types::*;
 
-enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0} test_set;
+enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0} test_set;
 
-`define TEST        QE_TEST_0
+`define TEST        RC_SERVO_TEST_0
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -23,6 +23,7 @@ logic  uP_ack, uP_handshake_2;
 logic  [7:0] uP_data_out;
 wire   [7:0] uP_data;
 logic  [`NOS_PWM_CHANNELS-1 : 0] pwm_out, H_bridge_1, H_bridge_2;
+logic  [`NOS_RC_SERVO_CHANNELS-1 : 0] RC_servo;
 logic  led1, led2, led3, led4, led5;
 logic  test_pt1, test_pt2, test_pt3, test_pt4;
 
@@ -133,6 +134,7 @@ motion_system uut(
                   .pwm_out(pwm_out),
                   .H_bridge_1(H_bridge_1),
                   .H_bridge_2(H_bridge_2),
+                  .RC_servo(RC_servo),
                   .led1(led1),
                   .led2(led2),
                   .led3(led3),
@@ -171,6 +173,11 @@ initial begin
           #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_COUNTS_PER_REV), 8, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_SIM_PHASE_TIME), 10, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_CONFIG), 4, data, status);
+        end
+    RC_SERVO_TEST_0 : begin
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + `RC_SERVO_PERIOD), 1000, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + 3), 50, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + `RC_SERVO_CONFIG), 32'h8000000F, data, status);
         end
     default :
         $display("Test select number %d is  unknown", `TEST);

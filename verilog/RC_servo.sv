@@ -12,7 +12,7 @@ import types::*;
 module RC_servo  ( 
 					input  logic clk, reset,
 					IO_bus  bus,
-					output logic [`NOS_RC_SERVO_CHANNELS:0] RC_servo
+					output logic [(`NOS_RC_SERVO_CHANNELS-1):0] RC_servo
 					);
 					
 logic [31:0] data_in_reg;
@@ -28,11 +28,12 @@ uint32_t  RC_on_times[`NOS_RC_SERVO_CHANNELS];
 //
 // internal registers
    
-uint32_t  tmp_RC_on_times[`NOS_RC_SERVO_CHANNELS];
+uint32_t  tmp_RC_on_time_counter[`NOS_RC_SERVO_CHANNELS];
+uint32_t  tmp_period_counter;
 
 // local signals
 //
-
+logic RC_servo_global_enable;
 
 /////////////////////////////////////////////////
 //
@@ -86,7 +87,6 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
-assign RC_servo_enable  = RC_servo_config[`RC_SERVO_ENABLE];
 
 //
 // put data onto bus
@@ -130,12 +130,76 @@ always_comb begin
 		end
 end
 
-
 //
 // define 32-bit value to be written to bus
-//
+
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
+/////////////////////////////////////////////////
+//
+// Code to run individual servo channels
+
+assign RC_servo_global_enable = RC_servo_config[`RC_SERVO_GLOBAL_ENABLE];
+
+logic RC_servo_period_0;
+
+genvar Servo_channel;
+generate
+	for (Servo_channel = 0; Servo_channel < `NOS_RC_SERVO_CHANNELS; Servo_channel = Servo_channel+1) begin : Servos
+	
+		logic ON_time_complete, RC_servo_ON, RC_servo_OFF;
+		logic load_RC_servo_ON_timer;
 		
+		RC_servo_channel_FSM RC_servo_channel_FSM_sys( 
+					.clk(clk),
+					.reset(reset),
+					.RC_enable(RC_servo_config[Servo_channel]),
+					.RC_servo_period_0(RC_servo_period_0),
+					.ON_time_complete(ON_time_complete),
+					.RC_servo_ON(RC_servo_ON),
+					.RC_servo_OFF(RC_servo_OFF),
+					.load_RC_servo_ON_timer(load_RC_servo_ON_timer)
+        );
+		 
+		 assign ON_time_complete = (tmp_RC_on_time_counter[Servo_channel] == 0) ? 1'b1 : 1'b0;	 
+		 
+		 always_ff @(posedge clk or negedge reset) begin
+			if (!reset) begin
+				tmp_RC_on_time_counter[Servo_channel] <= 0;
+				RC_servo[Servo_channel]               <= 0;
+			end  else begin
+				if(load_RC_servo_ON_timer == 1'b1) begin
+					tmp_RC_on_time_counter[Servo_channel] <= RC_on_times[Servo_channel];
+				end else begin
+					if(RC_servo_ON == 1'b1) begin
+						tmp_RC_on_time_counter[Servo_channel] <= tmp_RC_on_time_counter[Servo_channel] - 1;
+						RC_servo[Servo_channel] <= 1;
+					end else begin
+						if (RC_servo_OFF == 1'b1) begin
+							RC_servo[Servo_channel] <= 0;
+						end
+					end
+				end			
+			end
+		end
+		 
+	end // generate for loop
+	
+endgenerate
+
+//
+// update global servo period 20mS counter
+
+ always_ff @(posedge clk) begin
+	if (RC_servo_global_enable == 1'b1) begin
+		if (tmp_period_counter > 0) begin
+			tmp_period_counter <= tmp_period_counter - 1;
+		end else begin
+			tmp_period_counter <= RC_servo_period;
+		end
+	end
+ end	
+
+assign RC_servo_period_0 = (tmp_period_counter == 0) ? 1'b1 : 1'b0;
 
 endmodule

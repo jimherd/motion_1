@@ -91,11 +91,20 @@
    `define RC_SERVO_PERIOD    	0   
    `define RC_SERVO_CONFIG     	1
 	`define RC_SERVO_STATUS     	2
+	`define RC_SERVO_ON_TIME      3
 
 	//
 	// definition of configuration register bits
 	
-	`define RC_SERVO_ENABLE       0		// 1 bit 
+	`define RC_SERVO_CHANNEL_0_ENABLE     0
+	`define RC_SERVO_CHANNEL_1_ENABLE     1
+	//
+	`define RC_SERVO_GLOBAL_ENABLE       31		// 1 bit 
+	
+//
+// used in testbench files
+
+   `define RC_0	(`RC_BASE)      
 
 ///////////////////////////////////////////////////
 //
