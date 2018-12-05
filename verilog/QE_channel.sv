@@ -26,7 +26,7 @@ SOFTWARE.
 // QE_channel_sv : Implement a single encoder channel
 // =============
 // 
-//
+
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 

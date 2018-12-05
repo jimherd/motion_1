@@ -52,7 +52,7 @@ logic [31:0]  pwm_status;
 
 logic [31:0]  T_period_temp;
 logic [31:0]  T_on_temp;
-logic [31:0] data_in_reg;
+logic [31:0]  data_in_reg;
 
 //
 // Local variables
@@ -65,18 +65,14 @@ logic         H_bridge_swap;
 logic         H_bridge_dwell_mode;
 logic  [1:0]  H_bridge_invert_mode;
 
-logic T_period_zero, T_on_zero;
-logic dec_T_on, dec_T_period, reload_times;
-logic pwm_enable;
-logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
-logic pwm;
-logic subsystem_enable;
-
 //
 // initialise relevant subsystems
 //		1. FSM to run peripheral end of internal 32-bit bus
 //		2. PWM state machine
 //    3. H-bridge decode system
+
+logic subsystem_enable;
+logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
 
 bus_FSM   bus_FSM_sys(
    .clk(clk),
@@ -89,7 +85,11 @@ bus_FSM   bus_FSM_sys(
    .write_data_word_to_BUS(write_data_word_to_BUS),
    .write_status_word_to_BUS(write_status_word_to_BUS)
    );
-   
+	
+logic T_period_zero, T_on_zero;
+logic dec_T_on, dec_T_period, reload_times;
+logic pwm_enable; 
+  
 pwm_FSM   pwm_FSM_sys(
    .clk(clk),
    .reset(reset),
@@ -101,6 +101,8 @@ pwm_FSM   pwm_FSM_sys(
    .reload_times(reload_times),
    .pwm(pwm) 
    );
+
+logic pwm;
 	
 H_bridge  H_bridge_sys( 
    .PWM_signal(pwm),

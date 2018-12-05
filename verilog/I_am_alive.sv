@@ -23,8 +23,11 @@ SOFTWARE.
 */
 
 //
-// Generate "I'm alive" LED signal
+// I_am_alive.sv : Generate "I'm alive" LED signal
+// =============
 //
+// Create visible flashing LED
+
 `include  "global_constants.sv"
 
 module I_am_alive(

@@ -26,7 +26,6 @@ SOFTWARE.
 // global_constants.sv : System GLOBAL constants
 // ===================
 //
-//
 
 `ifndef   _global_constants_sv_
 `define   _global_constants_sv_
@@ -181,7 +180,7 @@ SOFTWARE.
 	
 //
 // bit definitions for PWM/H-bridge configuaration register
-//
+
 	`define	PWM_ENABLE			 	 0
 	//
 	`define	H_BRIDGE_INT_ENABLE	16		// 1 bit
@@ -194,7 +193,7 @@ SOFTWARE.
 
 //
 // bit definitions for PWM/H-bridge configuaration register
-//
+
 	`define  QE_SOURCE		       1		// 1 bit : external or internal signals
 	`define  QE_SIM_ENABLE         2    // 1 bit : enable quadrature encoder simulatorsimulator
 	`define  QE_SIM_DIRECTION      3    // 1 bit : flip simulated A/B signals

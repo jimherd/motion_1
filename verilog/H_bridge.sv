@@ -23,19 +23,26 @@ SOFTWARE.
 */
 
 //
-// H-bridge.sv : 
+// H-bridge.sv : Implement various forms of H-bridge logic
+// ===========
 //
-// Implement various forms of H-bridge logic
-//
-//
+// Options to generate different formats of H-bridge control signals.
+// The two formats are
+//		1. PWM + direction
+//		2. IN1 + IN2
+
 `include  "global_constants.sv"
 
-
 module H_bridge ( 
-                  input  logic PWM_signal,
-						input  logic int_enable, ext_enable, pwm_dwell, swap,
-						input  [1:0] mode, invert,
-						input  [2:0] command,
+                  input  logic PWM_signal,	// source of basic PWM signal
+						input  [2:0] command,		// commands - forward, backward, brake, etc
+						input  [1:0] mode, 			// format of H-bridge control signals
+						input  logic int_enable, 	//
+						input  logic ext_enable, 	//
+						input  logic pwm_dwell, 	// set of time of PWM to BRAKE or COAST
+						input  logic swap,			//
+						input  [1:0] invert,			//
+						
 						output logic H_bridge_1, H_bridge_2
 						);
 						
@@ -98,7 +105,7 @@ end
 //
 // Post processing of H-bridge signals to provide INVERT, SWAP and ENABLE
 // features.
-//
+
 always_comb
 begin
 	H_bridge_1 = 0;
