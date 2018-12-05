@@ -24,7 +24,9 @@ SOFTWARE.
 
 //
 // interfaces.sv : Bus interface definitions
+// =============
 //
+
 `ifndef   _interfaces_sv_
 `define   _interfaces_sv_
 

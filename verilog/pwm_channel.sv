@@ -23,24 +23,25 @@ SOFTWARE.
 */
 
 //
-// pwm_channel.sv : 
-//
-// Implement a PWM generation channel
+// pwm_channel.sv : Implement a PWM generation channel
+// ==============
 //
 // Timings are in units of 20nS.
 //
+
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
 module pwm_channel  #(parameter PWM_UNIT = 0)  (
                      input  logic  clk, reset,
-                     IO_bus bus,
-                     output logic  pwm_signal,
-							output logic  H_bridge_1, H_bridge_2
+                     IO_bus bus,							// internal 32-bit bus
+                     output logic  pwm_signal,		// actual PWM signal
+							output logic  H_bridge_1, 		// first H-bridge signal derived from 'pwm_signal'
+							output logic  H_bridge_2		// second H-bridge signal derived from 'pwm_signal'
                      );
 //
 // PWM subsystem registers
-//   
+   
 logic [31:0]  T_period;    // in units of 20nS
 logic [31:0]  T_on;        // in units of 20nS
 logic [31:0]  pwm_config; 
@@ -48,9 +49,13 @@ logic [31:0]  pwm_status;
 
 //
 // Local registers
-//
+
 logic [31:0]  T_period_temp;
 logic [31:0]  T_on_temp;
+logic [31:0] data_in_reg;
+
+//
+// Local variables
 
 logic         H_bridge_int_enable;
 logic         H_bridge_ext_enable;
@@ -67,8 +72,11 @@ logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_
 logic pwm;
 logic subsystem_enable;
 
-logic [31:0] data_in_reg;
-
+//
+// initialise relevant subsystems
+//		1. FSM to run peripheral end of internal 32-bit bus
+//		2. PWM state machine
+//    3. H-bridge decode system
 
 bus_FSM   bus_FSM_sys(
    .clk(clk),
@@ -109,7 +117,7 @@ H_bridge  H_bridge_sys(
    
 //
 // Data subsystem to calculate pulse edges
-//
+
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       T_on_temp = 0;
@@ -138,16 +146,19 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end 
 
+//
+// check for counters reaching zero
+
 assign T_period_zero =  (T_period_temp == 0) ? 1'b1 : 1'b0;
 assign T_on_zero     =  (T_on_temp == 0)     ? 1'b1 : 1'b0;
 
 //
-// data subsystem to talk to bus interface
+// data subsystem to talk to 32-bit internal bus interface
 //
 // get data from bus. If read command then ignore data word.
 // Clear PWM_enable signal if period or on timings are changed otherwise
 // system can get into an infinite loop.
-//
+
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       T_period   <= 0;
@@ -170,6 +181,9 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
+//
+// decode configuration register bits
+
 assign  pwm_enable           = pwm_config[`PWM_ENABLE];
 
 assign  H_bridge_int_enable  = pwm_config[`H_BRIDGE_INT_ENABLE];
@@ -182,7 +196,7 @@ assign  H_bridge_invert_mode = pwm_config[(`H_BRIDGE_INVERT_PINS + 1) : `H_BRIDG
 
 //
 // put data onto bus
-//
+
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       data_in_reg <= 'z;
@@ -207,13 +221,13 @@ assign pwm_signal = pwm;   // set pwm signal value
 
 //
 // create status word
-//
+
 assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
 
 
 //
 // assess if registers numbers refer to this subsystem
-//
+
 always_comb begin
       subsystem_enable = 0;
       case (bus.reg_address)  
@@ -227,9 +241,8 @@ end
 
 //
 // define 32-bit value to be written to bus
-//
+
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
-//assign motion_system.test_pt1 = subsystem_enable;
 
 endmodule

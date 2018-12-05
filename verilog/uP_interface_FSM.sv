@@ -23,25 +23,57 @@ SOFTWARE.
 */
 
 //
-// uP_interface_FSM.sv : 
+// uP_interface_FSM.sv : State machine to run 32-bit interface
+// ===================
 //
-// State machine to run 32-bit interface. Moore machine
+// Type : Standard three section Moore Finite State Machine structure
+//
+// Documentation :
+//		State machine diagram in system notes folder.
+//
+// Notes
+//		State machine to control data transfer over the internal 32-bit data bus.
+//    Bus consists of four parts
+//			1. 32-bit bus from uP interface to peripheral subsystems
+//			2. 32-bit bus from peripheral subsystems to uP interface
+//			3. 8-bit register address bus from uP interface to peripheraal subsystems
+//			4. set of handshake signals 
+//
+//		The state machine is split into 6 sections as follows
+//			1. read bytes from uP
+//			2. send data onto internal 32-bit bus
+//			3  read TWO 32-bit values from addresses subsystem
+//			4. send data to uP
+//			5. complete transaction
+//			6. handle soft reset signal
 //
 `include  "global_constants.sv"
 
 module uP_interface_FSM(
             input  logic  clk, reset, 
-            output logic  bus_handshake_1,
-            input  logic  bus_handshake_2,
-            input  logic  uP_handshake_1, uP_start, uP_soft_reset, counter_zero,
-            output logic  uP_handshake_2, uP_ack,
-            output logic  read_uP_byte, write_uP_byte, read_bus_word, clear_uP_packet,             
-            output logic  set_in_uP_byte_count, set_out_uP_byte_count,
-            output logic  set_in_bus_word_count
+				input  logic  uP_soft_reset, 				// allow uP to initiate FPGA reset
+				
+				input  logic  uP_start, 					// signal from uP to initiate start of transaction
+				output logic  uP_ack,						//
+
+            output logic  bus_handshake_1,			// first handshake line for internal 32-bit bus
+            input  logic  bus_handshake_2,			// second handshake line for internal 32-bit bus
+            input  logic  uP_handshake_1, 			// first handshake line for external 8-bit bus to uP
+				output logic  uP_handshake_2, 			// second handshake line for external 8-bit bus to uP
+
+            output logic  read_uP_byte, 				// read byte from uP
+				output logic  write_uP_byte, 				//	write byte to uP
+				
+				output logic  read_bus_word, 				// read word from internal 32-bit bus
+				output logic  clear_uP_packet,  			//           
+            output logic  set_in_uP_byte_count, 	//
+				output logic  set_out_uP_byte_count,	//
+            output logic  set_in_bus_word_count,	//
+				input  logic  counter_zero					// ==1 when byte counter is zero
             );
 //
-// set of FSM states
-//
+// set of FSM states (refer to state diagram for different sections)
+
 enum bit [6:0] {   // section #1
                      S_M0, 
                      S_RuP0, S_RuP1, S_RuP2, S_RuP3, S_RuP4, S_RuP5,
@@ -55,7 +87,9 @@ enum bit [6:0] {   // section #1
                      S_M1, S_M2,
                      S_M3, S_M4, S_M5 
                } state, next_state;
-   
+
+//
+// register next state		
 
 always_ff @(posedge clk or negedge reset) begin
       if (!reset)
@@ -63,7 +97,10 @@ always_ff @(posedge clk or negedge reset) begin
       else
          state <= next_state;
 end
-      
+
+//
+// next state logic
+    
 always_comb begin: set_next_state
    next_state = state;   // default condition is next state is present state
    unique case (state)
@@ -145,7 +182,7 @@ end: set_next_state
 
 //
 // Moore outputs
-//
+
 assign set_in_uP_byte_count  =  (state == S_RuP0);
 assign read_uP_byte          =  (state == S_RuP2);
 assign uP_handshake_2        = ((state == S_RuP3) || (state == S_RuP4) || (state == S_WuP2) ||

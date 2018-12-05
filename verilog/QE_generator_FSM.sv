@@ -23,24 +23,43 @@ SOFTWARE.
 */
 
 //
-// quad_enc_generator_FSM.sv : 
+// quad_enc_generator_FSM.sv : State machine to generate simulated quadrature signals
+// =========================
 //
-// State machine to run 32-bit interface. Moore machine
+// Type : Standard three section Moore Finite State Machine structure
 //
+// Documentation :
+//		State machine diagram in system notes folder.
+//
+// Notes
+//		State machine to control generation of standard A/B/I quadrature signals for
+//  	test purposes.  The A/B signals are a two bit grey code with 4 phases. 
+//		
+
 `include  "global_constants.sv"
 
 module QE_generator_FSM( 
-               input  logic  clk, reset, 
-               input  logic  QE_sim_enable, phase_cnt_4, index_cnt, timer_cnt_0,
-               output logic  inc_counters, clear_phase_counter, clear_pulse_counter, 
-               output logic  load_phase_timer, decrement_phase_timer
+               input  logic  clk, reset,
+               input  logic  QE_sim_enable, 				// 1 = enable quadrature encoder simulator
+					input  logic  phase_cnt_4, 				// 1 = grey code of A/B inputs complete
+					input  logic  index_cnt, 					//
+					input  logic  timer_cnt_0,					//
+               output logic  inc_counters, 				// increment ON and period timers
+					output logic  clear_phase_counter, 		// clear 2 bit A/B phase counter
+					output logic  clear_pulse_counter, 		//
+               output logic  load_phase_timer, 			//
+					output logic  decrement_phase_timer		//
                );
+//
+// set of states
 
 enum bit [4:0] {  
 						S_QE_GEN0, S_QE_GEN1, S_QE_GEN2, S_QE_GEN3, S_QE_GEN4,
 						S_QE_GEN5, S_QE_GEN6, S_QE_GEN7, S_QE_GEN8
                } state, next_state;
 
+//
+// register next state
 
 always_ff @(posedge clk or negedge reset)
       if (!reset)   begin
@@ -48,7 +67,10 @@ always_ff @(posedge clk or negedge reset)
       end
       else
          state <= next_state;
-      
+ 
+//
+// next state logic
+ 
 always_comb begin: set_next_state
    next_state = state;   // default condition is next state is present state
    unique case (state)
@@ -75,7 +97,6 @@ end: set_next_state
 
 //
 // Moore outputs
-//
 
 assign inc_counters				= (state == S_QE_GEN1);
 assign clear_phase_counter		= (state == S_QE_GEN3); 

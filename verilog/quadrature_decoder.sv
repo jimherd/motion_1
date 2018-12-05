@@ -23,24 +23,38 @@ SOFTWARE.
 */
 
 //
-// 4x decoder : 4 pulses per A/B cycle => 360 pulses/rev.
+// quadrature_decoder.sv : decode encoder signals
+// =====================
+//
+// 4x decoder : 4 pulses per A/B cycle.
 // Generates a single pulse for each edge of A and B signals.
-// Gives 360 pulses for AS5134 encoder
 //
 // No need to synchronise as this is done on input
 //
+// Notes
+//		The output 'index' is used as a 'clock' edge in later logic.  This will show up
+//    as a warning in Quartus.  
+
 `include  "global_constants.sv"
 
 module quadrature_decoder(
-                     input  logic clk, reset, quadA_in, quadB_in, quadI_in,
-                     output logic count_pulse, direction, index
-                        );
+                     input  logic clk, reset,
+							input  logic quadA_in, 		// Synchronised quadrature input A
+							input  logic quadB_in,		// Synchronised quadrature input B
+							input  logic quadI_in,		// Synchronised quadrature input I
+                     output logic count_pulse, 	// decoded pulse (X4 decoder)
+							output logic direction, 	// decoded direction signal
+							output logic index			// index pulse (used as clock in logic)
+               );
+
+//
+// local variables
 
 logic  quadA_delayed, quadB_delayed, index_sync;
-
-
 logic  count_enable, count_direction;
 
+//
+// get raw encoder signals
 
    always_ff @(posedge clk or negedge reset) begin 
       if (!reset) begin
@@ -53,6 +67,9 @@ logic  count_enable, count_direction;
          index_sync    <=  quadI_in;
       end
    end
+
+//
+// generate decoded signals
 
 assign index         = index_sync;
 assign count_pulse   = quadA_in ^ quadA_delayed ^ quadB_in ^ quadB_delayed;

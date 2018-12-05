@@ -1,23 +1,48 @@
+/*
+MIT License
+
+Copyright (c) 2018 James Herd
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 //
-// QE_channel_sv : 
-//
-// Implement a single encoder channel
+// QE_channel_sv : Implement a single encoder channel
+// =============
+// 
 //
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
 import types::*;
 
-
 module QE_channel #(QE_UNIT = 0) ( 
 									input  logic clk, reset,
-									IO_bus  bus,
-									input  logic async_ext_QE_A, async_ext_QE_B, async_ext_QE_I
+									IO_bus  bus,						// internal 32-bit bus
+									input  logic async_ext_QE_A, 	// external encoder A input
+									input  logic async_ext_QE_B, 	// external encoder B input
+									input  logic async_ext_QE_I	// external encoder I input
 									);
 
 //
 // subsystem registers accessible to external system
-//   
+   
 uint32_t  QE_count_buffer;
 uint32_t  QE_turns_buffer;
 uint32_t  QE_speed_buffer;
@@ -25,15 +50,15 @@ uint32_t  QE_sim_phase_time;
 uint32_t  QE_counts_per_rev;
 uint32_t  QE_config;
 uint32_t  QE_status;
+
 //
-
-
 // internal registers
-//   
+   
 uint32_t  QE_speed;
 
-// local signals
 //
+// local signals
+
 logic QE_direction, QE_pulse, index;
 logic QE_A, QE_B, QE_I;
 
@@ -59,12 +84,7 @@ bus_FSM   bus_FSM_sys(
 		);
 
 //
-// data subsystem to talk to bus interface
-//
-// get data from bus. If read command then ignore data word.
-// Clear PWM_enable signal if period or on timings are changed otherwise
-// system can get into an infinite loop.
-//
+// get register data from internal 32-bit bus
 
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
@@ -86,6 +106,9 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
+//
+// Extract data from configuration register
+
 logic  QE_source, QE_sim_enable, QE_sim_direction, QE_flip_AB;
 
 assign QE_source        = QE_config[`QE_SOURCE];
@@ -94,8 +117,8 @@ assign QE_sim_direction = QE_config[`QE_SIM_DIRECTION];
 assign QE_flip_AB       = QE_config[`QE_FLIP_AB];
 
 //
-// put data onto bus
-//
+// put register data onto internal 32-bit bus
+
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       data_in_reg <= 'z;
@@ -109,7 +132,6 @@ always_ff @(posedge clk or negedge reset) begin
             (`QE_COUNTS_PER_REV 	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_counts_per_rev;
             (`QE_CONFIG  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_config;
             (`QE_STATUS  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_status;				
-				
          endcase
       end else begin
          if(write_status_word_to_BUS == 1'b1) begin
@@ -122,7 +144,6 @@ end
 
 //
 // assess if registers numbers refer to this subsystem
-//
 
 always_comb begin
       subsystem_enable = 0;
@@ -138,10 +159,9 @@ always_comb begin
       endcase
 end
 
-
 //
 // define 32-bit value to be written to bus
-//
+
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
 		
@@ -173,6 +193,12 @@ logic ext_QE_A, ext_QE_B, ext_QE_I;
 logic [2:0] QE_sim_phase_counter;
 uint32_t    QE_sim_pulse_counter;
 uint32_t    QE_sim_phase_timer;
+
+//
+// collect status data into status rgister
+
+assign QE_status = {QE_I, QE_B, QE_A ,ext_QE_I, ext_QE_B, ext_QE_A};
+
 
 always_ff @(posedge clk or negedge reset)
 begin

@@ -23,10 +23,8 @@ SOFTWARE.
 */
 
 //
-// uP_interface.sv : 
-//
-// Implement an 8-bit interface to control microcontroller to the internal
-// 32-bit bus to slave subsystems.
+// uP_interface.sv : manage 32-bit bus to 8-bit bus conversions
+// ===============
 //
 // All the hardwork is done in the state machine.
 //
@@ -36,11 +34,14 @@ SOFTWARE.
 import types::*;
 
 module uP_interface(
-                     input  logic   clk, reset,
-                     IO_bus.master  bus,
-                     input  logic   uP_start, uP_handshake_1, uP_RW,
-                     output logic   uP_ack, uP_handshake_2,
-                     inout  [7:0]  uP_data
+                     input  logic  clk, reset,
+                     IO_bus.master bus,				// internal 32-bit peripheral bus
+                     input  logic  uP_start, 		// ==1 to start transaction with uP
+							input  logic  uP_handshake_1,	// first handshake to uP
+							input  logic  uP_RW,				// read/write signal from uP
+                     output logic  uP_ack, 			// transaction acknowledge signal to uP
+							output logic  uP_handshake_2,	// second handshake to uP
+                     inout  [7:0]  uP_data			// 8-bit bidirectional bus to uP
                    );
                    
 

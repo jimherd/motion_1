@@ -23,10 +23,14 @@ SOFTWARE.
 */
 
 //
-// bus_FSM.sv : 
+// bus_FSM.sv : State machine to run 32-bit interface in a peripheral subsystem
 //
-// State machine to run 32-bit interface. Moore machine
+// Type : Standard three section Moore Finite State Machine structure
 //
+// Documentation :
+//		State machine diagram in system notes folder.
+//
+
 `include  "global_constants.sv"
 
 module bus_FSM( 
@@ -35,6 +39,9 @@ module bus_FSM(
                output wire   handshake_2,
                output logic  read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS
                );
+
+//
+// set of states
 
 enum bit [4:0] {
                   // section #1   
@@ -45,7 +52,8 @@ enum bit [4:0] {
                      S_WWS0, S_WWS1, S_WWS2, S_WWS3, S_WWS4, S_WWS5 
                } state, next_state;
    
-logic handshake_2_reg; 
+//
+// register next state
 
 always_ff @(posedge clk or negedge reset)
       if (!reset)   begin
@@ -53,7 +61,10 @@ always_ff @(posedge clk or negedge reset)
       end
       else
          state <= next_state;
-      
+
+//
+// next state logic
+			
 always_comb begin: set_next_state
    next_state = state;   // default condition is next state is present state
    unique case (state)
@@ -107,10 +118,12 @@ end: set_next_state
 
 //
 // Moore outputs
-//
+
 assign read_word_from_BUS       =  (state == S_RW2);
 assign write_data_word_to_BUS   =  (state == S_WWD0) || (state == S_WWD1) || (state == S_WWD2);
 assign write_status_word_to_BUS =  (state == S_WWS0) || (state == S_WWS1) || (state == S_WWS2);
+
+logic handshake_2_reg; 
 
 always_comb
 begin

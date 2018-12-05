@@ -23,8 +23,11 @@ SOFTWARE.
 */
 
 //
-// global_constants_sv : System GLOBAL constants
+// global_constants.sv : System GLOBAL constants
+// ===================
 //
+//
+
 `ifndef   _global_constants_sv_
 `define   _global_constants_sv_
 

@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+//
+// types.sv : create some useful data types.
+// ========
+//
+
 package types;
 
    typedef logic [31:0] register_t;

@@ -23,13 +23,22 @@ SOFTWARE.
 */
 
 // 
-// Two flip-flop synchroniser
+// synchronizer.sv : Two flip-flop synchroniser
+// ===============
 //
 module synchronizer (
-    output logic sync_out,
-    input  logic async_in, clk, reset);
-    
+	 input  logic clk, reset,
+    input  logic async_in, 	// asynchronous input
+	 output logic sync_out		// synchronous output
+);
+  
+//
+// local variable
+  
 logic q1; // 1st stage ff output
+
+//
+// sync logic
 
 always_ff @(posedge clk or negedge reset)
     if (!reset) 

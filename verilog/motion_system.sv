@@ -23,8 +23,8 @@ SOFTWARE.
 */
 
 //
-// Top level system file
-//
+// motion_system.sv : Top level system file
+// ================
 //
 // Notes
 //    * Connection to uP changed to shared 8-bit bus
@@ -37,29 +37,56 @@ import types::*;
 //
 // System structure
 //
-module motion_system( input  logic  CLOCK_50,
-                      input  logic  [`NOS_PWM_CHANNELS-1 : 0] quadrature_A, quadrature_B, quadrature_I,
-                      input  logic  async_uP_start, async_uP_handshake_1, async_uP_RW, async_uP_reset, 
-                      output logic  uP_ack, uP_handshake_2,
-                      inout  wire [7:0] uP_data,
-                      output wire   [`NOS_QE_CHANNELS-1 : 0] pwm_out, H_bridge_1, H_bridge_2,
+module motion_system( input  logic      CLOCK_50,
+							 input  logic      async_uP_reset, 				// async reset from uP
+
+                      input  logic      async_uP_start, 				// start command transaction
+							 input  logic      async_uP_RW, 					// read or write command
+							 input  logic      async_uP_handshake_1, 		// first handshake
+                      output logic      uP_ack, uP_handshake_2, 	// second handshake							 
+                      inout  wire [7:0] uP_data,						// 8-bit bidirectional data bus to uP
+					//
+					// system hardware signals
+					
+                      input  logic  [`NOS_QE_CHANNELS-1 : 0]  quadrature_A, quadrature_B, quadrature_I,
+                      output wire   [`NOS_PWM_CHANNELS-1 : 0] pwm_out, H_bridge_1, H_bridge_2,
 							 output wire   [`NOS_RC_SERVO_CHANNELS-1 : 0] RC_servo,
                       output        led1, led2, led3, led4, led5,
                       output        test_pt1, test_pt2, test_pt3, test_pt4
                       );
 
-IO_bus  intf(.clk(CLOCK_50));
+//
+// declare on chip 32-bit bus
+
+IO_bus  intf(
+		.clk(CLOCK_50)
+		);
+		
 logic   uP_start, uP_handshake_1, uP_RW, uP_reset, reset;
 
 assign reset = async_uP_reset;
 assign led2 = !reset;
+assign led3 = !reset;
+assign led4 = !reset;
+assign led5 = !reset;
+
+assign test_pt1 = !reset;
+assign test_pt2 = !reset;
+assign test_pt3 = !reset;
+assign test_pt4 = !reset;
+
+//
+// initiate LED flash activity
 
    I_am_alive flash(
                   .clk(CLOCK_50),
                   .reset(reset),
                   .led(led1)
                   );
-                      
+
+//
+// initiate signal synchtonizers
+						
    synchronizer sync_handshake_1(
                   .clk(CLOCK_50),
                   .reset(reset),
@@ -80,14 +107,10 @@ assign led2 = !reset;
                   .async_in(async_uP_start),
                   .sync_out(uP_start)
                   );
+                   
 
-//   synchronizer sync_uP_reset(
-//                  .clk(CLOCK_50),
-//                  .reset(reset),
-//                  .async_in(async_uP_reset),
-//                  .sync_out(uP_reset)
-//                  );                     
-                  
+//
+// initiate 32-bit internal bus master subsystems
                   
    uP_interface uP_interface_sys(
                                  .clk(CLOCK_50),
@@ -99,7 +122,9 @@ assign led2 = !reset;
                                  .uP_ack(uP_ack), 
                                  .uP_handshake_2(uP_handshake_2),
                                  .uP_data(uP_data)
-                                 );
+										);
+//
+// initiate set of quadrature encoder (QE) subsystems
    
    QE_channel #(.QE_UNIT(0)) QE_ch0 (
                                  .clk(CLOCK_50),
@@ -139,6 +164,9 @@ assign led2 = !reset;
 
 `else
 
+//
+// initiate set of PWM subsystems
+
    pwm_channel #(.PWM_UNIT(0)) pwm_ch0(
                                        .clk(CLOCK_50),
                                        .reset(reset),
@@ -159,6 +187,9 @@ assign led2 = !reset;
 							
 
 `endif
+
+//
+// initiate RC servo subsystem
 
 	RC_servo  RC_servo_sys( 
 					.clk(CLOCK_50), 

@@ -23,21 +23,36 @@ SOFTWARE.
 */
 
 //
-// RC_servo_channel_FSM.sv : 
+// RC_servo_channel_FSM.sv : Manage single RC servo channel
+// =======================
 //
-// Manage single RC servo channel
+// Type : Standard three section Moore Finite State Machine structure
 //
+// Documentation :
+//		State machine diagram in system notes folder.
+//
+
 `include  "global_constants.sv"
 
 module RC_servo_channel_FSM( 
                input  logic  clk, reset, 
-               input  logic  RC_enable, ON_time_complete, RC_servo_period_0, 
-               output logic  RC_servo_ON, RC_servo_OFF, load_RC_servo_ON_timer 
+               input  logic  RC_enable,					// 1 = enable servo channel
+					input  logic  ON_time_complete,			// 1 = pulse ON time is complete
+					input  logic  RC_servo_period_0,			// 1 = specifies start of servo period
+               output logic  RC_servo_ON,					// 1 = pulse set to ON
+					output logic  RC_servo_OFF,				// 1 = pulse set to OFF
+					output logic  load_RC_servo_ON_timer	// 1 = reload pulse details
                );
+
+//
+// set of states
 					
 enum bit [2:0] {  
                      S_RC_CS0, S_RC_CS1, S_RC_CS2, S_RC_CS3, S_RC_CS4
                } state, next_state;
+
+//
+// Register next state 
 
 always_ff @(posedge clk or negedge reset)
       if (!reset)   begin
@@ -46,8 +61,11 @@ always_ff @(posedge clk or negedge reset)
       else
          state <= next_state;
 			
+//
+// Next state logic
+			
 always_comb begin: set_next_state
-   next_state = state;   // default condition is next state is present state
+   next_state = state;
    unique case (state)
       S_RC_CS0 :
          next_state = (RC_enable == 1'b1) ? S_RC_CS1 : S_RC_CS0;  
@@ -61,7 +79,10 @@ always_comb begin: set_next_state
          next_state = S_RC_CS0;  	
    endcase
 end: set_next_state
-					
+
+//
+// Moore outputs
+				
 assign RC_servo_OFF	               = (state == S_RC_CS0) || (state ==  S_RC_CS4);
 assign RC_servo_ON	               = (state == S_RC_CS3);
 assign load_RC_servo_ON_timer       = (state == S_RC_CS2); 
