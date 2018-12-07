@@ -88,7 +88,8 @@ bus_FSM   bus_FSM_sys(
 	
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
-logic pwm_enable; 
+logic pwm_enable;
+logic pwm; 
   
 pwm_FSM   pwm_FSM_sys(
    .clk(clk),
@@ -101,8 +102,6 @@ pwm_FSM   pwm_FSM_sys(
    .reload_times(reload_times),
    .pwm(pwm) 
    );
-
-logic pwm;
 	
 H_bridge  H_bridge_sys( 
    .PWM_signal(pwm),
