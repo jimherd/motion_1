@@ -54,7 +54,7 @@ uint32_t  QE_status;
 //
 // internal registers
    
-uint32_t  QE_speed;
+uint32_t  QE_temp_speed_counter;
 
 //
 // local signals
@@ -369,38 +369,78 @@ quadrature_decoder QE(
 //   2. The diameter of the wheel could be a settable constant.
 //
 
-logic clear_all, increment_speed_counter, load_speed_buffer, clear_speed_counter;
-logic  max_count;
+logic clear_all, inc_temp_speed_counter, dec_sample_count, load_speed_buffer, do_average;
+logic speed_measure_enable, count_overflow, speed_filter_enable, samples_complete;
 
+byte_t sample_counter;
+					
 QE_speed_measure_FSM  QE_speed_measure_FSM_sys( 
                .clk(clk), 
 					.reset(reset), 
-               .QE_A_sig(QE_A), 
-					.max_count(max_count),
-               .clear_all(clear_all), 
-					.increment_speed_counter(increment_speed_counter), 
-					.load_speed_buffer(load_speed_buffer), 
-					.clear_speed_counter(clear_speed_counter)
-               );
+					.speed_measure_enable(speed_measure_enable),
+               .QE_A(QE_A),
+					.count_overflow(count_overflow),
+					.speed_filter_enable(speed_filter_enable),
+					.samples_complete(samples_complete),
+					
+               .clear_all(clear_all),
+					.inc_temp_speed_counter(inc_temp_speed_counter),
+					.dec_sample_count(dec_sample_count),
+					.do_average(do_average),
+					.load_speed_buffer(load_speed_buffer)
+					);
+
+assign enable              = QE_config[`QE_SPEED_MEASURE_ENABLE];					
+assign count_overflow      = (QE_speed_buffer > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
+assign speed_filter_enable = QE_config[`QE_SPEED_FILTER_ENABLE];
+assign samples_complete    = (sample_counter == 0) ? 1'b1 : 1'b0;
+
 					
 always_ff @(posedge clk or negedge reset)
 begin
    if (!reset) begin
-      QE_speed 			<= 0;
+      QE_speed_buffer 	<= 0;
 		QE_speed_buffer	<= 0;
+		sample_counter    <= 0;
    end  else begin
-		if (increment_speed_counter == 1'b1) begin
-			QE_speed <= QE_speed + 1;
-		end else begin
-			if (load_speed_buffer == 1'b1) begin
-				QE_speed_buffer <= QE_speed;
+		if (enable == 1'b1) begin
+			if (inc_temp_speed_counter == 1'b1) begin
+				QE_temp_speed_counter <= QE_temp_speed_counter + 1;
 			end else begin
-				if (clear_speed_counter == 1'b1) begin
-					QE_speed <= 0;
+				if (dec_sample_count == 1'b1) begin
+					sample_counter = sample_counter - 1;
 				end else begin
-					if (clear_all == 1'b1) begin
-						QE_speed				<= 0;
-						QE_speed_buffer	<= 0;
+					if (do_average == 1'b1) begin
+					
+					end else begin
+						if (load_speed_buffer == 1'b1) begin
+							QE_speed_buffer <= QE_temp_speed_counter;
+						end else begin
+							if (clear_all == 1'b1) begin
+								QE_speed_buffer	<= 0;
+								if (speed_filter_enable == 1'b1) begin	   
+									case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
+										0       : sample_counter <=  1;
+										1       : sample_counter <=  2;
+										2       : sample_counter <=  4;
+										3       : sample_counter <=  8;
+										4       : sample_counter <= 16;
+										default : sample_counter <=  1;
+									endcase;
+								end
+							end else begin
+								if (do_average == 1'b1) begin
+									case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
+										0       : QE_temp_speed_counter <= QE_temp_speed_counter;
+										1       : QE_temp_speed_counter <= QE_temp_speed_counter << 1;
+										2       : QE_temp_speed_counter <= QE_temp_speed_counter << 2;
+										3       : QE_temp_speed_counter <= QE_temp_speed_counter << 3;
+										4       : QE_temp_speed_counter <= QE_temp_speed_counter << 4;
+										default : QE_temp_speed_counter <= QE_temp_speed_counter;
+									endcase;
+								end
+							end
+						end
 					end
 				end
 			end
@@ -408,7 +448,6 @@ begin
 	end
 end
 
-assign max_count = (QE_speed > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
 	
 always_ff @(posedge QE_pulse or negedge reset)
 begin
