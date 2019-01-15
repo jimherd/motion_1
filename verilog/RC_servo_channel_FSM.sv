@@ -31,6 +31,19 @@ SOFTWARE.
 // Documentation :
 //		State machine diagram in system notes folder.
 //
+// Notes
+//		State machine driver by two timers - one for the ON time and
+//    one for the period time.  
+//    Typically, the period will be 20mS and there will be one state
+//    machine per servo output.
+//
+// States
+//			S_RC_CS0  : enable hold state
+//			S_RC_CS1  : wait until start of T-period
+//			S_RC_CS2  : load servo ON timer
+//			S_RC_CS3  : wait until end of ON time
+//			S_RC_CS4  : set servo OFF
+//
 
 `include  "global_constants.sv"
 

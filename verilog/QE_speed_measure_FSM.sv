@@ -31,11 +31,10 @@ SOFTWARE.
 //		State machine diagram in system notes folder.
 //
 // Notes
-//			A high speed counter is enable durin the "A" pulse of a quadrature
+//			A high speed counter is enabled during the "A" pulse of a quadrature
 //       encoder.  Therefore the higher the count, the slower the speed.
 //       there is a check on the value getting too large  which implies that
 //       the attached motor has stopped.
-//       The system 
 //
 // States
 //			S_MV0  : enable hold state
@@ -119,11 +118,11 @@ end: set_next_state
 //
 // moore outputs
 					
-assign clear_all						= (state ==  S_MV1);
-assign inc_temp_speed_counter	   = (state ==  S_MV4);
-assign dec_sample_count		 		= (state ==  S_MV7);
-assign do_average						= (state ==  S_MV9);
-assign load_speed_buffer			= (state ==  S_MV10);
+assign clear_all						= (state == S_MV1);
+assign inc_temp_speed_counter	   = (state == S_MV4);
+assign dec_sample_count		 		= (state == S_MV7);
+assign do_average						= (state == S_MV9);
+assign load_speed_buffer			= (state == S_MV10);
 
 endmodule
 

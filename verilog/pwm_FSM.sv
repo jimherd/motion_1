@@ -33,6 +33,9 @@ SOFTWARE.
 //
 // Notes
 //		Consists of two timers. One for the PWM period and one for the PWM ON time.
+//
+// States
+//			S_QE_GEN0  : enable hold state
 
 `include  "global_constants.sv"
 
@@ -50,18 +53,21 @@ module pwm_FSM #(parameter PWM_UNIT = 0) (
 //
 // Set of FSM states
 
-enum bit [1:0] {  IDLE,
+ /* enum bit [1:0] {  IDLE,
                   CONFIG,
                   CHECK_ON_TIME,
                   CHECK_OFF_TIME
-               } state, next_state;
+               } state, next_state;   */
  
+enum bit [2:0] {  
+						S_PWM_GEN0, S_PWM_GEN1, S_PWM_GEN2, S_PWM_GEN3
+               } state, next_state;
 //
 // register next state
 
 always_ff @(posedge clk or negedge reset) begin
       if (!reset)   begin
-         state <= IDLE;
+         state <= S_PWM_GEN0;
       end else           
          state <= next_state;
 end
@@ -71,29 +77,29 @@ end
 
 always_comb begin: set_next_state
    unique case (state)
-      IDLE:
+      S_PWM_GEN0:
          if (pwm_enable == 0)
-            next_state = IDLE;
+            next_state = S_PWM_GEN0;
          else
-            next_state = CONFIG;
-      CONFIG :
-            next_state = CHECK_ON_TIME;
-      CHECK_ON_TIME:
+            next_state = S_PWM_GEN1;
+      S_PWM_GEN1 :
+            next_state = S_PWM_GEN2;
+      S_PWM_GEN2:
          if (pwm_enable == 0)
-            next_state = IDLE;
+            next_state = S_PWM_GEN0;
          else 
             if (T_on_zero)
-               next_state = CHECK_OFF_TIME;
+               next_state = S_PWM_GEN3;
             else
-               next_state = CHECK_ON_TIME; 
-      CHECK_OFF_TIME:
+               next_state = S_PWM_GEN2; 
+      S_PWM_GEN3:
          if (pwm_enable == 0)
-            next_state = IDLE;
+            next_state = S_PWM_GEN0;
          else
             if (T_period_zero)
-               next_state = IDLE; 
+               next_state = S_PWM_GEN0; 
             else
-               next_state = CHECK_OFF_TIME;
+               next_state = S_PWM_GEN3;
       default :
          next_state = state;   // default condition - next state is present state
    endcase
@@ -102,10 +108,10 @@ end: set_next_state
 //
 // set Moore outputs
 
-assign dec_T_on     = (state == CHECK_ON_TIME);
-assign dec_T_period = (state == CHECK_ON_TIME) || (state == CHECK_OFF_TIME);
-assign reload_times = (state == CONFIG);
-assign pwm          = (state == CHECK_ON_TIME);
+assign dec_T_on     = (state == S_PWM_GEN2);
+assign dec_T_period = (state == S_PWM_GEN2) || (state == S_PWM_GEN3);
+assign reload_times = (state == S_PWM_GEN1);
+assign pwm          = (state == S_PWM_GEN2);
 
 endmodule
 

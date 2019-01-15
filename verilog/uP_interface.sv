@@ -27,7 +27,7 @@ SOFTWARE.
 // ===============
 //
 // All the hardwork is done in the state machine.
-//
+
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 

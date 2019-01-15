@@ -47,7 +47,7 @@ SOFTWARE.
 ///////////////////////////////////////////////////
 //
 // number of subsystems 
-//
+
 	`define NOS_PWM_CHANNELS      	2
 	`define NOS_QE_CHANNELS  			2
    `define NOS_RC_SERVO_CHANNELS    8
@@ -55,7 +55,7 @@ SOFTWARE.
 ///////////////////////////////////////////////////
 //
 // Register address map
-//	
+	
 	`define BASE_REGISTER_ADDRESS   	1
 	`define PWM_BASE            	   `BASE_REGISTER_ADDRESS
 	`define NOS_PWM_REGISTERS   	   (`PWM_STATUS + 1)
@@ -92,7 +92,6 @@ SOFTWARE.
 ///////////////////////////////////////////////////
 //
 // Quadrature encoder subsystem
-//
 
    `define QE_COUNT_BUFFER    	0   
    `define QE_TURN_BUFFER     	1
@@ -113,7 +112,7 @@ SOFTWARE.
 ///////////////////////////////////////////////////
 //
 // RC Servo subsystem
-//
+
    `define RC_SERVO_PERIOD    	0   
    `define RC_SERVO_CONFIG     	1
 	`define RC_SERVO_STATUS     	2
@@ -122,9 +121,11 @@ SOFTWARE.
 	//
 	// definition of configuration register bits
 	
-	`define RC_SERVO_CHANNEL_0_ENABLE     0
-	`define RC_SERVO_CHANNEL_1_ENABLE     1
+	`define RC_SERVO_CHANNEL_0_ENABLE     0		// 1 bit 
+	`define RC_SERVO_CHANNEL_1_ENABLE     1		// 1 bit 
+	// repeated for set of channels
 	//
+	
 	`define RC_SERVO_GLOBAL_ENABLE       31		// 1 bit 
 	
 //
@@ -138,17 +139,17 @@ SOFTWARE.
 
    //
    // number of 32-bit values to be read from slave
-   //
+  
    `define NOS_READ_WORDS_FROM_SLAVE     2
    `define NOS_READ_BYTES_FROM_SLAVE     (4 * `NOS_READ_WORDS_FROM_SLAVE)
    //
    // Number of bytes read from and written to uP
-   //
+  
    `define NOS_READ_BYTES     6
    `define NOS_WRITE_BYTES    (`NOS_READ_WORDS_FROM_SLAVE * 4)
    //
    // named bytes in byte packet from uP
-   //
+   
    `define CMD_REG         0
    `define REGISTER_NUMBER 1
    `define UP_STATUS_REG   4
@@ -158,7 +159,7 @@ SOFTWARE.
 
    //
    // bit definitions
-   //
+   
    `define BIT0  0
    `define BIT1  1
    `define BIT2  2
@@ -192,7 +193,7 @@ SOFTWARE.
 	`define	H_BRIDGE_INVERT_PINS	24		// 2 bits
 
 //
-// bit definitions for PWM/H-bridge configuaration register
+// bit definitions for Quadrature encoder configuaration register
 
 	`define  QE_SOURCE		       1		// 1 bit : external or internal signals
 	`define  QE_SIM_ENABLE         2    // 1 bit : enable quadrature encoder simulator

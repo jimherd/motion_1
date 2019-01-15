@@ -302,11 +302,11 @@ begin
 	if (QE_source == QE_INTERNAL) begin
 		QE_A_tmp = int_QE_A;
 		QE_B_tmp = int_QE_B;
-		QE_I = int_QE_I;
+		QE_I     = int_QE_I;
 	end else begin
 		QE_A_tmp = ext_QE_A;
 		QE_B_tmp = ext_QE_B;
-		QE_I = ext_QE_I;	
+		QE_I     = ext_QE_I;	
 	end
 end
 
@@ -390,10 +390,10 @@ QE_speed_measure_FSM  QE_speed_measure_FSM_sys(
 					.load_speed_buffer(load_speed_buffer)
 					);
 
-assign enable              = QE_config[`QE_SPEED_MEASURE_ENABLE];					
-assign count_overflow      = (QE_speed_buffer > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
-assign speed_filter_enable = QE_config[`QE_SPEED_FILTER_ENABLE];
-assign samples_complete    = (sample_counter == 0) ? 1'b1 : 1'b0;
+assign speed_measure_enable = QE_config[`QE_SPEED_MEASURE_ENABLE];					
+assign count_overflow       = (QE_speed_buffer > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
+assign speed_filter_enable  = QE_config[`QE_SPEED_FILTER_ENABLE];
+assign samples_complete     = (sample_counter == 0) ? 1'b1 : 1'b0;
 
 					
 always_ff @(posedge clk or negedge reset)
@@ -403,42 +403,38 @@ begin
 		QE_speed_buffer	<= 0;
 		sample_counter    <= 0;
    end  else begin
-		if (enable == 1'b1) begin
+		if (speed_measure_enable == 1'b1) begin
 			if (inc_temp_speed_counter == 1'b1) begin
 				QE_temp_speed_counter <= QE_temp_speed_counter + 1;
 			end else begin
 				if (dec_sample_count == 1'b1) begin
-					sample_counter = sample_counter - 1;
+					sample_counter = sample_counter - 1'b1;
 				end else begin
-					if (do_average == 1'b1) begin
-					
+					if (load_speed_buffer == 1'b1) begin
+						QE_speed_buffer <= QE_temp_speed_counter;
 					end else begin
-						if (load_speed_buffer == 1'b1) begin
-							QE_speed_buffer <= QE_temp_speed_counter;
+						if (clear_all == 1'b1) begin
+							QE_speed_buffer	<= 0;
+							if (speed_filter_enable == 1'b1) begin	   
+								case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
+									0       : sample_counter <=  1;
+									1       : sample_counter <=  2;
+									2       : sample_counter <=  4;
+									3       : sample_counter <=  8;
+									4       : sample_counter <= 16;
+									default : sample_counter <=  1;
+								endcase;
+							end
 						end else begin
-							if (clear_all == 1'b1) begin
-								QE_speed_buffer	<= 0;
-								if (speed_filter_enable == 1'b1) begin	   
-									case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
-										0       : sample_counter <=  1;
-										1       : sample_counter <=  2;
-										2       : sample_counter <=  4;
-										3       : sample_counter <=  8;
-										4       : sample_counter <= 16;
-										default : sample_counter <=  1;
-									endcase;
-								end
-							end else begin
-								if (do_average == 1'b1) begin
-									case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
-										0       : QE_temp_speed_counter <= QE_temp_speed_counter;
-										1       : QE_temp_speed_counter <= QE_temp_speed_counter << 1;
-										2       : QE_temp_speed_counter <= QE_temp_speed_counter << 2;
-										3       : QE_temp_speed_counter <= QE_temp_speed_counter << 3;
-										4       : QE_temp_speed_counter <= QE_temp_speed_counter << 4;
-										default : QE_temp_speed_counter <= QE_temp_speed_counter;
-									endcase;
-								end
+							if (do_average == 1'b1) begin
+								case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
+									0       : QE_temp_speed_counter <= QE_temp_speed_counter;
+									1       : QE_temp_speed_counter <= QE_temp_speed_counter << 1;
+									2       : QE_temp_speed_counter <= QE_temp_speed_counter << 2;
+									3       : QE_temp_speed_counter <= QE_temp_speed_counter << 3;
+									4       : QE_temp_speed_counter <= QE_temp_speed_counter << 4;
+									default : QE_temp_speed_counter <= QE_temp_speed_counter;
+								endcase;
 							end
 						end
 					end

@@ -84,7 +84,6 @@ bus_FSM   bus_FSM_sys(
 // get data from bus. If read command then ignore data word.
 // Clear PWM_enable signal if period or on timings are changed otherwise
 // system can get into an infinite loop.
-//
 
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
@@ -114,7 +113,7 @@ end
 
 //
 // put data onto bus
-//
+
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       data_in_reg <= 'z;

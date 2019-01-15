@@ -34,7 +34,21 @@ SOFTWARE.
 // Notes
 //		State machine to control generation of standard A/B/I quadrature signals for
 //  	test purposes.  The A/B signals are a two bit grey code with 4 phases. 
-//		
+//    phase counter : counts phase from 0 to 3.
+//    pulse counter : counts edges
+//		phase timer   : used to time period between edges.
+//	
+// States
+//			S_QE_GEN0  : enable hold state
+//			S_QE_GEN1  : increment phase counter and pulse counter
+//			S_QE_GEN2  : test for phase counter > 3
+//			S_QE_GEN3  : clear phase counter
+//			S_QE_GEN4  : test pulse counter
+//			S_QE_GEN5  : clear pulse counter
+//			S_QE_GEN6  : load phase timer
+//			S_QE_GEN7  : decrement phase timer
+//			S_QE_GEN8  : test phase timer
+//	
 
 `include  "global_constants.sv"
 
