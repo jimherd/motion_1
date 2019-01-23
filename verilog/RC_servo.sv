@@ -26,7 +26,7 @@ SOFTWARE.
 // RC_servo_sv : 
 //
 // Implement a set of RC Servo  channels
-//
+
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
@@ -109,7 +109,6 @@ always_ff @(posedge clk or negedge reset) begin
          end
    end
 end
-
 
 //
 // put data onto bus

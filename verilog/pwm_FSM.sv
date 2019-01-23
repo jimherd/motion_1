@@ -35,7 +35,10 @@ SOFTWARE.
 //		Consists of two timers. One for the PWM period and one for the PWM ON time.
 //
 // States
-//			S_QE_GEN0  : enable hold state
+//			S_PWM_GEN0  : enable hold state
+//			S_PWM_GEN1  : 
+//			S_PWM_GEN2  : 
+//			S_PWM_GEN3  : 
 
 `include  "global_constants.sv"
 

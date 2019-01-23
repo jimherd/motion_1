@@ -65,15 +65,15 @@ IO_bus  intf(
 logic   uP_start, uP_handshake_1, uP_RW, uP_reset, reset;
 
 assign reset = async_uP_reset;
-assign led2 = !reset;
-assign led3 = !reset;
-assign led4 = !reset;
-assign led5 = !reset;
+//assign led2 = !reset;
+//assign led3 = !reset;
+//assign led4 = !reset;
+//assign led5 = !reset;
 
-assign test_pt1 = !reset;
-assign test_pt2 = !reset;
-assign test_pt3 = !reset;
-assign test_pt4 = !reset;
+//assign test_pt1 = !reset;
+//assign test_pt2 = !reset;
+//assign test_pt3 = !reset;
+//assign test_pt4 = !reset;
 
 //
 // initiate LED flash activity
@@ -83,6 +83,32 @@ assign test_pt4 = !reset;
                   .reset(reset),
                   .led(led1)
                   );
+
+//
+// System check feature
+						
+	supervisor supervisor_sys(
+                  .clk(CLOCK_50),
+                  .reset(reset),
+					//	
+					//inputs
+					
+						.uP_handshake_1(uP_handshake_1), 
+						.uP_handshake_2(uP_handshake_2),
+						.bus_handshake_1(intf.handshake_1), 
+						.bus_handshake_2(intf.handshake_2),
+					//
+					// outputs
+					
+						.led_2(led2), 
+						.led_3(led3), 
+						.led_4(led4), 
+						.led_5(led5),
+						.test_pt1(test_pt1), 
+						.test_pt2(test_pt2), 
+						.test_pt3(test_pt3), 
+						.test_pt4(test_pt4)
+					);
 
 //
 // initiate signal synchtonizers

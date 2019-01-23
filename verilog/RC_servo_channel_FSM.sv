@@ -32,7 +32,7 @@ SOFTWARE.
 //		State machine diagram in system notes folder.
 //
 // Notes
-//		State machine driver by two timers - one for the ON time and
+//		State machine driver for two timers - one for the ON time and
 //    one for the period time.  
 //    Typically, the period will be 20mS and there will be one state
 //    machine per servo output.
