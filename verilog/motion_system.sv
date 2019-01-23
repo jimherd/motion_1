@@ -169,9 +169,26 @@ assign reset = async_uP_reset;
                                  .async_ext_QE_B(quadrature_B[1]), 
                                  .async_ext_QE_I(quadrature_I[1])
                                  );
+
+	QE_channel #(.QE_UNIT(2)) QE_ch2 (
+                                 .clk(CLOCK_50),
+                                 .reset(reset),
+                                 .bus(intf.slave),
+                                 .async_ext_QE_A(quadrature_A[2]), 
+                                 .async_ext_QE_B(quadrature_B[2]), 
+                                 .async_ext_QE_I(quadrature_I[2])
+                                 );											
+
+   QE_channel #(.QE_UNIT(3)) QE_ch3 (
+                                 .clk(CLOCK_50),
+                                 .reset(reset),
+                                 .bus(intf.slave),
+                                 .async_ext_QE_A(quadrature_A[3]), 
+                                 .async_ext_QE_B(quadrature_B[3]), 
+                                 .async_ext_QE_I(quadrature_I[3])
+                                 );
+
 											
-
-
 `ifdef USE_PWM_GENERATE
 
 	genvar PWM_unit;
@@ -210,7 +227,24 @@ assign reset = async_uP_reset;
 													.H_bridge_1(H_bridge_1[1]),
 													.H_bridge_2(H_bridge_2[1])
                                        );
-							
+
+   pwm_channel #(.PWM_UNIT(2)) pwm_ch2(
+                                       .clk(CLOCK_50), 
+                                       .reset(reset),
+                                       .bus(intf.slave), 
+                                       .pwm_signal(pwm_out[2]),
+													.H_bridge_1(H_bridge_1[2]),
+													.H_bridge_2(H_bridge_2[2])
+													);
+
+   pwm_channel #(.PWM_UNIT(3)) pwm_ch3(
+                                       .clk(CLOCK_50), 
+                                       .reset(reset),
+                                       .bus(intf.slave), 
+                                       .pwm_signal(pwm_out[3]),
+													.H_bridge_1(H_bridge_1[3]),
+													.H_bridge_2(H_bridge_2[3])
+                                       );							
 
 `endif
 
