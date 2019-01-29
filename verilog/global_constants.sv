@@ -35,10 +35,14 @@ SOFTWARE.
 // =============================
 //
 // Uncomment if you want to create PWM subsystems by a "generate" construct.
-// (As of Nov 2018 this feature does not work)
-//
-// `define USE_PWM_GENERATE
 
+ `define USE_PWM_GENERATE
+
+//
+// Uncomment if you want to create QE subsystems by a "generate" construct.
+
+ `define USE_QE_GENERATE
+ 
 //
 // System constants
 // ================

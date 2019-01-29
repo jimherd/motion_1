@@ -1,5 +1,5 @@
 $date
-	Wed Jan 23 15:54:44 2019
+	Thu Jan 24 22:25:15 2019
 $end
 $version
 	ModelSim Version 10.5b
@@ -24,51 +24,83 @@ $var wire 1 , uP_data [3] $end
 $var wire 1 - uP_data [2] $end
 $var wire 1 . uP_data [1] $end
 $var wire 1 / uP_data [0] $end
-$var wire 1 0 quadrature_A [1] $end
-$var wire 1 1 quadrature_A [0] $end
-$var wire 1 2 quadrature_B [1] $end
-$var wire 1 3 quadrature_B [0] $end
-$var wire 1 4 quadrature_I [1] $end
-$var wire 1 5 quadrature_I [0] $end
-$var wire 1 6 pwm_out [1] $end
-$var wire 1 7 pwm_out [0] $end
-$var wire 1 8 H_bridge_1 [1] $end
-$var wire 1 9 H_bridge_1 [0] $end
-$var wire 1 : H_bridge_2 [1] $end
-$var wire 1 ; H_bridge_2 [0] $end
-$var wire 1 < RC_servo [7] $end
-$var wire 1 = RC_servo [6] $end
-$var wire 1 > RC_servo [5] $end
-$var wire 1 ? RC_servo [4] $end
-$var wire 1 @ RC_servo [3] $end
-$var wire 1 A RC_servo [2] $end
-$var wire 1 B RC_servo [1] $end
-$var wire 1 C RC_servo [0] $end
-$var wire 1 D led1 $end
-$var wire 1 E led2 $end
-$var wire 1 F led3 $end
-$var wire 1 G led4 $end
-$var wire 1 H led5 $end
-$var wire 1 I test_pt1 $end
-$var wire 1 J test_pt2 $end
-$var wire 1 K test_pt3 $end
-$var wire 1 L test_pt4 $end
-$var reg 1 M uP_start $end
-$var reg 1 N uP_handshake_1 $end
-$var reg 1 O uP_RW $end
-$var reg 1 P uP_reset $end
-$var reg 1 Q reset $end
+$var wire 1 0 quadrature_A [3] $end
+$var wire 1 1 quadrature_A [2] $end
+$var wire 1 2 quadrature_A [1] $end
+$var wire 1 3 quadrature_A [0] $end
+$var wire 1 4 quadrature_B [3] $end
+$var wire 1 5 quadrature_B [2] $end
+$var wire 1 6 quadrature_B [1] $end
+$var wire 1 7 quadrature_B [0] $end
+$var wire 1 8 quadrature_I [3] $end
+$var wire 1 9 quadrature_I [2] $end
+$var wire 1 : quadrature_I [1] $end
+$var wire 1 ; quadrature_I [0] $end
+$var wire 1 < pwm_out [3] $end
+$var wire 1 = pwm_out [2] $end
+$var wire 1 > pwm_out [1] $end
+$var wire 1 ? pwm_out [0] $end
+$var wire 1 @ H_bridge_1 [3] $end
+$var wire 1 A H_bridge_1 [2] $end
+$var wire 1 B H_bridge_1 [1] $end
+$var wire 1 C H_bridge_1 [0] $end
+$var wire 1 D H_bridge_2 [3] $end
+$var wire 1 E H_bridge_2 [2] $end
+$var wire 1 F H_bridge_2 [1] $end
+$var wire 1 G H_bridge_2 [0] $end
+$var wire 1 H RC_servo [7] $end
+$var wire 1 I RC_servo [6] $end
+$var wire 1 J RC_servo [5] $end
+$var wire 1 K RC_servo [4] $end
+$var wire 1 L RC_servo [3] $end
+$var wire 1 M RC_servo [2] $end
+$var wire 1 N RC_servo [1] $end
+$var wire 1 O RC_servo [0] $end
+$var wire 1 P led1 $end
+$var wire 1 Q led2 $end
+$var wire 1 R led3 $end
+$var wire 1 S led4 $end
+$var wire 1 T led5 $end
+$var wire 1 U test_pt1 $end
+$var wire 1 V test_pt2 $end
+$var wire 1 W test_pt3 $end
+$var wire 1 X test_pt4 $end
+$var reg 1 Y uP_start $end
+$var reg 1 Z uP_handshake_1 $end
+$var reg 1 [ uP_RW $end
+$var reg 1 \ uP_reset $end
+$var reg 1 ] reset $end
+
+$scope begin PWM_H_bridge[3] $end
+$var parameter 32 ^ PWM_unit $end
+$upscope $end
+
+$scope begin PWM_H_bridge[2] $end
+$var parameter 32 _ PWM_unit $end
+$upscope $end
+
+$scope begin PWM_H_bridge[1] $end
+$var parameter 32 ` PWM_unit $end
+$upscope $end
+
+$scope begin PWM_H_bridge[0] $end
+$var parameter 32 a PWM_unit $end
+$upscope $end
 $upscope $end
 $enddefinitions $end
 #0
 $dumpvars
 0&
 0'
-xM
-xN
-xO
-xP
-zQ
+xY
+xZ
+x[
+x\
+z]
+b0 a
+b1 `
+b10 _
+b11 ^
 z!
 z"
 z#
@@ -82,33 +114,45 @@ x+
 x*
 x)
 x(
-z1
-z0
 z3
 z2
+z1
+z0
+z7
+z6
 z5
 z4
-07
-06
-09
-08
-0;
-0:
-xC
-xB
-xA
-x@
-x?
-x>
-x=
-x<
-xD
-xE
-1F
-1G
-xH
-xI
-xJ
-xK
+z;
+z:
+z9
+z8
+0?
+0>
+0=
+0<
+0C
+0B
+0A
+0@
+0G
+0F
+0E
+0D
+xO
+xN
+xM
 xL
+xK
+xJ
+xI
+xH
+xP
+xQ
+1R
+1S
+xT
+xU
+xV
+xW
+xX
 $end

@@ -149,8 +149,31 @@ assign reset = async_uP_reset;
                                  .uP_handshake_2(uP_handshake_2),
                                  .uP_data(uP_data)
 										);
+										
+		
 //
 // initiate set of quadrature encoder (QE) subsystems
+
+`ifdef USE_QE_GENERATE
+
+//
+// generate a set of QE units. Number of units defined in "global_constants.sv"
+
+	genvar QE_unit;
+	generate
+		for (QE_unit=0; QE_unit < `NOS_QE_CHANNELS; QE_unit=QE_unit+1) begin : QE_encoder
+			QE_channel #(.QE_UNIT(QE_unit)) QE_ch (
+                                 .clk(CLOCK_50),
+                                 .reset(reset),
+                                 .bus(intf.slave),
+                                 .async_ext_QE_A(quadrature_A[QE_unit]), 
+                                 .async_ext_QE_B(quadrature_B[QE_unit]), 
+                                 .async_ext_QE_I(quadrature_I[QE_unit])
+                                 );
+			end
+	endgenerate
+
+`else	
    
    QE_channel #(.QE_UNIT(0)) QE_ch0 (
                                  .clk(CLOCK_50),
@@ -187,9 +210,15 @@ assign reset = async_uP_reset;
                                  .async_ext_QE_B(quadrature_B[3]), 
                                  .async_ext_QE_I(quadrature_I[3])
                                  );
+`endif
 
-											
+//
+// initiate set of PWM subsystems
+										
 `ifdef USE_PWM_GENERATE
+
+//
+// generate a set of PWM units. Number of units defined in "global_constants.sv"
 
 	genvar PWM_unit;
 	generate
@@ -207,8 +236,6 @@ assign reset = async_uP_reset;
 
 `else
 
-//
-// initiate set of PWM subsystems
 
    pwm_channel #(.PWM_UNIT(0)) pwm_ch0(
                                        .clk(CLOCK_50),
@@ -245,6 +272,7 @@ assign reset = async_uP_reset;
 													.H_bridge_1(H_bridge_1[3]),
 													.H_bridge_2(H_bridge_2[3])
                                        );							
+
 
 `endif
 
