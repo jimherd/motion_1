@@ -286,4 +286,13 @@ assign reset = async_uP_reset;
 					.RC_servo(RC_servo)
 					);
    
+//
+// initiate system information subsystem
+
+SYS_info  SYS_info_sys( 
+					.clk(CLOCK_50), 
+					.reset(reset),
+					.bus(intf.slave),
+					);
+
 endmodule

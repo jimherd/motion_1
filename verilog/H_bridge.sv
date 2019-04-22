@@ -28,8 +28,8 @@ SOFTWARE.
 //
 // Options to generate different formats of H-bridge control signals.
 // The two formats are
-//		1. PWM + direction
-//		2. IN1 + IN2
+//		1. PWM + direction	(MODE_PWM_DIR)
+//		2. IN1 + IN2			(MODE_IN1A_IN2B)
 
 `include  "global_constants.sv"
 
@@ -52,7 +52,7 @@ always_comb
 begin
 	H_bridge_1_tmp = 0;   // required to prevent inferred latch error
 	H_bridge_2_tmp = 0;
-	if (mode == MODE_PWM_CONTROL) begin  // swap PWM signal to give forward/backward 
+	if (mode == MODE_IN1A_IN2B) begin  // swap PWM signal to give forward/backward 
 		unique case (command)
 			MOTOR_COAST : begin
 				H_bridge_1_tmp = 1'b0;
@@ -76,7 +76,7 @@ begin
 			end
 		endcase
 	end
-	else if (mode == MODE_PWM_DIR_CONTROL) begin  // uses pwm and direction signals 
+	else if (mode == MODE_PWM_DIR) begin  // uses pwm and direction signals 
 		case (command)
 			MOTOR_COAST : begin
 				H_bridge_1_tmp = 0;

@@ -31,6 +31,12 @@ SOFTWARE.
 `define   _global_constants_sv_
 
 //
+// System versions
+
+`define	MAJOR_VERSION		0
+`define	MINOR_VERSION		1
+
+//
 // System compilation directives
 // =============================
 //
@@ -52,6 +58,7 @@ SOFTWARE.
 //
 // number of subsystems 
 
+	`define NOS_SYS_INFO_REGISTERS	1
 	`define NOS_PWM_CHANNELS      	4
 	`define NOS_QE_CHANNELS  			4
    `define NOS_RC_SERVO_CHANNELS    8
@@ -60,8 +67,8 @@ SOFTWARE.
 //
 // Register address map
 	
-	`define BASE_REGISTER_ADDRESS   	1
-	`define PWM_BASE            	   `BASE_REGISTER_ADDRESS
+	`define REGISTER_BASE				0
+	`define PWM_BASE            	   `REGISTER_BASE + `NOS_SYS_INFO_REGISTERS
 	`define NOS_PWM_REGISTERS   	   (`PWM_STATUS + 1)
 	`define QE_BASE            		((`NOS_PWM_REGISTERS * `NOS_PWM_CHANNELS) + `PWM_BASE)
    `define NOS_QE_REGISTERS   		(`QE_STATUS + 1)
@@ -70,6 +77,18 @@ SOFTWARE.
 	`define RC_ON_TIME_BASE          (`RC_BASE + 3)
 	`define NXT_BASE                 (3 + `NOS_RC_SERVO_CHANNELS) + RC_BASE)
 
+///////////////////////////////////////////////////
+//
+// System information subsystem
+
+   `define SYS_INFO_0    	0   // Read-only
+	
+	`define SYS_INFO_0_DATA   ((`MAJOR_VERSION         <<  0) + \
+										(`MINOR_VERSION         <<  4) + \
+										(`NOS_PWM_CHANNELS      <<  8) + \
+										(`NOS_QE_CHANNELS       << 12) + \
+										(`NOS_RC_SERVO_CHANNELS << 16))
+	
 ///////////////////////////////////////////////////
 //
 // PWM subsystem
@@ -176,7 +195,7 @@ SOFTWARE.
    `define RESET_CMD_DONE 8'hFF
 
 	
-	enum bit {MODE_PWM_CONTROL=1'b0, MODE_PWM_DIR_CONTROL=1'b1} H_bridge_interface_types;
+	enum bit {MODE_IN1A_IN2B=1'b0, MODE_PWM_DIR=1'b1} H_bridge_interface_types;
 
 
 	enum bit [1:0] {MOTOR_COAST=2'b00, MOTOR_FORWARD=2'b01, MOTOR_BACKWARD=2'b10, MOTOR_BRAKE=2'b11} motor_commands;	
@@ -192,9 +211,9 @@ SOFTWARE.
 	`define	H_BRIDGE_EXT_ENABLE	17		// 1 bit
 	`define	H_BRIDGE_COMMAND		18		// 3 bits
 	`define	H_BRIDGE_MODE  		21		// 2 bits
-	`define	H_BRIDGE_SWAP			22		// 1 bit
-	`define	H_BRIDGE_DWELL_MODE	23		// 1 bit
-	`define	H_BRIDGE_INVERT_PINS	24		// 2 bits
+	`define	H_BRIDGE_SWAP			23		// 1 bit
+	`define	H_BRIDGE_DWELL_MODE	24		// 1 bit
+	`define	H_BRIDGE_INVERT_PINS	25		// 2 bits
 
 //
 // bit definitions for Quadrature encoder configuaration register
