@@ -195,7 +195,7 @@ uint32_t    QE_sim_pulse_counter;
 uint32_t    QE_sim_phase_timer;
 
 //
-// collect status data into status rgister
+// collect status data into status register
 
 assign QE_status = {QE_I, QE_B, QE_A ,ext_QE_I, ext_QE_B, ext_QE_A};
 

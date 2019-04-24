@@ -84,7 +84,7 @@ always_ff @(posedge clk or negedge reset) begin
          end
 		end else begin
          if(write_status_word_to_BUS == 1'b1) begin
-            data_in_reg <= 32'b0;
+            data_in_reg <= ~`SYS_INFO_0_DATA;
          end else
             data_in_reg <= 'z;
       end

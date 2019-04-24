@@ -292,7 +292,7 @@ assign reset = async_uP_reset;
 SYS_info  SYS_info_sys( 
 					.clk(CLOCK_50), 
 					.reset(reset),
-					.bus(intf.slave),
+					.bus(intf.slave)
 					);
 
 endmodule
