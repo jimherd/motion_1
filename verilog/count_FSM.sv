@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 //
-// count_FSM.sv : count slow edges
+// count_FSM.sv : up/down counter for slow pulses
 // ============
 //
 // Type : Standard three section Moore Finite State Machine structure
@@ -37,11 +37,13 @@ SOFTWARE.
 // States
 //			S_COUNT0  : count hold state and wait for rising edge of pulse being counted
 //			S_COUNT1  : check direction signal
-//			S_COUNT2  : incrementt by 1
+//			S_COUNT2  : increment by 1
 //			S_COUNT3  : decrement by 1
 //			S_COUNT4	 : wait for falling edge of pulse being counted
 
 `include  "global_constants.sv"
+`include  "interfaces.sv"
+
 
 module count_FSM (
                   input  logic  clk, reset, 

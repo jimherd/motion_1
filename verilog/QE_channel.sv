@@ -74,6 +74,7 @@ logic subsystem_enable;
 bus_FSM   bus_FSM_sys(
 		.clk(clk),
 		.reset(reset),
+		
 		.subsystem_enable(subsystem_enable),
 		.handshake_2(bus.handshake_2),
 		.handshake_1(bus.handshake_1),
@@ -81,7 +82,7 @@ bus_FSM   bus_FSM_sys(
 		.read_word_from_BUS(read_word_from_BUS), 
 		.write_data_word_to_BUS(write_data_word_to_BUS),
 		.write_status_word_to_BUS(write_status_word_to_BUS)
-		);
+);
 
 //
 // get register data from internal 32-bit bus
@@ -444,32 +445,64 @@ begin
 	end
 end
 
+//
+// Now count quadrature pulses
+
+logic inc_QE_count_buffer, dec_QE_count_buffer;
+		
+count_FSM QE_pulse_count_FSM_sys(
+		.clk(clk),
+		.reset(reset),
+							
+      .count_sig(QE_pulse),
+		.direction(QE_direction),
+      .inc_counter(inc_QE_count_buffer),
+		.dec_counter(dec_QE_count_buffer)
+);	
+
 	
-always_ff @(posedge QE_pulse or negedge reset)
+always_ff @(posedge clk or negedge reset)
 begin
    if (!reset) begin
       QE_count_buffer <= 0;
    end  else begin
-      if (QE_direction)
+      if (inc_QE_count_buffer) begin
          QE_count_buffer<=QE_count_buffer + 1; 
-      else
-         QE_count_buffer<=QE_count_buffer - 1;
+      end else begin
+			if (dec_QE_count_buffer) begin
+				QE_count_buffer<=QE_count_buffer - 1;
+			end
+		end
    end
 end
 
 //
-// Count index pulses (1 per revolution)
-//
+// Now index quadrature pulses (1 per revolution)
 
-always_ff @(posedge index or negedge reset)   
+logic inc_QE_turns_buffer, dec_QE_turns_buffer;
+		
+count_FSM QE_index_count_FSM_sys(
+		.clk(clk),
+		.reset(reset),
+							
+      .count_sig(index),
+		.direction(QE_direction),
+      .inc_counter(inc_QE_turns_buffer),
+		.dec_counter(dec_QE_turns_buffer)
+);	
+
+always_ff @(posedge clk or negedge reset)   
 begin   
    if (!reset) begin
       QE_turns_buffer <= 0;
    end else begin
-      if(QE_direction)
+      if(inc_QE_turns_buffer) begin
          QE_turns_buffer <= QE_turns_buffer + 1; 
-      else
-         QE_turns_buffer <= QE_turns_buffer - 1;
+      end else begin
+			if(dec_QE_turns_buffer) begin
+				QE_turns_buffer <= QE_turns_buffer - 1;
+			end
+		end
    end
 end
 
