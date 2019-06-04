@@ -49,6 +49,12 @@ SOFTWARE.
 
  `define USE_QE_GENERATE
  
+ //
+ // Uncomment if you want to return a 32-bit status word for each command
+ // transaction
+ 
+ //`define INCLUDE_32_BIT_STATUS_RETURN
+ 
 //
 // System constants
 // ================
@@ -162,20 +168,25 @@ SOFTWARE.
 
    //
    // number of 32-bit values to be read from slave
-  
-   `define NOS_READ_WORDS_FROM_SLAVE     2
+	
+	`ifdef INCLUDE_32_BIT_STATUS_RETURN
+		`define NOS_READ_WORDS_FROM_SLAVE     2
+	`else
+		`define NOS_READ_WORDS_FROM_SLAVE     1
+	`endif
+	
    `define NOS_READ_BYTES_FROM_SLAVE     (4 * `NOS_READ_WORDS_FROM_SLAVE)
    //
    // Number of bytes read from and written to uP
   
-   `define NOS_READ_BYTES     6
-   `define NOS_WRITE_BYTES    (`NOS_READ_WORDS_FROM_SLAVE * 4)
+   `define NOS_READ_BYTES_FROM_UP     6
+   `define NOS_WRITE_BYTES_TO_UP    (`NOS_READ_WORDS_FROM_SLAVE * 4)
    //
    // named bytes in byte packet from uP
    
    `define CMD_REG         0
    `define REGISTER_NUMBER 1
-   `define UP_STATUS_REG   4
+   `define UP_STATUS_REG   0
    //
    `define RD_CMD  0
    `define WR_CMD  1

@@ -52,7 +52,7 @@ logic  set_in_bus_word_count, set_out_bus_word_count;
 byte_t counter, target_count, data_out;
 byte_t data_in;
 
-byte_t input_packet[`NOS_READ_BYTES];
+byte_t input_packet[`NOS_READ_BYTES_FROM_UP];
 byte_t output_packet[`NOS_READ_BYTES_FROM_SLAVE];
 
 
@@ -86,11 +86,11 @@ always_ff @(posedge clk or negedge reset) begin
    end 
    else begin
       if (set_in_uP_byte_count == 1'b1) begin
-         target_count <= byte_t'(`NOS_READ_BYTES);
+         target_count <= byte_t'(`NOS_READ_BYTES_FROM_UP);
          counter <= 0;
       end else begin
          if (set_out_uP_byte_count == 1'b1) begin
-            target_count <= byte_t'(`NOS_WRITE_BYTES);
+            target_count <= byte_t'(`NOS_WRITE_BYTES_TO_UP);
             counter <= 0;
          end else begin
             if (set_in_bus_word_count == 1'b1) begin
@@ -121,7 +121,7 @@ always_ff @(posedge clk or negedge reset) begin
                      else begin
                         if (clear_uP_packet == 1'b1) begin
                            output_packet[`UP_STATUS_REG] <= `RESET_CMD_DONE;
-                           target_count <= byte_t'(`NOS_READ_BYTES);
+                           target_count <= byte_t'(`NOS_READ_BYTES_FROM_UP);
                            counter <= 0;
                         end
                      end

@@ -97,7 +97,11 @@ always_comb begin: set_next_state
       S_WWD3 :
          next_state = S_WWD4; 
       S_WWD4 :
-         next_state = (handshake_1 == 1'b1) ? S_WWD4 : S_WWS0;
+			`ifdef INCLUDE_32_BIT_STATUS_RETURN
+					next_state = (handshake_1 == 1'b1) ? S_WWD4 : S_WWS0;
+			`else
+					next_state = (handshake_1 == 1'b1) ? S_WWD4 : S_WWS5;
+			`endif
       //
       // Write 32-bit status word onto BUS
       // 

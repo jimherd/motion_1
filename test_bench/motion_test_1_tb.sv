@@ -51,7 +51,7 @@ logic  [`NOS_RC_SERVO_CHANNELS-1 : 0] RC_servo;
 logic  led1, led2, led3, led4, led5;
 logic  test_pt1, test_pt2, test_pt3, test_pt4;
 
-byte_t input_packet[`NOS_WRITE_BYTES];
+byte_t input_packet[`NOS_WRITE_BYTES_TO_UP];
 logic [31:0] status, data;
 
 task do_init();
@@ -78,6 +78,8 @@ task do_end;
   end
 endtask
 
+// write_byte : write a byte to the FPGA
+//
 task write_byte;
   input [7:0] data;
   begin
@@ -91,6 +93,8 @@ task write_byte;
   end
 endtask;
 
+// read_byte : read a byte from the FPGA
+//
 task read_byte;
   output [7:0] data;
   begin
@@ -104,6 +108,8 @@ task read_byte;
   end;
 endtask;
 
+// do_write : write a 6 byte packet to the FPGA
+//
 task do_write;
   input [7:0] command;
   input [7:0] reg_address;
@@ -118,10 +124,12 @@ task do_write;
   end;
 endtask;
 
+// do_read : read a packet from the FPGA
+//
 task do_read;
-  output byte_t packet[`NOS_WRITE_BYTES];
+  output byte_t packet[`NOS_WRITE_BYTES_TO_UP];
   begin
-    for (int i=0; i < `NOS_WRITE_BYTES; i++) begin
+    for (int i=0; i < `NOS_WRITE_BYTES_TO_UP; i++) begin
 		read_byte(packet[i]);
 	end;
   end;

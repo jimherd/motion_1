@@ -447,15 +447,18 @@ end
 
 //
 // Now count quadrature pulses
+//
+// Uses state machine to sync count to clock
 
 logic inc_QE_count_buffer, dec_QE_count_buffer;
 		
 count_FSM QE_pulse_count_FSM_sys(
 		.clk(clk),
 		.reset(reset),
-							
+	// inputs
       .count_sig(QE_pulse),
 		.direction(QE_direction),
+	// outputs
       .inc_counter(inc_QE_count_buffer),
 		.dec_counter(dec_QE_count_buffer)
 );	
@@ -477,16 +480,19 @@ begin
 end
 
 //
-// Now index quadrature pulses (1 per revolution)
+// Now count index quadrature pulses (1 per revolution)
+//
+// Uses state machine to sync count to clock
 
 logic inc_QE_turns_buffer, dec_QE_turns_buffer;
 		
 count_FSM QE_index_count_FSM_sys(
 		.clk(clk),
 		.reset(reset),
-							
+	// inputs
       .count_sig(index),
 		.direction(QE_direction),
+	// outputs
       .inc_counter(inc_QE_turns_buffer),
 		.dec_counter(dec_QE_turns_buffer)
 );	
