@@ -1,0 +1,96 @@
+# Copyright (C) 2019  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and any partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details, at
+# https://fpgasoftware.intel.com/eula.
+
+# Quartus Prime Version 18.1.1 Build 646 04/11/2019 SJ Lite Edition
+# File: C:\jth\HW_new_robot\Quartus_projects\motion_1\motion_1_base_assignments.csv
+# Generated on: Thu Jun 20 11:25:59 2019
+
+Status,From,To,Assignment Name,Value,Enabled,Entity,Comment,Tag
+Ok,,CLOCK_50,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,async_uP_handshake_1,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,async_uP_start,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,pwm_out[1],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_handshake_2,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,pwm_out[0],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,quadrature_A[1],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,quadrature_A[0],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,quadrature_B[1],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,quadrature_B[0],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,quadrature_I[1],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,quadrature_I[0],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,reset,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_ack,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[7],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[6],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[5],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[4],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[3],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[2],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[1],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_in[0],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[7],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[6],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[5],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[4],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[3],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[2],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[1],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,uP_data_out[0],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,CLOCK_50,Location,PIN_27,Yes,,,
+'To' name unrecognized,,led,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,pwm_out[0],Location,PIN_48,Yes,,,
+Ok,,quadrature_A[1],Location,PIN_22,Yes,,,
+Ok,,async_uP_RW,Location,PIN_98,Yes,,,
+Ok,,async_uP_handshake_1,Location,PIN_99,Yes,,,
+Ok,,async_uP_reset,Location,PIN_105,Yes,,,
+Ok,,async_uP_start,Location,PIN_101,Yes,,,
+Ok,,async_uP_RW,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,async_uP_reset,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+'To' name unrecognized,,board_reset,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_ack,Location,PIN_102,Yes,,,
+Ok,,uP_data[7],Location,PIN_50,Yes,,,
+Ok,,uP_data[6],Location,PIN_47,Yes,,,
+Ok,,uP_data[5],Location,PIN_45,Yes,,,
+Ok,,uP_data[4],Location,PIN_44,Yes,,,
+Ok,,uP_data[3],Location,PIN_43,Yes,,,
+Ok,,uP_data[2],Location,PIN_41,Yes,,,
+Ok,,uP_data[1],Location,PIN_39,Yes,,,
+Ok,,uP_data[0],Location,PIN_38,Yes,,,
+Ok,,uP_handshake_2,Location,PIN_100,Yes,,,
+Ok,,uP_data[7],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data[6],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data[5],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data[4],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data[3],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data[2],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data[1],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data[0],I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,uP_data,I/O Standard,3.3-V LVTTL,Yes,motion_system,,
+Ok,,led1,Location,PIN_132,Yes,,,
+Ok,,led2,Location,PIN_134,Yes,,,
+Ok,,led3,Location,PIN_135,Yes,,,
+Ok,,led4,Location,PIN_140,Yes,,,
+Ok,,led5,Location,PIN_141,Yes,,,
+Ok,,test_pt1,Location,PIN_80,Yes,,,
+Ok,,test_pt2,Location,PIN_113,Yes,,,
+Ok,,test_pt3,Location,PIN_114,Yes,,,
+Ok,,test_pt4,Location,PIN_123,Yes,,,
+Ok,,H_bridge_1[0],Location,PIN_58,Yes,,,
+Ok,,H_bridge_2[0],Location,PIN_60,Yes,,,
+Ok,,RC_servo[0],Location,PIN_88,Yes,,,
+Ok,,pwm_out[3],Location,PIN_122,Yes,,,
+Ok,,pwm_out[2],Location,PIN_130,Yes,,,
+Ok,,pwm_out[1],Location,PIN_119,Yes,,,
+,<<new>>,<<new>>,<<new>>,,,,,
