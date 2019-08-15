@@ -65,8 +65,8 @@ SOFTWARE.
 // number of subsystems 
 
 	`define NOS_SYS_INFO_REGISTERS	1
-	`define NOS_PWM_CHANNELS      	4
-	`define NOS_QE_CHANNELS  			4
+	`define NOS_PWM_CHANNELS      	1
+	`define NOS_QE_CHANNELS  			1
    `define NOS_RC_SERVO_CHANNELS    8
 
 ///////////////////////////////////////////////////
@@ -133,10 +133,10 @@ SOFTWARE.
 //
 // used in testbench files
 
-   `define QE_0	(`QE_BASE + (0 * `NOS_QE_CHANNELS))      
-   `define QE_1	(`QE_BASE + (1 * `NOS_QE_CHANNELS))
-   `define QE_2 	(`QE_BASE + (2 * `NOS_QE_CHANNELS))
-   `define QE_3 	(`QE_BASE + (3 * `NOS_QE_CHANNELS))
+   `define QE_0	(`QE_BASE + (0 * `NOS_QE_REGISTERS))      
+   `define QE_1	(`QE_BASE + (1 * `NOS_QE_REGISTERS))
+   `define QE_2 	(`QE_BASE + (2 * `NOS_QE_REGISTERS))
+   `define QE_3 	(`QE_BASE + (3 * `NOS_QE_REGISTERS))
 
 ///////////////////////////////////////////////////
 //
@@ -220,11 +220,11 @@ SOFTWARE.
 	//
 	`define	H_BRIDGE_INT_ENABLE	16		// 1 bit
 	`define	H_BRIDGE_EXT_ENABLE	17		// 1 bit
-	`define	H_BRIDGE_COMMAND		18		// 3 bits
-	`define	H_BRIDGE_MODE  		21		// 2 bits
-	`define	H_BRIDGE_SWAP			23		// 1 bit
-	`define	H_BRIDGE_DWELL_MODE	24		// 1 bit
-	`define	H_BRIDGE_INVERT_PINS	25		// 2 bits
+	`define	H_BRIDGE_MODE  		18		// 2 bits
+	`define	H_BRIDGE_COMMAND		20		// 3 bits
+	`define	H_BRIDGE_SWAP			24		// 1 bit
+	`define	H_BRIDGE_DWELL_MODE	25		// 1 bit
+	`define	H_BRIDGE_INVERT_PINS	26		// 2 bits
 
 //
 // bit definitions for Quadrature encoder configuaration register
@@ -236,7 +236,7 @@ SOFTWARE.
 	
 	`define  QE_SPEED_MEASURE_ENABLE		16	// 1 bit : 
 	`define  QE_SPEED_FILTER_ENABLE		17 // 1 bit : enables binary averaging filter
-	`define  QE_FILTER_SIZE					18 // 3 bits : sample size == value to the power 2.
+	`define  QE_FILTER_SIZE					20 // 3 bits : sample size == value to the power 2.
 	
 	enum bit {QE_INTERNAL, QE_EXTERNAL} QE_encoder_source;
 	enum bit {QE_CW, QE_CCW} rotational_direction;

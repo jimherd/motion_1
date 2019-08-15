@@ -31,9 +31,9 @@ SOFTWARE.
 `include "../verilog/global_constants.sv"
 import types::*;
 
-enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0} test_set;
+enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0} test_set;
 
-`define TEST        RC_SERVO_TEST_0
+`define TEST        QE_INT_TEST_0
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -201,10 +201,10 @@ initial begin
           #50 do_transaction(`READ_REGISTER_CMD,  (`PWM_0 + `PWM_PERIOD), 101, data, status);
           $display("PWM period = %d", data);
         end
-    QE_TEST_0 : begin    // simple Quadrature Encoder test
+    QE_INT_TEST_0 : begin    // simple Quadrature Encoder test using internal QE signal generaation
           #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_COUNTS_PER_REV), 8, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_SIM_PHASE_TIME), 10, data, status);
-          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_CONFIG), 4, data, status);
+          #50 do_transaction(`WRITE_REGISTER_CMD, (`QE_0 + `QE_CONFIG), 32'h00010006, data, status);
         end
     RC_SERVO_TEST_0 : begin
           #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + `RC_SERVO_PERIOD), 1000, data, status);

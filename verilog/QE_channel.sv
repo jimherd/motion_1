@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 //
-// QE_channel_sv : Implement a single encoder channel
+// QE_channel_sv : Implement a single quadrature encoder channel
 // =============
 // 
 
@@ -40,7 +40,12 @@ module QE_channel #(QE_UNIT = 0) (
 									input  logic async_ext_QE_I	// external encoder I input
 									);
 
-//
+// 
+// definition of first and last registers for this unit
+
+`define	FIRST_QE_REGISTER		(`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
+`define	LAST_QE_REGISTER		((`QE_STATUS +       (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) - 1)							
+									//
 // subsystem registers accessible to external system
    
 uint32_t  QE_count_buffer;
@@ -83,6 +88,31 @@ bus_FSM   bus_FSM_sys(
 		.write_data_word_to_BUS(write_data_word_to_BUS),
 		.write_status_word_to_BUS(write_status_word_to_BUS)
 );
+
+//
+// Decode register address to check if this subsystem is addressed
+
+always_comb begin
+	if ((bus.reg_address >= `FIRST_QE_REGISTER) && (bus.reg_address <= `LAST_QE_REGISTER)) begin
+		subsystem_enable = 1;
+	end else begin
+		subsystem_enable = 0;
+	end
+end
+
+////always_comb begin
+////      subsystem_enable = 1;
+//      case (bus.reg_address)  
+//         (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;   // 1
+//         (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
+//         (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
+//         (`QE_SIM_PHASE_TIME  + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
+//         (`QE_COUNTS_PER_REV 	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))	: subsystem_enable = 1;
+//         (`QE_CONFIG  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
+//         (`QE_STATUS  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;			
+//         default                                                         		: subsystem_enable = 0;  // 0
+//      endcase
+//end
 
 //
 // get register data from internal 32-bit bus
@@ -143,22 +173,7 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
-//
-// assess if registers numbers refer to this subsystem
 
-always_comb begin
-      subsystem_enable = 0;
-      case (bus.reg_address)  
-         (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
-         (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
-         (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
-         (`QE_SIM_PHASE_TIME  + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
-         (`QE_COUNTS_PER_REV 	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))	: subsystem_enable = 1;
-         (`QE_CONFIG  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
-         (`QE_STATUS  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;			
-         default                                                         		: subsystem_enable = 0; 
-      endcase
-end
 
 //
 // define 32-bit value to be written to bus
@@ -206,7 +221,7 @@ begin
    if (!reset) begin
       QE_sim_phase_counter <= 0;
 		QE_sim_pulse_counter <= 0;
-		QE_sim_phase_timer   <= 10;
+		QE_sim_phase_timer   <= (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)));
    end  else begin
 		if (inc_counters == 1'b1) begin
 			QE_sim_phase_counter <= QE_sim_phase_counter + 1'b1;

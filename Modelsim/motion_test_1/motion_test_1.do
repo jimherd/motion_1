@@ -26,9 +26,9 @@
 #
 set RUN_TIME  25000ns
 
-# options : PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0
+# options : PWM_TEST_0, PWM_TEST_1, QE_INT_TEST_0, RC_SERVO_TEST_0
 
-set     TEST     RC_SERVO_TEST_0
+set     TEST     QE_INT_TEST_0
 
 project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_1
 #
@@ -74,23 +74,24 @@ switch $TEST {
 		add wave -label T_ON_reg_CH0 -radix hexadecimal -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/T_on}
 		add wave -label {PWM_ch[0]} -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/pwm}
 	}
-	QE_TEST_0 {
+	QE_INT_TEST_0 {
 		add wave -divider "QE subsystem"
-		add wave -label QE0_subsystem_enable -position end  sim:/motion_test_1_tb/uut/QE_ch0/subsystem_enable
-		add wave -label speed_measure_state -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_speed_measure_FSM_sys/state
-		add wave -label QE_sim_state -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_generator_FSM_sys/state
-		add wave -label QE_sim_phase_cnt -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_counter
-		add wave -label QE_dec_phase_time  -radix decimal -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_time
-		add wave -label QE_dec_phase_timer -position end  sim:/motion_test_1_tb/uut/QE_ch0/decrement_phase_timer
-		add wave -label QE_sim_phase_timer -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_phase_timer
-		add wave -label QE_sim_pulse_cnt -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_sim_pulse_counter
-		add wave -label speed -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_speed
-		add wave -label QE_speed_measure -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_speed_buffer
-		add wave -label QE_pulse_count -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_count_buffer
-		add wave -label QE_rev_count -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_turns_buffer
-		add wave -label QE_A -position end  -radix decimal sim:/motion_test_1_tb/uut/QE_ch0/QE_A
-		add wave -label QE_B -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_B
-		add wave -label QE_I -position end  sim:/motion_test_1_tb/uut/QE_ch0/QE_I
+		add wave -label QE_reg_address -position end -radix decimal  {sim:/motion_test_1_tb/uut/intf/reg_address}
+		add wave -label QE0_subsystem_enable -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch/subsystem_enable}
+		add wave -label speed_measure_state -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_speed_measure_FSM_sys/state}
+		add wave -label QE_sim_state -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_generator_FSM_sys/state}
+		add wave -label QE_sim_phase_cnt -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_sim_phase_counter}
+		add wave -label QE_dec_phase_time  -radix decimal -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_sim_phase_time}
+		add wave -label QE_dec_phase_timer -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//decrement_phase_timer}
+		add wave -label QE_sim_phase_timer -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_sim_phase_timer}
+		add wave -label QE_sim_pulse_cnt -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_sim_pulse_counter}
+#		add wave -label speed -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_speed}
+		add wave -label QE_speed_measure -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_speed_buffer}
+		add wave -label QE_pulse_count -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_count_buffer}
+		add wave -label QE_rev_count -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_turns_buffer}
+		add wave -label QE_A -position end  -radix decimal {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_A}
+		add wave -label QE_B -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_B}
+		add wave -label QE_I -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch//QE_I}
 	}
 	RC_SERVO_TEST_0 {
 		add wave -divider "RC Servo subsystem"
@@ -104,14 +105,14 @@ switch $TEST {
 #
 # run simulation
 #
-switch $TEST {
-	RC_SERVO_TEST_0 {
-		run 1ms
-	}
-	default {
-		run $RUN_TIME
-	}
-}
+#switch $TEST {
+#	RC_SERVO_TEST_0 {
+#		run 1ms
+#	}
+#	default {
+#		run $RUN_TIME
+#	}
+#}
 wave zoom full
 
 
