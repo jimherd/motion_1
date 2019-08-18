@@ -215,13 +215,15 @@ uint32_t    QE_sim_phase_timer;
 
 assign QE_status = {QE_I, QE_B, QE_A ,ext_QE_I, ext_QE_B, ext_QE_A};
 
+//
+// Run quadrature encoder simulation - drive by state machine
 
 always_ff @(posedge clk or negedge reset)
 begin
    if (!reset) begin
       QE_sim_phase_counter <= 0;
 		QE_sim_pulse_counter <= 0;
-		QE_sim_phase_timer   <= (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)));
+		QE_sim_phase_timer   <= 0;
    end  else begin
 		if (inc_counters == 1'b1) begin
 			QE_sim_phase_counter <= QE_sim_phase_counter + 1'b1;
@@ -415,9 +417,9 @@ assign samples_complete     = (sample_counter == 0) ? 1'b1 : 1'b0;
 always_ff @(posedge clk or negedge reset)
 begin
    if (!reset) begin
-      QE_speed_buffer 	<= 0;
-		QE_speed_buffer	<= 0;
-		sample_counter    <= 0;
+      QE_speed_buffer 	    <= 0;
+		QE_temp_speed_counter <= 0;
+		sample_counter        <= 0;
    end  else begin
 		if (speed_measure_enable == 1'b1) begin
 			if (inc_temp_speed_counter == 1'b1) begin

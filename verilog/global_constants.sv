@@ -238,7 +238,7 @@ SOFTWARE.
 	`define  QE_SPEED_FILTER_ENABLE		17 // 1 bit : enables binary averaging filter
 	`define  QE_FILTER_SIZE					20 // 3 bits : sample size == value to the power 2.
 	
-	enum bit {QE_INTERNAL, QE_EXTERNAL} QE_encoder_source;
+	enum bit {QE_EXTERNAL, QE_INTERNAL} QE_encoder_source;
 	enum bit {QE_CW, QE_CCW} rotational_direction;
 	enum bit {NO, YES} condition;
 	

@@ -1,0 +1,112 @@
+$date
+	Mon Aug 19 00:00:37 2019
+$end
+$version
+	ModelSim Version 10.5b
+$end
+$timescale
+	100ps
+$end
+
+$scope module motion_system $end
+$var wire 1 ! CLOCK_50 $end
+$var wire 1 " async_uP_reset $end
+$var wire 1 # async_uP_start $end
+$var wire 1 $ async_uP_RW $end
+$var wire 1 % async_uP_handshake_1 $end
+$var reg 1 & uP_ack $end
+$var reg 1 ' uP_handshake_2 $end
+$var wire 1 ( uP_data [7] $end
+$var wire 1 ) uP_data [6] $end
+$var wire 1 * uP_data [5] $end
+$var wire 1 + uP_data [4] $end
+$var wire 1 , uP_data [3] $end
+$var wire 1 - uP_data [2] $end
+$var wire 1 . uP_data [1] $end
+$var wire 1 / uP_data [0] $end
+$var wire 1 0 quadrature_A [0] $end
+$var wire 1 1 quadrature_B [0] $end
+$var wire 1 2 quadrature_I [0] $end
+$var wire 1 3 pwm_out [0] $end
+$var wire 1 4 H_bridge_1 [0] $end
+$var wire 1 5 H_bridge_2 [0] $end
+$var wire 1 6 RC_servo [7] $end
+$var wire 1 7 RC_servo [6] $end
+$var wire 1 8 RC_servo [5] $end
+$var wire 1 9 RC_servo [4] $end
+$var wire 1 : RC_servo [3] $end
+$var wire 1 ; RC_servo [2] $end
+$var wire 1 < RC_servo [1] $end
+$var wire 1 = RC_servo [0] $end
+$var wire 1 > led1 $end
+$var wire 1 ? led2 $end
+$var wire 1 @ led3 $end
+$var wire 1 A led4 $end
+$var wire 1 B led5 $end
+$var wire 1 C test_pt1 $end
+$var wire 1 D test_pt2 $end
+$var wire 1 E test_pt3 $end
+$var wire 1 F test_pt4 $end
+$var reg 1 G uP_start $end
+$var reg 1 H uP_handshake_1 $end
+$var reg 1 I uP_RW $end
+$var reg 1 J uP_reset $end
+$var reg 1 K reset $end
+
+$scope begin PWM_H_bridge[0] $end
+$var parameter 32 L PWM_unit $end
+$upscope $end
+
+$scope begin QE_encoder[0] $end
+$var parameter 32 M QE_unit $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0&
+0'
+xG
+xH
+xI
+xJ
+zK
+b0 M
+b0 L
+z!
+z"
+z#
+z$
+z%
+x/
+x.
+x-
+x,
+x+
+x*
+x)
+x(
+z0
+z1
+z2
+03
+04
+05
+x=
+x<
+x;
+x:
+x9
+x8
+x7
+x6
+x>
+x?
+1@
+1A
+xB
+xC
+xD
+xE
+xF
+$end
