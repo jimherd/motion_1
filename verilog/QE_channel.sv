@@ -100,20 +100,6 @@ always_comb begin
 	end
 end
 
-////always_comb begin
-////      subsystem_enable = 1;
-//      case (bus.reg_address)  
-//         (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;   // 1
-//         (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
-//         (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
-//         (`QE_SIM_PHASE_TIME  + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) 	: subsystem_enable = 1;
-//         (`QE_COUNTS_PER_REV 	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))	: subsystem_enable = 1;
-//         (`QE_CONFIG  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;
-//         (`QE_STATUS  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: subsystem_enable = 1;			
-//         default                                                         		: subsystem_enable = 0;  // 0
-//      endcase
-//end
-
 //
 // get register data from internal 32-bit bus
 
@@ -216,7 +202,7 @@ uint32_t    QE_sim_phase_timer;
 assign QE_status = {QE_I, QE_B, QE_A ,ext_QE_I, ext_QE_B, ext_QE_A};
 
 //
-// Run quadrature encoder simulation - drive by state machine
+// Run quadrature encoder simulation - driven by state machine
 
 always_ff @(posedge clk or negedge reset)
 begin
@@ -432,7 +418,7 @@ begin
 						QE_speed_buffer <= QE_temp_speed_counter;
 					end else begin
 						if (clear_all == 1'b1) begin
-							QE_speed_buffer	<= 0;
+							QE_temp_speed_counter	<= 0;
 							if (speed_filter_enable == 1'b1) begin	   
 								case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
 									0       : sample_counter <=  1;
