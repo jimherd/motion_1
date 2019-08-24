@@ -85,9 +85,9 @@ always_comb begin: set_next_state
             next_state = S_COUNT1;
       S_COUNT1:
          if (direction == 0)
-            next_state = S_COUNT3;
-         else
             next_state = S_COUNT2;
+         else
+            next_state = S_COUNT3;
       S_COUNT2:
          next_state = S_COUNT4;
       S_COUNT3:

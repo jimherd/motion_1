@@ -320,7 +320,7 @@ assign QE_B = (QE_flip_AB == NO) ? QE_B_tmp : QE_A_tmp;
 
 /////////////////////////////////////////////////
 //
-// synchronise external quadrature signals
+// synchronise external quadrature signals - A, B, and I
 
 synchronizer sync_QE_A(
                   .clk(clk),
@@ -455,32 +455,50 @@ end
 
 logic inc_QE_count_buffer, dec_QE_count_buffer;
 		
-count_FSM QE_pulse_count_FSM_sys(
-		.clk(clk),
-		.reset(reset),
-	// inputs
-      .count_sig(QE_pulse),
-		.direction(QE_direction),
-	// outputs
-      .inc_counter(inc_QE_count_buffer),
-		.dec_counter(dec_QE_count_buffer)
-);	
+//count_FSM QE_pulse_count_FSM_sys(
+//		.clk(clk),
+//		.reset(reset),
+//	// inputs
+//      .count_sig(QE_pulse),
+//		.direction(QE_direction),
+//	// outputs
+//      .inc_counter(inc_QE_count_buffer),
+//		.dec_counter(dec_QE_count_buffer)
+//);	
 
-	
-always_ff @(posedge clk or negedge reset)
+//
+// use QE_pulse and QE_direction outputs from quadrature encoder
+// to count rotation pulses
+
+always_ff @(posedge QE_pulse or negedge reset)
 begin
    if (!reset) begin
       QE_count_buffer <= 0;
    end  else begin
-      if (inc_QE_count_buffer) begin
-         QE_count_buffer<=QE_count_buffer + 1; 
+      if (QE_direction == 1) begin
+         QE_count_buffer <= QE_count_buffer + 1; 
       end else begin
-			if (dec_QE_count_buffer) begin
-				QE_count_buffer<=QE_count_buffer - 1;
+			if (QE_direction == 0) begin
+				QE_count_buffer <= QE_count_buffer - 1;
 			end
 		end
    end
 end
+	
+//always_ff @(posedge clk or negedge reset)
+//begin
+//   if (!reset) begin
+//      QE_count_buffer <= 0;
+//   end  else begin
+//      if (inc_QE_count_buffer) begin
+//         QE_count_buffer<=QE_count_buffer + 1; 
+//      end else begin
+//			if (dec_QE_count_buffer) begin
+//				QE_count_buffer<=QE_count_buffer - 1;
+//			end
+//		end
+//   end
+//end
 
 //
 // Now count index quadrature pulses (1 per revolution)

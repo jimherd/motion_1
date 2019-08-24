@@ -32,6 +32,10 @@ set     TEST     QE_INT_TEST_0
 
 project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_1
 #
+# compile
+#
+vlog -work work -sv -stats=none C:/jth/HW_new_robot/Quartus_projects/motion_1/verilog/types.sv
+#
 # uses "-permissive" to downgrade some interface port errors
 #
 quit -sim
