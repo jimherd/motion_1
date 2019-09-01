@@ -51,8 +51,7 @@ module motion_system( input  logic      CLOCK_50,
                       input  logic  [`NOS_QE_CHANNELS-1 : 0]  quadrature_A, quadrature_B, quadrature_I,
                       output wire   [`NOS_PWM_CHANNELS-1 : 0] pwm_out, H_bridge_1, H_bridge_2,
 							 output wire   [`NOS_RC_SERVO_CHANNELS-1 : 0] RC_servo,
-                      output        led1, led2, led3, led4, led5,
-                      output        test_pt1, test_pt2, test_pt3, test_pt4
+                      output        led1, led2, led3, led4, led5
                       );
 
 //
@@ -70,10 +69,6 @@ assign reset = async_uP_reset;
 //assign led4 = !reset;
 //assign led5 = !reset;
 
-//assign test_pt1 = !reset;
-//assign test_pt2 = !reset;
-//assign test_pt3 = !reset;
-//assign test_pt4 = !reset;
 
 //
 // initiate LED flash activity
@@ -103,11 +98,7 @@ assign reset = async_uP_reset;
 						.led_2(led2), 
 						.led_3(led3), 
 						.led_4(led4), 
-						.led_5(led5),
-						.test_pt1(test_pt1), 
-						.test_pt2(test_pt2), 
-						.test_pt3(test_pt3), 
-						.test_pt4(test_pt4)
+						.led_5(led5)
 					);
 
 //

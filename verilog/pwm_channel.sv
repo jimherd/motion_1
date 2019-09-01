@@ -39,6 +39,12 @@ module pwm_channel  #(parameter PWM_UNIT = 0)  (
 							output logic  H_bridge_1, 		// first H-bridge signal derived from 'pwm_signal'
 							output logic  H_bridge_2		// second H-bridge signal derived from 'pwm_signal'
                      );
+							
+// 
+// definition of first and last registers for this unit
+
+`define	FIRST_PWM_REGISTER	( `PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
+`define	LAST_PWM_REGISTER		( `PWM_STATUS + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))		
 //
 // PWM subsystem registers
    
@@ -229,16 +235,29 @@ assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
 //
 // assess if registers numbers refer to this subsystem
 
+//
+// Decode register address to check if this subsystem is addressed
+
 always_comb begin
-      subsystem_enable = 0;
-      case (bus.reg_address)  
-         (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-         (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-         (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-         (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-         default                                                         : subsystem_enable = 0; 
-      endcase
+	if ((bus.reg_address >= `FIRST_PWM_REGISTER) && (bus.reg_address <= `LAST_PWM_REGISTER)) begin
+		subsystem_enable = 1;
+	end else begin
+		subsystem_enable = 0;
+	end
 end
+
+// WHY DOES THIS NOT WORK !!!!!!
+//
+//always_comb begin
+//      subsystem_enable = 0;   // default value
+//      case (bus.reg_address)  
+//         (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+//         (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+//         (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+//         (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
+//         default                                                         : subsystem_enable = 0; 
+//      endcase
+//end
 
 //
 // define 32-bit value to be written to bus

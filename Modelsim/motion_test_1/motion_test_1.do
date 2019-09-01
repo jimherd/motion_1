@@ -28,7 +28,7 @@ set RUN_TIME  25000ns
 
 # options : PWM_TEST_0, PWM_TEST_1, QE_INT_TEST_0, RC_SERVO_TEST_0
 
-set     TEST     QE_INT_TEST_0
+set     TEST     PWM_TEST_1
 
 project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_1
 #
@@ -71,12 +71,12 @@ add wave -label counter_zero -position end  sim:/motion_test_1_tb/uut/uP_interfa
 switch $TEST {
 	PWM_TEST_1 {
 		add wave -divider "PWM subsystem"
-		add wave -label PWM0_subsystem_enable -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/subsystem_enable}
-		add wave -label BUS_state -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/bus_FSM_sys/state}
-		add wave -label read_word_from_BUS -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/bus_FSM_sys/read_word_from_BUS}
-		add wave -label write_word_to_BUS -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/bus_FSM_sys/write_data_word_to_BUS}
-		add wave -label T_ON_reg_CH0 -radix hexadecimal -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/T_on}
-		add wave -label {PWM_ch[0]} -position end  {sim:/motion_test_1_tb/uut/pwm_ch0/pwm}
+		add wave -label PWM0_subsystem_enable -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/subsystem_enable}
+		add wave -label BUS_state -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/bus_FSM_sys/state}
+		add wave -label read_word_from_BUS -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/bus_FSM_sys/read_word_from_BUS}
+		add wave -label write_word_to_BUS -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/bus_FSM_sys/write_data_word_to_BUS}
+		add wave -label T_ON_reg_CH0 -radix hexadecimal -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/T_on}
+		add wave -label {PWM_ch[0]} -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/pwm}
 	}
 	QE_INT_TEST_0 {
 		add wave -divider "QE subsystem"

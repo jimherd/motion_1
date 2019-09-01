@@ -118,8 +118,8 @@ always_ff @(posedge clk or negedge reset) begin
             end else
                if (bus.reg_address == (`QE_CONFIG + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
                   QE_config <= bus.data_out;
-               end
-         end
+               end    
+       end
    end
 end
 
@@ -449,26 +449,13 @@ begin
 end
 
 //
-// Now count quadrature pulses
+// count quadrature pulses.
 //
-// Uses state machine to sync count to clock
-
-logic inc_QE_count_buffer, dec_QE_count_buffer;
-		
-//count_FSM QE_pulse_count_FSM_sys(
-//		.clk(clk),
-//		.reset(reset),
-//	// inputs
-//      .count_sig(QE_pulse),
-//		.direction(QE_direction),
-//	// outputs
-//      .inc_counter(inc_QE_count_buffer),
-//		.dec_counter(dec_QE_count_buffer)
-//);	
-
+// Code to deal with register "QE_count_buffer"
 //
-// use QE_pulse and QE_direction outputs from quadrature encoder
-// to count rotation pulses
+//		1. Power ON reset to zero
+//		2. Inc/Dec based on quadrature pulse/direction signals
+//		3. Load with initial value (likely to be 0) 
 
 always_ff @(posedge QE_pulse or negedge reset)
 begin
@@ -480,28 +467,20 @@ begin
       end else begin
 			if (QE_direction == 0) begin
 				QE_count_buffer <= QE_count_buffer - 1;
-			end
-		end
-   end
+			end else begin
+				if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
+					if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
+                  QE_count_buffer <= bus.data_out;
+               end
+				end
+			 end
+		  end
+      end
 end
 	
-//always_ff @(posedge clk or negedge reset)
-//begin
-//   if (!reset) begin
-//      QE_count_buffer <= 0;
-//   end  else begin
-//      if (inc_QE_count_buffer) begin
-//         QE_count_buffer<=QE_count_buffer + 1; 
-//      end else begin
-//			if (dec_QE_count_buffer) begin
-//				QE_count_buffer<=QE_count_buffer - 1;
-//			end
-//		end
-//   end
-//end
 
 //
-// Now count index quadrature pulses (1 per revolution)
+// Count index quadrature pulses (1 per revolution)
 //
 // Uses state machine to sync count to clock
 

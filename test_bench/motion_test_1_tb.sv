@@ -33,7 +33,7 @@ import types::*;
 
 enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0} test_set;
 
-`define TEST        QE_INT_TEST_0
+`define TEST        PWM_TEST_1
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -171,11 +171,7 @@ motion_system uut(
                   .led2(led2),
                   .led3(led3),
                   .led4(led4),
-                  .led5(led5),
-                  .test_pt1(test_pt1),
-                  .test_pt2(test_pt2),
-                  .test_pt3(test_pt3),
-                  .test_pt4(test_pt4)
+                  .led5(led5)
  );
   
 logic [31:0] input_value;

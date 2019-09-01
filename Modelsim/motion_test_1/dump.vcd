@@ -1,5 +1,5 @@
 $date
-	Sat Aug 24 22:26:03 2019
+	Sun Sep 01 15:02:48 2019
 $end
 $version
 	ModelSim Version 10.5b
@@ -43,22 +43,18 @@ $var wire 1 ? led2 $end
 $var wire 1 @ led3 $end
 $var wire 1 A led4 $end
 $var wire 1 B led5 $end
-$var wire 1 C test_pt1 $end
-$var wire 1 D test_pt2 $end
-$var wire 1 E test_pt3 $end
-$var wire 1 F test_pt4 $end
-$var reg 1 G uP_start $end
-$var reg 1 H uP_handshake_1 $end
-$var reg 1 I uP_RW $end
-$var reg 1 J uP_reset $end
-$var reg 1 K reset $end
+$var reg 1 C uP_start $end
+$var reg 1 D uP_handshake_1 $end
+$var reg 1 E uP_RW $end
+$var reg 1 F uP_reset $end
+$var reg 1 G reset $end
 
 $scope begin PWM_H_bridge[0] $end
-$var parameter 32 L PWM_unit $end
+$var parameter 32 H PWM_unit $end
 $upscope $end
 
 $scope begin QE_encoder[0] $end
-$var parameter 32 M QE_unit $end
+$var parameter 32 I QE_unit $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -66,13 +62,13 @@ $enddefinitions $end
 $dumpvars
 0&
 0'
-xG
-xH
-xI
-xJ
-zK
-b0 M
-b0 L
+xC
+xD
+xE
+xF
+zG
+b0 I
+b0 H
 z!
 z"
 z#
@@ -105,8 +101,4 @@ x?
 1@
 1A
 xB
-xC
-xD
-xE
-xF
 $end

@@ -39,8 +39,7 @@ module supervisor(
 					input logic   uP_handshake_1, uP_handshake_2,
 					input logic   bus_handshake_1, bus_handshake_2,
 					
-					output logic  led_2, led_3, led_4, led_5,
-               output logic  test_pt1, test_pt2, test_pt3, test_pt4
+					output logic  led_2, led_3, led_4, led_5
                );
 
 
