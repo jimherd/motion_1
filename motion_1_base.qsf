@@ -140,10 +140,6 @@ set_location_assignment PIN_134 -to led2
 set_location_assignment PIN_135 -to led3
 set_location_assignment PIN_140 -to led4
 set_location_assignment PIN_141 -to led5
-set_location_assignment PIN_80 -to test_pt1
-set_location_assignment PIN_113 -to test_pt2
-set_location_assignment PIN_114 -to test_pt3
-set_location_assignment PIN_123 -to test_pt4
 set_location_assignment PIN_58 -to H_bridge_1[0]
 set_location_assignment PIN_60 -to H_bridge_2[0]
 set_global_assignment -name SYSTEMVERILOG_FILE verilog/RC_servo_channel_FSM.sv
