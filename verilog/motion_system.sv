@@ -28,6 +28,7 @@ SOFTWARE.
 //
 // Notes
 //    * Connection to uP changed to shared 8-bit bus
+//    * Move to new laptop  3/2/20
 
 `include  "global_constants.sv"
 `include  "interfaces.sv"
