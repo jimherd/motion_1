@@ -79,6 +79,16 @@ bus_FSM   bus_FSM_sys(
 		);
 
 //
+// address decode logic
+
+always_comb begin
+      subsystem_enable = 0;
+		if ( (bus.reg_address >= `RC_BASE) && (bus.reg_address < (3 + `NOS_RC_SERVO_CHANNELS) + `RC_BASE))  begin
+			subsystem_enable = 1;
+		end
+end
+		
+//
 // data subsystem to talk to bus interface
 //
 // get data from bus. If read command then ignore data word.
@@ -142,15 +152,7 @@ always_ff @(posedge clk or negedge reset) begin
    end
 end
 
-//
-// assess if registers numbers refer to this subsystem
 
-always_comb begin
-      subsystem_enable = 0;
-		if ( (bus.reg_address >= `RC_BASE) && (bus.reg_address < (3 + `NOS_RC_SERVO_CHANNELS) + `RC_BASE))  begin
-			subsystem_enable = 1;
-		end
-end
 
 //
 // define 32-bit value to be written to bus

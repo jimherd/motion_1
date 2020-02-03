@@ -141,7 +141,7 @@ always_ff @(posedge clk or negedge reset) begin
       data_in_reg <= 'z;
    end  else begin
       if(write_data_word_to_BUS == 1'b1) begin
-         case (bus.reg_address)  
+         unique case (bus.reg_address)  
             (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_count_buffer;
             (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_turns_buffer;
             (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_speed_buffer;

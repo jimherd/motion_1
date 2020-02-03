@@ -28,7 +28,7 @@ set RUN_TIME  25000ns
 
 # options : PWM_TEST_0, PWM_TEST_1, QE_INT_TEST_0, RC_SERVO_TEST_0
 
-set     TEST     PWM_TEST_1
+set     TEST     QE_INT_TEST_0
 
 project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_1
 #

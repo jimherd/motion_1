@@ -33,7 +33,7 @@ import types::*;
 
 enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0} test_set;
 
-`define TEST        PWM_TEST_1
+`define TEST        QE_INT_TEST_0
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
