@@ -65,8 +65,8 @@ SOFTWARE.
 // number of subsystems 
 
 	`define NOS_SYS_INFO_REGISTERS	1
-	`define NOS_PWM_CHANNELS      	1
-	`define NOS_QE_CHANNELS  			1
+	`define NOS_PWM_CHANNELS      	2
+	`define NOS_QE_CHANNELS  			2
    `define NOS_RC_SERVO_CHANNELS    8
 
 ///////////////////////////////////////////////////
