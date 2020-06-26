@@ -45,15 +45,18 @@ module uP_interface(
                    );
                    
 
-logic counter_zero, set_in_uP_byte_count, set_out_uP_byte_count, read_uP_byte, write_uP_byte;
+logic  counter_zero, set_in_uP_byte_count, set_out_uP_byte_count, read_uP_byte, write_uP_byte;
 logic  read_bus_word, clear_uP_packet, uP_soft_reset;
 logic  set_in_bus_word_count, set_out_bus_word_count;
+logic  set_timeout_counter, dec_timeout, timeout_count_zero;
 
 byte_t counter, target_count, data_out;
 byte_t data_in;
 
 byte_t input_packet[`NOS_READ_BYTES_FROM_UP];
 byte_t output_packet[`NOS_READ_BYTES_FROM_SLAVE];
+
+uint16_t timeout_counter;
 
 
 uP_interface_FSM uP_interface_sys(
@@ -73,7 +76,10 @@ uP_interface_FSM uP_interface_sys(
                .read_uP_byte(read_uP_byte), 
                .write_uP_byte(write_uP_byte),
                .read_bus_word(read_bus_word),
-               .clear_uP_packet(clear_uP_packet)
+               .clear_uP_packet(clear_uP_packet),
+					.set_timeout_counter(set_timeout_counter),
+					.dec_timeout(dec_timeout),
+					.timeout_count_zero(timeout_count_zero)
                ); 
                
 
@@ -134,6 +140,21 @@ always_ff @(posedge clk or negedge reset) begin
 end
 
 
+always_ff @(posedge clk or negedge reset) begin
+   if (!reset) begin
+      timeout_counter = 0;
+   end else begin
+      if (set_timeout_counter) begin
+         timeout_counter = `TIMEOUT_COUNT;
+      end else begin 
+         if (dec_timeout) begin
+            timeout_counter = timeout_counter - 1;
+         end
+      end
+   end
+end
+
+
 assign  counter_zero = (target_count == 0) ? 1'b1 : 1'b0;
 
 assign  uP_soft_reset   = input_packet[`CMD_REG][`BIT7];
@@ -143,5 +164,12 @@ assign  bus.reg_address = input_packet[1];
 assign  bus.data_out    = {input_packet[5],input_packet[4],input_packet[3],input_packet[2]};
 
 assign  uP_data = (uP_RW == 0) ? data_out : 'z;
+
+assign  timeout_count_zero  =  (timeout_counter == 0) ? 1'b1 : 1'b0;
+
+//
+// Data subsystem to calculate pulse edges
+
+
 
 endmodule

@@ -197,7 +197,7 @@ assign  H_bridge_int_enable  = pwm_config[`H_BRIDGE_INT_ENABLE];
 assign  H_bridge_ext_enable  = pwm_config[`H_BRIDGE_EXT_ENABLE];
 assign  H_bridge_cmd         = pwm_config[(`H_BRIDGE_COMMAND + 2) : `H_BRIDGE_COMMAND];
 assign  H_bridge_mode        = pwm_config[(`H_BRIDGE_MODE + 1) : `H_BRIDGE_MODE];
-assign  H_bridge_swap        = pwm_config[`PWM_ENABLE];
+assign  H_bridge_swap        = pwm_config[`H_BRIDGE_SWAP];
 assign  H_bridge_dwell_mode  = pwm_config[`H_BRIDGE_DWELL_MODE];
 assign  H_bridge_invert_mode = pwm_config[(`H_BRIDGE_INVERT_PINS + 1) : `H_BRIDGE_INVERT_PINS];
 

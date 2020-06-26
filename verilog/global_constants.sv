@@ -245,6 +245,12 @@ SOFTWARE.
 	`define MAX_SPEED_COUNT 2000000
 	
 	enum bit {FALSE, TRUE} bool_states;
+	
+//
+// other constants
+
+	`define TIMEOUT_COUNT	10000
+	
 
 `endif    // _global_constants_sv_
 
