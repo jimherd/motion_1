@@ -55,7 +55,7 @@ logic [31:0] data_in_reg;
 //
 // Connection to internal system 32-bit bus
 
-logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
+logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
 logic subsystem_enable;
 
 bus_FSM   bus_FSM_sys(
@@ -95,10 +95,11 @@ end
 // assess if registers numbers refer to this subsystem
 
 always_comb begin
-      subsystem_enable = 0;
-		if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address <  `PWM_BASE))  begin
-			subsystem_enable = 1;
-		end
+	if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address <  `PWM_BASE))  begin
+		subsystem_enable = 1;
+	end else begin
+		subsystem_enable = 0;
+	end
 end
 
 //

@@ -13,8 +13,8 @@ Robot motion control board uses an Altera MAX 10 device to provide low level fea
 * On-board ARM M4 controller to provide higher level features
 
 ## Devices 
-* Intel/Altera - MAX10M08
-* ST Microelectronics - STM32F302
+* Intel/Altera        - MAX10M08
+* ST Microelectronics - STM32F303RE
 
 ## Languages
 * SystemVerilog
@@ -22,9 +22,10 @@ Robot motion control board uses an Altera MAX 10 device to provide low level fea
 
 ## Built With
 
-* Quartus Prime Lite 17.1
+* Quartus Prime Lite 19.1
 * ModelSim Starter Edition 10.5b
-* MBED
+* MBED STUDIO V1.0
+* MBED OS 6
 
 ## Authors
 

@@ -64,7 +64,7 @@ SOFTWARE.
 //
 // number of subsystems 
 
-	`define NOS_SYS_INFO_REGISTERS	1
+	`define NOS_SYS_INFO_REGISTERS	2
 	`define NOS_PWM_CHANNELS      	2
 	`define NOS_QE_CHANNELS  			2
    `define NOS_RC_SERVO_CHANNELS    8
@@ -87,7 +87,7 @@ SOFTWARE.
 //
 // System information subsystem
 
-   `define SYS_INFO_0    	0   // Read-only
+   `define SYS_INFO_0    	`REGISTER_BASE   // Read-only register
 	
 	`define SYS_INFO_0_DATA   ((`MAJOR_VERSION         <<  0) + \
 										(`MINOR_VERSION         <<  4) + \
