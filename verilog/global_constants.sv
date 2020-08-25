@@ -64,10 +64,20 @@ SOFTWARE.
 //
 // number of subsystems 
 
-	`define NOS_SYS_INFO_REGISTERS	2
+
 	`define NOS_PWM_CHANNELS      	2
 	`define NOS_QE_CHANNELS  			2
    `define NOS_RC_SERVO_CHANNELS    8
+	
+///////////////////////////////////////////////////
+//
+// Registers in each unit type
+
+	`define NOS_SYS_INFO_REGISTERS	1
+	`define NOS_PWM_REGISTERS   	   4
+	`define NOS_QE_REGISTERS   		7
+	`define NOS_RC_REGISTERS         (3 + `NOS_RC_SERVO_CHANNELS)
+
 
 ///////////////////////////////////////////////////
 //
@@ -75,11 +85,8 @@ SOFTWARE.
 	
 	`define REGISTER_BASE				0
 	`define PWM_BASE            	   `REGISTER_BASE + `NOS_SYS_INFO_REGISTERS
-	`define NOS_PWM_REGISTERS   	   (`PWM_STATUS + 1)
 	`define QE_BASE            		((`NOS_PWM_REGISTERS * `NOS_PWM_CHANNELS) + `PWM_BASE)
-   `define NOS_QE_REGISTERS   		(`QE_STATUS + 1)
 	`define RC_BASE                  ((`NOS_QE_REGISTERS * `NOS_QE_CHANNELS) + `QE_BASE)
-	`define NOS_RC_REGISTERS         (3 + `NOS_RC_SERVO_CHANNELS)
 	`define RC_ON_TIME_BASE          (`RC_BASE + 3)
 	`define NXT_BASE                 (3 + `NOS_RC_SERVO_CHANNELS) + RC_BASE)
 

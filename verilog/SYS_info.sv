@@ -58,6 +58,8 @@ logic [31:0] data_in_reg;
 logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
 logic subsystem_enable;
 
+//logic register_address_valid;
+
 bus_FSM   bus_FSM_sys(
 		.clk(clk),
 		.reset(reset),
@@ -67,7 +69,8 @@ bus_FSM   bus_FSM_sys(
 		.RW(bus.RW),
 		.read_word_from_BUS(read_word_from_BUS), 
 		.write_data_word_to_BUS(write_data_word_to_BUS),
-		.write_status_word_to_BUS(write_status_word_to_BUS)
+		.write_status_word_to_BUS(write_status_word_to_BUS),
+		.register_address_valid(bus.register_address_valid)
 		);
 
 
@@ -95,10 +98,10 @@ end
 // assess if registers numbers refer to this subsystem
 
 always_comb begin
-	if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address <  `PWM_BASE))  begin
-		subsystem_enable = 1;
-	end else begin
-		subsystem_enable = 0;
+	subsystem_enable = 0;
+	if (bus.register_address_valid == 1'b1) begin
+		if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE)) 
+			subsystem_enable = 1; 
 	end
 end
 

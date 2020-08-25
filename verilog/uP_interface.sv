@@ -49,6 +49,7 @@ logic  counter_zero, set_in_uP_byte_count, set_out_uP_byte_count, read_uP_byte, 
 logic  read_bus_word, clear_uP_packet, uP_soft_reset;
 logic  set_in_bus_word_count, set_out_bus_word_count;
 logic  set_timeout_counter, dec_timeout, timeout_count_zero;
+logic  register_address_valid;
 
 byte_t counter, target_count, data_out;
 byte_t data_in;
@@ -79,7 +80,8 @@ uP_interface_FSM uP_interface_sys(
                .clear_uP_packet(clear_uP_packet),
 					.set_timeout_counter(set_timeout_counter),
 					.dec_timeout(dec_timeout),
-					.timeout_count_zero(timeout_count_zero)
+					.timeout_count_zero(timeout_count_zero),
+					.register_address_valid(register_address_valid)
                ); 
                
 
@@ -166,6 +168,8 @@ assign  bus.data_out    = {input_packet[5],input_packet[4],input_packet[3],input
 assign  uP_data = (uP_RW == 0) ? data_out : 'z;
 
 assign  timeout_count_zero  =  (timeout_counter == 0) ? 1'b1 : 1'b0;
+
+assign  bus.register_address_valid = register_address_valid;
 
 //
 // Data subsystem to calculate pulse edges

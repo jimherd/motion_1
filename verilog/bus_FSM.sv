@@ -35,9 +35,10 @@ SOFTWARE.
 
 module bus_FSM( 
                input  logic  clk, reset, 
-               input  logic  RW, subsystem_enable, handshake_1,
+               input  logic  RW, subsystem_enable, handshake_1,register_address_valid,
                output wire   handshake_2,
                output logic  read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS
+
                );
 
 //
@@ -142,5 +143,7 @@ begin
 end
 
 assign handshake_2 = handshake_2_reg;
+
+
 
 endmodule

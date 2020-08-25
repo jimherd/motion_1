@@ -73,7 +73,9 @@ module uP_interface_FSM(
 
 				output logic  set_timeout_counter,
 				output logic  dec_timeout,
-				input  logic  timeout_count_zero
+				input  logic  timeout_count_zero,
+									
+				output logic  register_address_valid	// defines time when subunits can decode register address
             );
 //
 // set of FSM states (refer to state diagram for different sections)
@@ -227,5 +229,14 @@ assign read_bus_word         =  (state == S_RB3);
 
 assign set_timeout_counter   =  (state == S_TST0);
 assign dec_timeout           =  (state == S_TST3);
+
+
+always_comb
+begin
+	if ((state >= S_WB0) && (state <= S_WuP0)) 
+		register_address_valid = 1'b1;
+	else
+		register_address_valid = 1'b0;
+end
 
 endmodule
