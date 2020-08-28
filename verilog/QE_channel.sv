@@ -34,7 +34,7 @@ import types::*;
 
 module QE_channel #(QE_UNIT = 0) ( 
 									input  logic clk, reset,
-									IO_bus  bus,						// internal 32-bit bus
+									IO_bus       bus,						// internal 32-bit bus
 									input  logic async_ext_QE_A, 	// external encoder A input
 									input  logic async_ext_QE_B, 	// external encoder B input
 									input  logic async_ext_QE_I	// external encoder I input
@@ -97,7 +97,7 @@ always_comb begin
 	subsystem_enable = 0;
 	if (bus.register_address_valid == 1'b1) begin
 		if ((bus.reg_address >= `FIRST_QE_REGISTER) && (bus.reg_address <= `LAST_QE_REGISTER)) begin
-			subsystem_enable = 1;
+			subsystem_enable = 1'b1;
 		end 
 	end
 end
@@ -111,7 +111,7 @@ always_ff @(posedge clk or negedge reset) begin
 		QE_counts_per_rev		<= 0;
 		QE_config				<= 0;
    end else begin
-      if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
+      if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
          if (bus.reg_address == (`QE_SIM_PHASE_TIME + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
             QE_sim_phase_time <= bus.data_out;
          end else 
