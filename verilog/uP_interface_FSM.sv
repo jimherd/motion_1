@@ -80,7 +80,7 @@ module uP_interface_FSM(
 //
 // set of FSM states (refer to state diagram for different sections)
 
-enum bit [6:0] {   // section #1
+enum logic [6:0] {   // section #1    // bit
                      S_M0, 
                      S_RuP0, S_RuP1, S_RuP2, S_RuP3, S_RuP4, S_RuP5,
                   // section #2
@@ -213,7 +213,7 @@ end: set_next_state
 //
 // Moore outputs
 
-assign set_in_uP_byte_count  =  (state == S_RuP0);
+assign set_in_uP_byte_count  =  (state == S_RuP0);  //   //state[S_RuP0];
 assign read_uP_byte          =  (state == S_RuP2);
 assign uP_handshake_2        = ((state == S_RuP3) || (state == S_RuP4) || 
  										  (state == S_WuP2) || (state == S_WuP3) ||

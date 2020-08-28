@@ -144,13 +144,13 @@ end
 
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
-      timeout_counter = 0;
+      timeout_counter <= 0;
    end else begin
       if (set_timeout_counter) begin
-         timeout_counter = `TIMEOUT_COUNT;
+         timeout_counter <= `TIMEOUT_COUNT;
       end else begin 
          if (dec_timeout) begin
-            timeout_counter = timeout_counter - 1;
+            timeout_counter <= timeout_counter - 1'b1;
          end
       end
    end

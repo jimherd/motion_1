@@ -82,10 +82,12 @@ bus_FSM   bus_FSM_sys(
 // address decode logic
 
 always_comb begin
-      subsystem_enable = 0;
+	subsystem_enable = 0;
+	if (bus.register_address_valid == 1'b1) begin
 		if ( (bus.reg_address >= `RC_BASE) && (bus.reg_address < (3 + `NOS_RC_SERVO_CHANNELS) + `RC_BASE))  begin
 			subsystem_enable = 1;
 		end
+	end
 end
 		
 //

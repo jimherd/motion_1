@@ -34,7 +34,7 @@ SOFTWARE.
 
 module pwm_channel  #(parameter PWM_UNIT = 0)  (
                      input  logic  clk, reset,
-                     IO_bus bus,							// internal 32-bit bus
+                     IO_bus        bus,				// internal 32-bit bus
                      output logic  pwm_signal,		// actual PWM signal
 							output logic  H_bridge_1, 		// first H-bridge signal derived from 'pwm_signal'
 							output logic  H_bridge_2		// second H-bridge signal derived from 'pwm_signal'
@@ -89,7 +89,8 @@ bus_FSM   bus_FSM_sys(
    .RW(bus.RW),
    .read_word_from_BUS(read_word_from_BUS), 
    .write_data_word_to_BUS(write_data_word_to_BUS),
-   .write_status_word_to_BUS(write_status_word_to_BUS)
+   .write_status_word_to_BUS(write_status_word_to_BUS),
+	.register_address_valid(bus.register_address_valid)
    );
 	
 logic T_period_zero, T_on_zero;
@@ -231,18 +232,15 @@ assign pwm_signal = pwm;   // set pwm signal value
 
 assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
 
-
-//
-// assess if registers numbers refer to this subsystem
-
 //
 // Decode register address to check if this subsystem is addressed
 
 always_comb begin
-	if ((bus.reg_address >= `FIRST_PWM_REGISTER) && (bus.reg_address <= `LAST_PWM_REGISTER)) begin
-		subsystem_enable = 1;
-	end else begin
-		subsystem_enable = 0;
+	subsystem_enable = 0;
+	if (bus.register_address_valid ==1'b1) begin
+		if ((bus.reg_address >= `FIRST_PWM_REGISTER) && (bus.reg_address <= `LAST_PWM_REGISTER)) begin
+			subsystem_enable = 1;
+		end 
 	end
 end
 

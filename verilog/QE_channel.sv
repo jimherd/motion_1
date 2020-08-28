@@ -86,17 +86,19 @@ bus_FSM   bus_FSM_sys(
 		.RW(bus.RW),
 		.read_word_from_BUS(read_word_from_BUS), 
 		.write_data_word_to_BUS(write_data_word_to_BUS),
-		.write_status_word_to_BUS(write_status_word_to_BUS)
+		.write_status_word_to_BUS(write_status_word_to_BUS),
+		.register_address_valid(bus.register_address_valid)
 );
 
 //
 // Decode register address to check if this subsystem is addressed
 
 always_comb begin
-	if ((bus.reg_address >= `FIRST_QE_REGISTER) && (bus.reg_address <= `LAST_QE_REGISTER)) begin
-		subsystem_enable = 1;
-	end else begin
-		subsystem_enable = 0;
+	subsystem_enable = 0;
+	if (bus.register_address_valid == 1'b1) begin
+		if ((bus.reg_address >= `FIRST_QE_REGISTER) && (bus.reg_address <= `LAST_QE_REGISTER)) begin
+			subsystem_enable = 1;
+		end 
 	end
 end
 
@@ -141,7 +143,7 @@ always_ff @(posedge clk or negedge reset) begin
       data_in_reg <= 'z;
    end  else begin
       if(write_data_word_to_BUS == 1'b1) begin
-         unique case (bus.reg_address)  
+         case (bus.reg_address)  
             (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_count_buffer;
             (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_turns_buffer;
             (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_speed_buffer;
