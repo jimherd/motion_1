@@ -43,12 +43,13 @@ interface IO_bus (input clk);
    logic  [7:0]  reg_address;
    logic         handshake_1, RW, register_address_valid;
    wire          handshake_2; 
+	wire          nFault;
 
-   modport master(input  data_in, handshake_2,
+   modport master(input  data_in, handshake_2, nFault,
                   output data_out, reg_address, RW, handshake_1, register_address_valid);
    
    modport slave( input  data_out, reg_address, RW, handshake_1, register_address_valid,
-                  output data_in, handshake_2);
+                  output data_in, handshake_2, nFault);
 
 endinterface
    

@@ -286,5 +286,11 @@ SYS_info  SYS_info_sys(
 					.reset(reset),
 					.bus(intf.slave)
 					);
+					
+register_error register_error(
+					.clk(CLOCK_50), 
+					.reset(reset),
+					.bus(intf.slave)
+					);
 
 endmodule

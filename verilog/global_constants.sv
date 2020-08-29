@@ -88,7 +88,11 @@ SOFTWARE.
 	`define QE_BASE            		((`NOS_PWM_REGISTERS * `NOS_PWM_CHANNELS) + `PWM_BASE)
 	`define RC_BASE                  ((`NOS_QE_REGISTERS * `NOS_QE_CHANNELS) + `QE_BASE)
 	`define RC_ON_TIME_BASE          (`RC_BASE + 3)
-	`define NXT_BASE                 (3 + `NOS_RC_SERVO_CHANNELS) + RC_BASE)
+	
+	`define NXT_BASE                 ((3 + `NOS_RC_SERVO_CHANNELS) + `RC_BASE)
+	
+	`define FIRST_ILLEGAL_REGISTER    `NXT_BASE
+	`define LAST_REGISTER             8'hFF
 
 ///////////////////////////////////////////////////
 //

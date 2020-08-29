@@ -23,9 +23,9 @@ SOFTWARE.
 */
 
 //
-// SYS_info_sv : 
+// register_error_sv : 
 //
-// Read only data about system
+// Detect access to a register not conected to any subsystem
 
 `include  "global_constants.sv"
 `include  "interfaces.sv"
@@ -33,13 +33,12 @@ SOFTWARE.
 import types::*;
 
 
-module SYS_info  ( 
+module register_error  ( 
 					input  logic clk, reset,
 					IO_bus  bus
 					);
 					
 logic [31:0] data_in_reg;
-logic        nFault;
 					
 //
 // subsystem registers accessible to external system
@@ -76,21 +75,24 @@ bus_FSM   bus_FSM_sys(
 
 
 //
-// put data onto bus
+// put data onto bus and assert nFault signal
 
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       data_in_reg <= 'z;
+		bus.nFault = 'z;
    end  else begin
       if(write_data_word_to_BUS == 1'b1) begin
 			if (bus.reg_address == `SYS_INFO_0 ) begin
-            data_in_reg <= `SYS_INFO_0_DATA;
+            data_in_reg <= 32'h55555555;
+				bus.nFault = 1'b0;
          end
 		end else begin
          if(write_status_word_to_BUS == 1'b1) begin
-            data_in_reg <= ~`SYS_INFO_0_DATA;
+            data_in_reg <= 32'hAAAAAAAA;
          end else
             data_in_reg <= 'z;
+				bus.nFault <= 'z;
       end
    end
 end
@@ -101,7 +103,7 @@ end
 always_comb begin
 	subsystem_enable = 0;
 	if (bus.register_address_valid == 1'b1) begin
-		if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE)) 
+		if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) 
 			subsystem_enable = 1; 
 	end
 end
