@@ -99,10 +99,10 @@ end
 // assess if registers numbers refer to this subsystem
 
 always_comb begin
-	subsystem_enable = 0;
+	subsystem_enable = 1'b0;
 	if (bus.register_address_valid == 1'b1) begin
 		if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE)) 
-			subsystem_enable = 1; 
+			subsystem_enable = 1'b1; 
 	end
 end
 

@@ -83,10 +83,8 @@ always_ff @(posedge clk or negedge reset) begin
 		bus.nFault = 'z;
    end  else begin
       if(write_data_word_to_BUS == 1'b1) begin
-			if (bus.reg_address == `SYS_INFO_0 ) begin
-            data_in_reg <= 32'h55555555;
-				bus.nFault = 1'b0;
-         end
+         data_in_reg <= 32'h55555555;
+			bus.nFault = 1'b0;
 		end else begin
          if(write_status_word_to_BUS == 1'b1) begin
             data_in_reg <= 32'hAAAAAAAA;
@@ -101,16 +99,21 @@ end
 // assess if registers numbers refer to this subsystem
 
 always_comb begin
-	subsystem_enable = 0;
+	subsystem_enable = 1'b0;
 	if (bus.register_address_valid == 1'b1) begin
-		if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) 
-			subsystem_enable = 1; 
+		if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) begin
+			subsystem_enable = 1'b1;
+			bus.nFault = 1'b0;
+		end else begin
+			bus.nFault = 'z;
+		end
 	end
 end
 
 //
 // define 32-bit value to be written to bus
 
-assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
+assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
+
 
 endmodule

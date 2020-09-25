@@ -41,6 +41,7 @@ module uP_interface(
 							input  logic  uP_RW,				// read/write signal from uP
                      output logic  uP_ack, 			// transaction acknowledge signal to uP
 							output logic  uP_handshake_2,	// second handshake to uP
+							output logic  uP_nFault,      // fault line to uP
                      inout  [7:0]  uP_data			// 8-bit bidirectional bus to uP
                    );
                    
@@ -171,9 +172,7 @@ assign  timeout_count_zero  =  (timeout_counter == 0) ? 1'b1 : 1'b0;
 
 assign  bus.register_address_valid = register_address_valid;
 
-//
-// Data subsystem to calculate pulse edges
-
+assign  uP_nFault = bus.nFault;
 
 
 endmodule
