@@ -43,13 +43,6 @@ logic [31:0] data_in_reg;
 //
 // subsystem registers accessible to external system
   
-//uint32_t  SYS_info_reg_0;
-//
-// internal registers
-
-// local signals
-//
-
 
 /////////////////////////////////////////////////
 //
@@ -58,7 +51,11 @@ logic [31:0] data_in_reg;
 logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
 logic subsystem_enable;
 
-//logic register_address_valid;
+//
+// instantiate Finite State Machines (FSMs)
+
+//
+// FSM to interface to on-FPGA 32-bit bus
 
 bus_FSM   bus_FSM_sys(
 		.clk(clk),
@@ -73,27 +70,58 @@ bus_FSM   bus_FSM_sys(
 		.register_address_valid(bus.register_address_valid)
 		);
 
+//
+// FSM to manage nFault error line (tri-state line)
+		
+logic set_nFault_z, set_nFault_value;
+		
+error_processing_FSM  sys_error_processing_FSM (
+		.clk(clk),
+		.reset(reset),
+		.register_address_valid(bus.register_address_valid),	
+		.subsystem_enable(subsystem_enable),
+		.set_nFault_z(set_nFault_z),
+		.set_nFault_value(set_nFault_value)
+		);
+		
 
 //
-// put data onto bus and assert nFault signal
+// put data onto bus 
 
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
       data_in_reg <= 'z;
-		bus.nFault = 'z;
    end  else begin
       if(write_data_word_to_BUS == 1'b1) begin
          data_in_reg <= 32'h55555555;
-			bus.nFault = 1'b0;
 		end else begin
          if(write_status_word_to_BUS == 1'b1) begin
             data_in_reg <= 32'hAAAAAAAA;
          end else
             data_in_reg <= 'z;
-				bus.nFault <= 'z;
       end
    end
 end
+
+//
+// processes error onto nFault bus line
+
+always_ff @(posedge clk or negedge reset) begin
+   if (!reset) begin
+      bus.nFault <= 'z;
+   end  else begin
+      if(set_nFault_z == 1'b1) begin
+			bus.nFault <= 'z;
+		end else begin
+			if (set_nFault_value == 1'b1) begin
+				bus.nFault <= 1'b0;
+			end else begin
+				bus.nFault <= 1'b1;
+			end
+		end
+	end
+end
+
 
 //
 // assess if registers numbers refer to this subsystem
@@ -103,9 +131,6 @@ always_comb begin
 	if (bus.register_address_valid == 1'b1) begin
 		if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) begin
 			subsystem_enable = 1'b1;
-			bus.nFault = 1'b0;
-		end else begin
-			bus.nFault = 'z;
 		end
 	end
 end

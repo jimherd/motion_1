@@ -50,7 +50,7 @@ SOFTWARE.
 module error_processing_FSM (
                   input  logic  clk, reset, 
 							
-                  input  logic  bus_register_address_valid,   //
+                  input  logic  register_address_valid,   //
 						input  logic  subsystem_enable, 		        // 
 	
                   output logic  set_nFault_z, 	    // 
@@ -83,7 +83,7 @@ end
 always_comb begin: set_next_state
    unique case (state)
       S_E0:
-         if (bus_register_address_valid == 1'b0)
+         if (register_address_valid == 1'b0)
             next_state = S_E0;
          else
             next_state = S_E1;
@@ -97,7 +97,7 @@ always_comb begin: set_next_state
       S_E3:
          next_state = `S_E_INITIAL_STATE;
 		S_E4:
-         if (bus_register_valid == 1'b1)
+         if (register_address_valid == 1'b1)
             next_state = S_E4;
          else
             next_state = S_E5;
