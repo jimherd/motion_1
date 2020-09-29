@@ -38,21 +38,20 @@ SOFTWARE.
 // 32-bit bus with individual input and output busses 
 //
 interface IO_bus (input clk);
-   wire  [31:0]  data_in;     // 'in'  wrt master
-   logic [31:0]  data_out;    // 'out' wrt master
-   logic  [7:0]  reg_address;
-   logic         handshake_1, RW, register_address_valid;
-   wire          handshake_2; 
-   wire          nFault;
+    wire  [31:0]  data_in;     // 'in'  wrt master
+    logic [31:0]  data_out;    // 'out' wrt master
+    logic  [7:0]  reg_address;
+    logic         handshake_1, RW, register_address_valid;
+    wire          handshake_2; 
+    wire          nFault;
 
-   modport master(input  data_in, handshake_2, nFault,
+    modport master(input  data_in, handshake_2, nFault,
                   output data_out, reg_address, RW, handshake_1, register_address_valid);
-   
-   modport slave( input  data_out, reg_address, RW, handshake_1, register_address_valid,
+
+    modport slave( input  data_out, reg_address, RW, handshake_1, register_address_valid,
                   output data_in, handshake_2, nFault);
 
 endinterface
-   
-   
+
 `endif    // _global_constants_sv_
 

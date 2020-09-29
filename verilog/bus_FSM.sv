@@ -34,34 +34,34 @@ SOFTWARE.
 `include  "global_constants.sv"
 
 module bus_FSM( 
-               input  logic  clk, reset, 
-               input  logic  RW, subsystem_enable, handshake_1,register_address_valid,
-               output wire   handshake_2,
-               output logic  read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS
-
-               );
+   input  logic  clk, reset, 
+   input  logic  RW, subsystem_enable, handshake_1,register_address_valid,
+   output wire   handshake_2,
+   output logic  read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS
+);
 
 //
 // set of states
 
 enum bit [4:0] {
-                  // section #1   
-                     S_RW0, S_RW1, S_RW2, S_RW3, S_RW4, S_RW5, S_RW6, 
-                  // section #2
-                     S_WWD0, S_WWD1, S_WWD2, S_WWD3, S_WWD4, 
-                  // section #3
-                     S_WWS0, S_WWS1, S_WWS2, S_WWS3, S_WWS4, S_WWS5 
-               } state, next_state;
+   // section #1   
+   S_RW0, S_RW1, S_RW2, S_RW3, S_RW4, S_RW5, S_RW6, 
+   // section #2
+   S_WWD0, S_WWD1, S_WWD2, S_WWD3, S_WWD4, 
+   // section #3
+   S_WWS0, S_WWS1, S_WWS2, S_WWS3, S_WWS4, S_WWS5 
+} state, next_state;
    
 //
 // register next state
 
-always_ff @(posedge clk or negedge reset)
-      if (!reset)   begin
-         state <= S_RW0;
-      end
-      else
-         state <= next_state;
+always_ff @(posedge clk or negedge reset) begin
+   if (!reset) begin
+      state <= S_RW0;
+   end else begin
+      state <= next_state;
+   end
+end
 
 //
 // next state logic

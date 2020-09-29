@@ -44,33 +44,31 @@ SOFTWARE.
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
-
 module count_FSM (
-                  input  logic  clk, reset, 
-							
-                  input  logic  count_sig, 		//
-						input  logic  direction, 		// signal to define direction of count
-	
-                  output logic  inc_counter, 	// decrement the ON time counter
-						output logic  dec_counter  	// decrement the period time counter
-                  );
-               
+   input  logic  clk, reset, 
+
+   input  logic  count_sig, 		//
+	input  logic  direction, 		// signal to define direction of count
+
+   output logic  inc_counter, 	// decrement the ON time counter
+	output logic  dec_counter  	// decrement the period time counter
+);
+
 //
 // Set of FSM states
 
-
- 
 enum bit [3:0] {  
-						S_COUNT0, S_COUNT1, S_COUNT2, S_COUNT3, S_COUNT4
-               } state, next_state;
+	S_COUNT0, S_COUNT1, S_COUNT2, S_COUNT3, S_COUNT4
+} state, next_state;
 //
 // register next state
 
 always_ff @(posedge clk or negedge reset) begin
       if (!reset)   begin
          state <= S_COUNT0;
-      end else           
+      end else begin       
          state <= next_state;
+      end
 end
 
 //

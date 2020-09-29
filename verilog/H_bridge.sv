@@ -34,17 +34,17 @@ SOFTWARE.
 `include  "global_constants.sv"
 
 module H_bridge ( 
-                  input  logic PWM_signal,	// source of basic PWM signal
-						input  [2:0] command,		// commands - forward, backward, brake, etc
-						input  [1:0] mode, 			// format of H-bridge control signals
-						input  logic int_enable, 	//
-						input  logic ext_enable, 	//
-						input  logic pwm_dwell, 	// set of time of PWM to BRAKE or COAST
-						input  logic swap,			//
-						input  [1:0] invert,			//
-						
-						output logic H_bridge_1, H_bridge_2
-						);
+    input  logic PWM_signal,	// source of basic PWM signal
+	input  [2:0] command,		// commands - forward, backward, brake, etc
+	input  [1:0] mode, 			// format of H-bridge control signals
+	input  logic int_enable, 	//
+	input  logic ext_enable, 	//
+	input  logic pwm_dwell, 	// set of time of PWM to BRAKE or COAST
+	input  logic swap,			//
+	input  [1:0] invert,		//
+
+	output logic H_bridge_1, H_bridge_2
+);
 						
 logic H_bridge_1_tmp, H_bridge_2_tmp;
 						

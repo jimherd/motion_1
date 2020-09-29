@@ -81,7 +81,7 @@ bus_FSM   bus_FSM_sys(
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
         data_in_reg <= 'z;
-   end  else begin
+    end  else begin
         if(write_data_word_to_BUS == 1'b1) begin
             if (bus.reg_address == `SYS_INFO_0 ) begin
                 data_in_reg <= `SYS_INFO_0_DATA;

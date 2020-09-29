@@ -43,69 +43,70 @@ SOFTWARE.
 `include  "global_constants.sv"
 
 module pwm_FSM #(parameter PWM_UNIT = 0) (
-                     input  logic  clk, reset, 
-                     input  logic  pwm_enable, 		// ==1 then run PWM machine
-							input  logic  T_on_zero, 		// ==1 when ON time complete
-							input  logic  T_period_zero,	// ==1 when period complete
-                     output logic  dec_T_on, 		// decrement the ON time counter
-							output logic  dec_T_period, 	// decrement the period time counter
-							output logic  reload_times, 	// reload ON and period counters
-                     output logic  pwm					// PWM output signal
-                  );
-               
+    input  logic  clk, reset, 
+    input  logic  pwm_enable, 		// ==1 then run PWM machine
+    input  logic  T_on_zero, 		// ==1 when ON time complete
+    input  logic  T_period_zero,	// ==1 when period complete
+    output logic  dec_T_on, 		// decrement the ON time counter
+    output logic  dec_T_period, 	// decrement the period time counter
+    output logic  reload_times, 	// reload ON and period counters
+    output logic  pwm					// PWM output signal
+);
+
 //
 // Set of FSM states
 
- /* enum bit [1:0] {  IDLE,
-                  CONFIG,
-                  CHECK_ON_TIME,
-                  CHECK_OFF_TIME
-               } state, next_state;   */
- 
+/* enum bit [1:0] { 
+    IDLE,
+    CONFIG,
+    CHECK_ON_TIME,
+    CHECK_OFF_TIME
+} state, next_state;   */
+
 enum bit [2:0] {  
-						S_PWM_GEN0, S_PWM_GEN1, S_PWM_GEN2, S_PWM_GEN3
-               } state, next_state;
+    S_PWM_GEN0, S_PWM_GEN1, S_PWM_GEN2, S_PWM_GEN3
+} state, next_state;
 //
 // register next state
 
 always_ff @(posedge clk or negedge reset) begin
-      if (!reset)   begin
-         state <= S_PWM_GEN0;
-      end else           
-         state <= next_state;
+    if (!reset)   begin
+        state <= S_PWM_GEN0;
+    end else           
+        state <= next_state;
 end
 
 //
 // next state logic
 
 always_comb begin: set_next_state
-   unique case (state)
-      S_PWM_GEN0:
-         if (pwm_enable == 0)
-            next_state = S_PWM_GEN0;
-         else
-            next_state = S_PWM_GEN1;
-      S_PWM_GEN1 :
-            next_state = S_PWM_GEN2;
-      S_PWM_GEN2:
-         if (pwm_enable == 0)
-            next_state = S_PWM_GEN0;
-         else 
-            if (T_on_zero)
-               next_state = S_PWM_GEN3;
+    unique case (state)
+        S_PWM_GEN0:
+            if (pwm_enable == 0)
+                next_state = S_PWM_GEN0;
             else
-               next_state = S_PWM_GEN2; 
-      S_PWM_GEN3:
-         if (pwm_enable == 0)
-            next_state = S_PWM_GEN0;
-         else
-            if (T_period_zero)
-               next_state = S_PWM_GEN0; 
+                next_state = S_PWM_GEN1;
+        S_PWM_GEN1 :
+                next_state = S_PWM_GEN2;
+        S_PWM_GEN2:
+            if (pwm_enable == 0)
+                next_state = S_PWM_GEN0;
+            else 
+                if (T_on_zero)
+                    next_state = S_PWM_GEN3;
+                else
+                    next_state = S_PWM_GEN2; 
+        S_PWM_GEN3:
+            if (pwm_enable == 0)
+                next_state = S_PWM_GEN0;
             else
-               next_state = S_PWM_GEN3;
-      default :
-         next_state = state;   // default condition - next state is present state
-   endcase
+                if (T_period_zero)
+                    next_state = S_PWM_GEN0; 
+                else
+                    next_state = S_PWM_GEN3;
+        default :
+            next_state = state;   // default condition - next state is present state
+    endcase
 end: set_next_state
 
 //
