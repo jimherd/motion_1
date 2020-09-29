@@ -32,7 +32,7 @@ SOFTWARE.
 //		State machine diagram in system notes folder.
 //
 // Notes
-//		Consists of two timers. One for the PWM period and one for the PWM ON time.
+//		
 //
 // States
 //			S_E0 : Initial state - wait for "register_address_valid" signal
@@ -65,14 +65,14 @@ enum bit [3:0] {
 						S_E0, S_E1, S_E2, S_E3, S_E4, S_E5
                } state, next_state;
 					
-`define    S_E_INITIAL_STATE		S_E0
+`define    S_Ex_INITIAL_STATE		S_E0
 
 //
 // register next state
 
 always_ff @(posedge clk or negedge reset) begin
       if (!reset)   begin
-         state <= `S_E_INITIAL_STATE;
+         state <= `S_Ex_INITIAL_STATE;
       end else           
          state <= next_state;
 end
@@ -95,14 +95,14 @@ always_comb begin: set_next_state
          else
             next_state = S_E4;
       S_E3:
-         next_state = `S_E_INITIAL_STATE;
+         next_state = `S_Ex_INITIAL_STATE;
 		S_E4:
          if (register_address_valid == 1'b1)
             next_state = S_E4;
          else
             next_state = S_E5;
       S_E5:
-         next_state = `S_E_INITIAL_STATE;
+         next_state = `S_Ex_INITIAL_STATE;
 		default :
          next_state = state;   // default condition - next state is present state
    endcase

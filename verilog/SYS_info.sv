@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 //
-// SYS_info_sv : 
+// SYS_info_sv :
 //
 // Read only data about system
 
@@ -33,17 +33,17 @@ SOFTWARE.
 import types::*;
 
 
-module SYS_info  ( 
-					input  logic clk, reset,
-					IO_bus  bus
-					);
-					
+module SYS_info  (
+    input  logic clk, reset,
+    IO_bus  bus
+);
+
 logic [31:0] data_in_reg;
 logic        nFault;
-					
+
 //
 // subsystem registers accessible to external system
-  
+
 //uint32_t  SYS_info_reg_0;
 //
 // internal registers
@@ -62,53 +62,58 @@ logic subsystem_enable;
 //logic register_address_valid;
 
 bus_FSM   bus_FSM_sys(
-		.clk(clk),
-		.reset(reset),
-		.subsystem_enable(subsystem_enable),
-		.handshake_2(bus.handshake_2),
-		.handshake_1(bus.handshake_1),
-		.RW(bus.RW),
-		.read_word_from_BUS(read_word_from_BUS), 
-		.write_data_word_to_BUS(write_data_word_to_BUS),
-		.write_status_word_to_BUS(write_status_word_to_BUS),
-		.register_address_valid(bus.register_address_valid)
-		);
+        .clk(clk),
+        .reset(reset),
+        .subsystem_enable(subsystem_enable),
+        .handshake_2(bus.handshake_2),
+        .handshake_1(bus.handshake_1),
+        .RW(bus.RW),
+        .read_word_from_BUS(read_word_from_BUS),
+        .write_data_word_to_BUS(write_data_word_to_BUS),
+        .write_status_word_to_BUS(write_status_word_to_BUS),
+        .register_address_valid(bus.register_address_valid)
+        );
 
 
 //
 // put data onto bus
 
 always_ff @(posedge clk or negedge reset) begin
-   if (!reset) begin
-      data_in_reg <= 'z;
+    if (!reset) begin
+        data_in_reg <= 'z;
    end  else begin
-      if(write_data_word_to_BUS == 1'b1) begin
-			if (bus.reg_address == `SYS_INFO_0 ) begin
-            data_in_reg <= `SYS_INFO_0_DATA;
-         end
-		end else begin
-         if(write_status_word_to_BUS == 1'b1) begin
-            data_in_reg <= ~`SYS_INFO_0_DATA;
-         end else
-            data_in_reg <= 'z;
-      end
-   end
+        if(write_data_word_to_BUS == 1'b1) begin
+            if (bus.reg_address == `SYS_INFO_0 ) begin
+                data_in_reg <= `SYS_INFO_0_DATA;
+            end
+        end else begin
+            if(write_status_word_to_BUS == 1'b1) begin
+                data_in_reg <= ~`SYS_INFO_0_DATA;
+            end else
+                data_in_reg <= 'z;
+        end
+    end
 end
 
 //
 // assess if registers numbers refer to this subsystem
 
 always_comb begin
-	subsystem_enable = 1'b0;
-	if (bus.register_address_valid == 1'b1) begin
-		if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE)) 
-			subsystem_enable = 1'b1; 
-	end
+    subsystem_enable = 1'b0;
+    if (bus.register_address_valid == 1'b1) begin
+        if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE))
+            subsystem_enable = 1'b1;
+    end
 end
 
 //
 // define 32-bit value to be written to bus
 
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
+
+//
+// TEMP : no error handling so drive "nFault" signal to high impedence state
+
+assign  bus.nFault = 'z;
 
 endmodule

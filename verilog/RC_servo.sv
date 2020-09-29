@@ -75,7 +75,8 @@ bus_FSM   bus_FSM_sys(
 		.RW(bus.RW),
 		.read_word_from_BUS(read_word_from_BUS), 
 		.write_data_word_to_BUS(write_data_word_to_BUS),
-		.write_status_word_to_BUS(write_status_word_to_BUS)
+		.write_status_word_to_BUS(write_status_word_to_BUS),
+		.register_address_valid(bus.register_address_valid)
 		);
 
 //
@@ -227,5 +228,10 @@ endgenerate
  end	
 
 assign RC_servo_period_0 = (tmp_period_counter == 0) ? 1'b1 : 1'b0;
+
+//
+// TEMP : no error handling so drive "nFault" signal tohigh impedence state
+
+assign  bus.nFault = 'z;
 
 endmodule

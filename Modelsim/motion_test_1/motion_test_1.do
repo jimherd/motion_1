@@ -28,7 +28,7 @@ set RUN_TIME  25000ns
 
 # options : PWM_TEST_0, PWM_TEST_1, QE_INT_TEST_0, RC_SERVO_TEST_0
 
-set     TEST     QE_INT_TEST_0
+set     TEST     PWM_TEST_1
 
 project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_1
 #
@@ -54,6 +54,7 @@ add wave -label uP_handshake_2 -position end  sim:/motion_test_1_tb/uut/uP_inter
 add wave -label write_byte_to_uP -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/write_uP_byte
 add wave -label uP_data -radix hexadecimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_data
 add wave -label uP_state -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/uP_interface_sys/state
+add wave -label uP_nFault -position end sim:/motion_test_1_tb/uut/uP_interface_sys/uP_nFault
 #
 add wave -divider "internal 32-bit bus"
 add wave -label BUS_handshake_1 -position end  sim:/motion_test_1_tb/uut/intf/handshake_1

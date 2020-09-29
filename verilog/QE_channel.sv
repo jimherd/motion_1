@@ -514,4 +514,9 @@ begin
    end
 end
 
+//
+// TEMP : no error handling so drive "nFault" signal to high impedence state
+
+assign  bus.nFault = 'z;
+
 endmodule

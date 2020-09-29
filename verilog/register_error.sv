@@ -34,12 +34,12 @@ import types::*;
 
 
 module register_error  ( 
-					input  logic clk, reset,
-					IO_bus  bus
-					);
-					
+               input  logic clk, reset,
+               IO_bus  bus
+               );
+               
 logic [31:0] data_in_reg;
-					
+               
 //
 // subsystem registers accessible to external system
   
@@ -58,32 +58,32 @@ logic subsystem_enable;
 // FSM to interface to on-FPGA 32-bit bus
 
 bus_FSM   bus_FSM_sys(
-		.clk(clk),
-		.reset(reset),
-		.subsystem_enable(subsystem_enable),
-		.handshake_2(bus.handshake_2),
-		.handshake_1(bus.handshake_1),
-		.RW(bus.RW),
-		.read_word_from_BUS(read_word_from_BUS), 
-		.write_data_word_to_BUS(write_data_word_to_BUS),
-		.write_status_word_to_BUS(write_status_word_to_BUS),
-		.register_address_valid(bus.register_address_valid)
-		);
+      .clk(clk),
+      .reset(reset),
+      .subsystem_enable(subsystem_enable),
+      .handshake_2(bus.handshake_2),
+      .handshake_1(bus.handshake_1),
+      .RW(bus.RW),
+      .read_word_from_BUS(read_word_from_BUS), 
+      .write_data_word_to_BUS(write_data_word_to_BUS),
+      .write_status_word_to_BUS(write_status_word_to_BUS),
+      .register_address_valid(bus.register_address_valid)
+      );
 
 //
 // FSM to manage nFault error line (tri-state line)
-		
+      
 logic set_nFault_z, set_nFault_value;
-		
+      
 error_processing_FSM  sys_error_processing_FSM (
-		.clk(clk),
-		.reset(reset),
-		.register_address_valid(bus.register_address_valid),	
-		.subsystem_enable(subsystem_enable),
-		.set_nFault_z(set_nFault_z),
-		.set_nFault_value(set_nFault_value)
-		);
-		
+      .clk(clk),
+      .reset(reset),
+      .register_address_valid(bus.register_address_valid),  
+      .subsystem_enable(subsystem_enable),
+      .set_nFault_z(set_nFault_z),
+      .set_nFault_value(set_nFault_value)
+      );
+      
 
 //
 // put data onto bus 
@@ -94,7 +94,7 @@ always_ff @(posedge clk or negedge reset) begin
    end  else begin
       if(write_data_word_to_BUS == 1'b1) begin
          data_in_reg <= 32'h55555555;
-		end else begin
+      end else begin
          if(write_status_word_to_BUS == 1'b1) begin
             data_in_reg <= 32'hAAAAAAAA;
          end else
@@ -106,33 +106,37 @@ end
 //
 // processes error onto nFault bus line
 
+logic reg_nFault;
+
 always_ff @(posedge clk or negedge reset) begin
    if (!reset) begin
-      bus.nFault <= 'z;
+      reg_nFault <= 'z;
    end  else begin
       if(set_nFault_z == 1'b1) begin
-			bus.nFault <= 'z;
-		end else begin
-			if (set_nFault_value == 1'b1) begin
-				bus.nFault <= 1'b0;
-			end else begin
-				bus.nFault <= 1'b1;
-			end
-		end
-	end
+         reg_nFault <= 'z;
+      end else begin
+         if (set_nFault_value == 1'b1) begin
+            reg_nFault <= 1'b0;
+         end else begin
+            reg_nFault <= 1'b1;
+         end
+      end
+   end
 end
+
+assign bus.nFault = reg_nFault;
 
 
 //
 // assess if registers numbers refer to this subsystem
 
 always_comb begin
-	subsystem_enable = 1'b0;
-	if (bus.register_address_valid == 1'b1) begin
-		if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) begin
-			subsystem_enable = 1'b1;
-		end
-	end
+   subsystem_enable = 1'b0;
+   if (bus.register_address_valid == 1'b1) begin
+      if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) begin
+         subsystem_enable = 1'b1;
+      end
+   end
 end
 
 //

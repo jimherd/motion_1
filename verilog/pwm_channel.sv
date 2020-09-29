@@ -262,5 +262,9 @@ end
 
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
+//
+// TEMP : no error handling so drive "nFault" signal to high impedence state
+
+assign  bus.nFault = 'z;
 
 endmodule

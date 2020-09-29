@@ -34,16 +34,16 @@ SOFTWARE.
 import types::*;
 
 module uP_interface(
-                     input  logic  clk, reset,
-                     IO_bus.master bus,				// internal 32-bit peripheral bus
-                     input  logic  uP_start, 		// ==1 to start transaction with uP
-							input  logic  uP_handshake_1,	// first handshake to uP
-							input  logic  uP_RW,				// read/write signal from uP
-                     output logic  uP_ack, 			// transaction acknowledge signal to uP
-							output logic  uP_handshake_2,	// second handshake to uP
-							output logic  uP_nFault,      // fault line to uP
-                     inout  [7:0]  uP_data			// 8-bit bidirectional bus to uP
-                   );
+    input  logic  clk, reset,
+    IO_bus.master bus,				// internal 32-bit peripheral bus
+    input  logic  uP_start, 		// ==1 to start transaction with uP
+    input  logic  uP_handshake_1,	// first handshake to uP
+    input  logic  uP_RW,				// read/write signal from uP
+    output logic  uP_ack, 			// transaction acknowledge signal to uP
+    output logic  uP_handshake_2,	// second handshake to uP
+    output logic  uP_nFault,      // fault line to uP
+    inout  [7:0]  uP_data			// 8-bit bidirectional bus to uP
+);
                    
 
 logic  counter_zero, set_in_uP_byte_count, set_out_uP_byte_count, read_uP_byte, write_uP_byte;
@@ -61,29 +61,29 @@ byte_t output_packet[`NOS_READ_BYTES_FROM_SLAVE];
 uint16_t timeout_counter;
 
 
-uP_interface_FSM uP_interface_sys(
-               .clk(clk), 
-               .reset(reset),  
-               .bus_handshake_1(bus.handshake_1),
-               .bus_handshake_2(bus.handshake_2),
-               .uP_start(uP_start), 
-               .uP_ack(uP_ack),
-               .uP_handshake_1(uP_handshake_1),
-               .uP_handshake_2(uP_handshake_2),
-               .uP_soft_reset(uP_soft_reset),
-               .counter_zero(counter_zero),
-               .set_in_uP_byte_count(set_in_uP_byte_count), 
-               .set_out_uP_byte_count(set_out_uP_byte_count),
-               .set_in_bus_word_count(set_in_bus_word_count),
-               .read_uP_byte(read_uP_byte), 
-               .write_uP_byte(write_uP_byte),
-               .read_bus_word(read_bus_word),
-               .clear_uP_packet(clear_uP_packet),
-					.set_timeout_counter(set_timeout_counter),
-					.dec_timeout(dec_timeout),
-					.timeout_count_zero(timeout_count_zero),
-					.register_address_valid(register_address_valid)
-               ); 
+uP_interface_FSM uP_interface_sys (
+    .clk(clk), 
+    .reset(reset),  
+    .bus_handshake_1(bus.handshake_1),
+    .bus_handshake_2(bus.handshake_2),
+    .uP_start(uP_start), 
+    .uP_ack(uP_ack),
+    .uP_handshake_1(uP_handshake_1),
+    .uP_handshake_2(uP_handshake_2),
+    .uP_soft_reset(uP_soft_reset),
+    .counter_zero(counter_zero),
+    .set_in_uP_byte_count(set_in_uP_byte_count), 
+    .set_out_uP_byte_count(set_out_uP_byte_count),
+    .set_in_bus_word_count(set_in_bus_word_count),
+    .read_uP_byte(read_uP_byte), 
+    .write_uP_byte(write_uP_byte),
+    .read_bus_word(read_bus_word),
+    .clear_uP_packet(clear_uP_packet),
+    .set_timeout_counter(set_timeout_counter),
+    .dec_timeout(dec_timeout),
+    .timeout_count_zero(timeout_count_zero),
+    .register_address_valid(register_address_valid)
+); 
                
 
 always_ff @(posedge clk or negedge reset) begin

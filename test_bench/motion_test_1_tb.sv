@@ -33,7 +33,7 @@ import types::*;
 
 enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0} test_set;
 
-`define TEST        QE_INT_TEST_0
+`define TEST        PWM_TEST_1
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -163,6 +163,7 @@ motion_system uut(
                   .uP_ack(uP_ack), 
                   .uP_handshake_2(uP_handshake_2),
                   .uP_data(uP_data),
+                  .uP_nFault(uP_nFault),
                   .pwm_out(pwm_out),
                   .H_bridge_1(H_bridge_1),
                   .H_bridge_2(H_bridge_2),
