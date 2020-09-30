@@ -56,13 +56,6 @@ module pwm_FSM #(parameter PWM_UNIT = 0) (
 //
 // Set of FSM states
 
-/* enum bit [1:0] { 
-    IDLE,
-    CONFIG,
-    CHECK_ON_TIME,
-    CHECK_OFF_TIME
-} state, next_state;   */
-
 enum bit [2:0] {  
     S_PWM_GEN0, S_PWM_GEN1, S_PWM_GEN2, S_PWM_GEN3
 } state, next_state;

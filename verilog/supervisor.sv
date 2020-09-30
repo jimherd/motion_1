@@ -34,13 +34,13 @@ SOFTWARE.
 import types::*;
 
 module supervisor( 
-               input  logic  clk, reset,
-					
-					input logic   uP_handshake_1, uP_handshake_2,
-					input logic   bus_handshake_1, bus_handshake_2,
-					
-					output logic  led_2, led_3, led_4, led_5
-               );
+    input  logic  clk, reset,
+
+    input logic   uP_handshake_1, uP_handshake_2,
+    input logic   bus_handshake_1, bus_handshake_2,
+
+    output logic  led_2, led_3, led_4, led_5
+);
 
 
 //
@@ -48,7 +48,7 @@ module supervisor(
 
 // show handshake signals on LEDs
 //		- "bus_handshake_2" is a tri-state to will show ON
-					
+                    
 assign led_2 = ~uP_handshake_1;
 assign led_3 = ~uP_handshake_2;
 assign led_4 = ~bus_handshake_1;

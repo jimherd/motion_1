@@ -79,8 +79,8 @@ begin
 	else if (mode == MODE_PWM_DIR) begin  // uses pwm and direction signals 
 		case (command)
 			MOTOR_COAST : begin
-				H_bridge_1_tmp = 0;
-				H_bridge_2_tmp = 0;
+				H_bridge_1_tmp = 1'b0;
+				H_bridge_2_tmp = 1'b0;
 			end
 			MOTOR_FORWARD : begin
 				H_bridge_1_tmp = PWM_signal;
@@ -91,12 +91,12 @@ begin
 				H_bridge_2_tmp = BACKWARD;					
 			end
 			MOTOR_BRAKE : begin
-				H_bridge_1_tmp = 1;
-				H_bridge_2_tmp = 1;			
+				H_bridge_1_tmp = 1'b1;
+				H_bridge_2_tmp = 1'b1;			
 			end
 			default : begin
-				H_bridge_1_tmp = 0;
-				H_bridge_2_tmp = 0;
+				H_bridge_1_tmp = 1'b0;
+				H_bridge_2_tmp = 1'b0;
 			end
 		endcase
 	end
@@ -108,7 +108,7 @@ end
 
 always_comb
 begin
-	H_bridge_1 = 0;
+	H_bridge_1 = 1'b0;
 	if (int_enable == 1'b1)
 		if (swap == 1'b0) 
 			H_bridge_1 = (invert[0] == 1'b0) ? H_bridge_1_tmp : !H_bridge_1_tmp;
@@ -118,7 +118,7 @@ end
 
 always_comb
 begin
-	H_bridge_2 = 0;
+	H_bridge_2 = 1'b0;
 	if (int_enable == 1'b1)
 		if (swap == 1'b0) 
 			H_bridge_2 = (invert[1] == 1'b0) ? H_bridge_2_tmp : !H_bridge_2_tmp;

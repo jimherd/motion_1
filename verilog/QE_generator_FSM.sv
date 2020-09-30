@@ -53,60 +53,61 @@ SOFTWARE.
 `include  "global_constants.sv"
 
 module QE_generator_FSM( 
-               input  logic  clk, reset,
-               input  logic  QE_sim_enable, 				// 1 = enable quadrature encoder simulator
-					input  logic  phase_cnt_4, 				// 1 = grey code of A/B inputs complete
-					input  logic  index_cnt, 					//
-					input  logic  timer_cnt_0,					//
-               output logic  inc_counters, 				// increment ON and period timers
-					output logic  clear_phase_counter, 		// clear 2 bit A/B phase counter
-					output logic  clear_pulse_counter, 		//
-               output logic  load_phase_timer, 			//
-					output logic  decrement_phase_timer		//
-               );
+    input  logic  clk, reset,
+    input  logic  QE_sim_enable, 				// 1 = enable quadrature encoder simulator
+    input  logic  phase_cnt_4, 				// 1 = grey code of A/B inputs complete
+    input  logic  index_cnt, 					//
+    input  logic  timer_cnt_0,					//
+    output logic  inc_counters, 				// increment ON and period timers
+    output logic  clear_phase_counter, 		// clear 2 bit A/B phase counter
+    output logic  clear_pulse_counter, 		//
+    output logic  load_phase_timer, 			//
+    output logic  decrement_phase_timer		//
+);
 //
 // set of states
 
 enum bit [4:0] {  
-						S_QE_GEN0, S_QE_GEN1, S_QE_GEN2, S_QE_GEN3, S_QE_GEN4,
-						S_QE_GEN5, S_QE_GEN6, S_QE_GEN7, S_QE_GEN8
-               } state, next_state;
+    S_QE_GEN0, S_QE_GEN1, S_QE_GEN2, S_QE_GEN3, S_QE_GEN4,
+    S_QE_GEN5, S_QE_GEN6, S_QE_GEN7, S_QE_GEN8
+} state, next_state;
 
 //
 // register next state
 
-always_ff @(posedge clk or negedge reset)
-      if (!reset)   begin
-         state <= S_QE_GEN0;
-      end
-      else
-         state <= next_state;
- 
+always_ff @(posedge clk or negedge reset) begin
+    if (!reset)   begin
+        state <= S_QE_GEN0;
+    end else begin
+        state <= next_state;
+    end
+end
+
 //
 // next state logic
- 
+
 always_comb begin: set_next_state
-   next_state = state;   // default condition is next state is present state
-   unique case (state)
-      S_QE_GEN0 :
-         next_state = (QE_sim_enable == 1'b1) ? S_QE_GEN1 : S_QE_GEN0;  
-		S_QE_GEN1 :
-         next_state = S_QE_GEN2;   
-      S_QE_GEN2 :
-         next_state = (phase_cnt_4 == 1'b1) ? S_QE_GEN3 : S_QE_GEN4;  
-		S_QE_GEN3 :
-         next_state = S_QE_GEN4;
-		S_QE_GEN4 :
-         next_state = (index_cnt == 1'b1) ? S_QE_GEN5 : S_QE_GEN6;  
-		S_QE_GEN5 :
-         next_state = S_QE_GEN6;
-		S_QE_GEN6 :
-         next_state = S_QE_GEN7;
-		S_QE_GEN7 :
-         next_state = S_QE_GEN8;			
-		S_QE_GEN8 :
-         next_state = (timer_cnt_0 == 1'b1) ? S_QE_GEN0 : S_QE_GEN7;  
-   endcase
+    next_state = state;   // default condition is next state is present state
+    unique case (state)
+        S_QE_GEN0 :
+            next_state = (QE_sim_enable == 1'b1) ? S_QE_GEN1 : S_QE_GEN0;  
+        S_QE_GEN1 :
+            next_state = S_QE_GEN2;   
+        S_QE_GEN2 :
+            next_state = (phase_cnt_4 == 1'b1) ? S_QE_GEN3 : S_QE_GEN4;  
+        S_QE_GEN3 :
+            next_state = S_QE_GEN4;
+        S_QE_GEN4 :
+            next_state = (index_cnt == 1'b1) ? S_QE_GEN5 : S_QE_GEN6;  
+        S_QE_GEN5 :
+            next_state = S_QE_GEN6;
+        S_QE_GEN6 :
+            next_state = S_QE_GEN7;
+        S_QE_GEN7 :
+            next_state = S_QE_GEN8;			
+        S_QE_GEN8 :
+            next_state = (timer_cnt_0 == 1'b1) ? S_QE_GEN0 : S_QE_GEN7;  
+    endcase
 end: set_next_state
 
 //

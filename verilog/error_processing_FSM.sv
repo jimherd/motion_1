@@ -90,7 +90,7 @@ always_comb begin: set_next_state
             next_state = S_E2;
         S_E2:
             if (subsystem_enable == 1'b0)
-            next_state = S_E3;
+                next_state = S_E3;
             else
                 next_state = S_E4;
         S_E3:

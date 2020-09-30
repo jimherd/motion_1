@@ -45,59 +45,59 @@ SOFTWARE.
 `include  "interfaces.sv"
 
 module count_FSM (
-   input  logic  clk, reset, 
+    input  logic  clk, reset, 
 
-   input  logic  count_sig, 		//
-	input  logic  direction, 		// signal to define direction of count
+    input  logic  count_sig, 		//
+    input  logic  direction, 		// signal to define direction of count
 
-   output logic  inc_counter, 	// decrement the ON time counter
-	output logic  dec_counter  	// decrement the period time counter
+    output logic  inc_counter, 	// decrement the ON time counter
+    output logic  dec_counter  	// decrement the period time counter
 );
 
 //
 // Set of FSM states
 
 enum bit [3:0] {  
-	S_COUNT0, S_COUNT1, S_COUNT2, S_COUNT3, S_COUNT4
+    S_COUNT0, S_COUNT1, S_COUNT2, S_COUNT3, S_COUNT4
 } state, next_state;
 //
 // register next state
 
 always_ff @(posedge clk or negedge reset) begin
-      if (!reset)   begin
-         state <= S_COUNT0;
-      end else begin       
-         state <= next_state;
-      end
+    if (!reset)   begin
+        state <= S_COUNT0;
+    end else begin       
+        state <= next_state;
+    end
 end
 
 //
 // next state logic
 
 always_comb begin: set_next_state
-   unique case (state)
-      S_COUNT0:
-         if (count_sig == 0)
-            next_state = S_COUNT0;
-         else
-            next_state = S_COUNT1;
-      S_COUNT1:
-         if (direction == 0)
-            next_state = S_COUNT2;
-         else
-            next_state = S_COUNT3;
-      S_COUNT2:
-         next_state = S_COUNT4;
-      S_COUNT3:
-         next_state = S_COUNT4;
-		S_COUNT4:
-         if (count_sig == 0)
-            next_state = S_COUNT0;
-         else
+    unique case (state)
+        S_COUNT0:
+            if (count_sig == 0)
+                next_state = S_COUNT0;
+            else
+                next_state = S_COUNT1;
+        S_COUNT1:
+            if (direction == 0)
+                next_state = S_COUNT2;
+            else
+                next_state = S_COUNT3;
+        S_COUNT2:
             next_state = S_COUNT4;
-		default :
-         next_state = state;   // default condition - next state is present state
-   endcase
+        S_COUNT3:
+            next_state = S_COUNT4;
+        S_COUNT4:
+            if (count_sig == 0)
+                next_state = S_COUNT0;
+            else
+                next_state = S_COUNT4;
+        default :
+            next_state = state;   // default condition - next state is present state
+    endcase
 end: set_next_state
 
 //

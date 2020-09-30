@@ -38,16 +38,16 @@ SOFTWARE.
 `include  "global_constants.sv"
 
 module quadrature_decoder(
-                     input  logic clk, reset,
-							
-							input  logic quadA_in, 		// Synchronised quadrature input A
-							input  logic quadB_in,		// Synchronised quadrature input B
-							input  logic quadI_in,		// Synchronised quadrature input I
-							
-                     output logic count_pulse, 	// decoded pulse (X4 decoder)
-							output logic direction, 	// decoded direction signal
-							output logic index			// index pulse (used as clock in logic)
-               );
+    input  logic clk, reset,
+
+    input  logic quadA_in, 		// Synchronised quadrature input A
+    input  logic quadB_in,		// Synchronised quadrature input B
+    input  logic quadI_in,		// Synchronised quadrature input I
+
+    output logic count_pulse, 	// decoded pulse (X4 decoder)
+    output logic direction, 	// decoded direction signal
+    output logic index			// index pulse (used as clock in logic)
+);
 
 //
 // local variables
@@ -58,17 +58,17 @@ logic  count_enable, count_direction;
 //
 // get raw encoder signals
 
-   always_ff @(posedge clk or negedge reset) begin 
-      if (!reset) begin
-         quadA_delayed <= 0;
-         quadB_delayed <= 0;
-			index_sync    <= 0;
-      end else begin
-         quadA_delayed <=  quadA_in;
-         quadB_delayed <=  quadB_in;
-         index_sync    <=  quadI_in;
-      end
-   end
+always_ff @(posedge clk or negedge reset) begin 
+    if (!reset) begin
+        quadA_delayed <= 1'b0;
+        quadB_delayed <= 1'b0;
+        index_sync    <= 1'b0;
+    end else begin
+        quadA_delayed <=  quadA_in;
+        quadB_delayed <=  quadB_in;
+        index_sync    <=  quadI_in;
+    end
+end
 
 //
 // generate decoded signals

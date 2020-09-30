@@ -62,17 +62,17 @@ logic subsystem_enable;
 //logic register_address_valid;
 
 bus_FSM   bus_FSM_sys(
-        .clk(clk),
-        .reset(reset),
-        .subsystem_enable(subsystem_enable),
-        .handshake_2(bus.handshake_2),
-        .handshake_1(bus.handshake_1),
-        .RW(bus.RW),
-        .read_word_from_BUS(read_word_from_BUS),
-        .write_data_word_to_BUS(write_data_word_to_BUS),
-        .write_status_word_to_BUS(write_status_word_to_BUS),
-        .register_address_valid(bus.register_address_valid)
-        );
+    .clk(clk),
+    .reset(reset),
+    .subsystem_enable(subsystem_enable),
+    .handshake_2(bus.handshake_2),
+    .handshake_1(bus.handshake_1),
+    .RW(bus.RW),
+    .read_word_from_BUS(read_word_from_BUS),
+    .write_data_word_to_BUS(write_data_word_to_BUS),
+    .write_status_word_to_BUS(write_status_word_to_BUS),
+    .register_address_valid(bus.register_address_valid)
+);
 
 
 //
@@ -89,8 +89,9 @@ always_ff @(posedge clk or negedge reset) begin
         end else begin
             if(write_status_word_to_BUS == 1'b1) begin
                 data_in_reg <= ~`SYS_INFO_0_DATA;
-            end else
+            end else begin
                 data_in_reg <= 'z;
+            end
         end
     end
 end
@@ -101,8 +102,9 @@ end
 always_comb begin
     subsystem_enable = 1'b0;
     if (bus.register_address_valid == 1'b1) begin
-        if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE))
+        if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE)) begin
             subsystem_enable = 1'b1;
+        end
     end
 end
 
