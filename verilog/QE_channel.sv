@@ -34,18 +34,18 @@ import types::*;
 
 module QE_channel #(QE_UNIT = 0) ( 
     input  logic clk, reset,
-    IO_bus  bus,						// internal 32-bit bus
-    input  logic async_ext_QE_A, 	// external encoder A input
-    input  logic async_ext_QE_B, 	// external encoder B input
-    input  logic async_ext_QE_I	// external encoder I input
+    IO_bus  bus,                    // internal 32-bit bus
+    input  logic async_ext_QE_A,    // external encoder A input
+    input  logic async_ext_QE_B,    // external encoder B input
+    input  logic async_ext_QE_I     // external encoder I input
 );
 
 // 
 // definition of first and last registers for this unit
 
-`define	FIRST_QE_REGISTER		(`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
-`define	LAST_QE_REGISTER		((`QE_STATUS +       (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) - 1)							
-                                    //
+`define	FIRST_QE_REGISTER     (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
+`define	LAST_QE_REGISTER      ((`QE_STATUS +       (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) - 1) 
+//
 // subsystem registers accessible to external system
 
 uint32_t  QE_count_buffer;
@@ -107,9 +107,9 @@ end
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
-        QE_sim_phase_time		<= 1'b0;
-        QE_counts_per_rev		<= 1'b0;
-        QE_config				<= 1'b0;
+        QE_sim_phase_time       <= 1'b0;
+        QE_counts_per_rev       <= 1'b0;
+        QE_config               <= 1'b0;
     end else begin
         if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
             if (bus.reg_address == (`QE_SIM_PHASE_TIME + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
@@ -146,13 +146,13 @@ always_ff @(posedge clk or negedge reset) begin
     end  else begin
         if(write_data_word_to_BUS == 1'b1) begin
             case (bus.reg_address)  
-                (`QE_COUNT_BUFFER  	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_count_buffer;
-                (`QE_TURN_BUFFER 		+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_turns_buffer;
-                (`QE_SPEED_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_speed_buffer;
-                (`QE_SIM_PHASE_TIME  + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_sim_phase_time;
-                (`QE_COUNTS_PER_REV 	+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_counts_per_rev;
-                (`QE_CONFIG  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_config;
-                (`QE_STATUS  			+ (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))  	: data_in_reg <= QE_status;				
+                (`QE_COUNT_BUFFER   + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_count_buffer;
+                (`QE_TURN_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_turns_buffer;
+                (`QE_SPEED_BUFFER   + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_speed_buffer;
+                (`QE_SIM_PHASE_TIME + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_sim_phase_time;
+                (`QE_COUNTS_PER_REV + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_counts_per_rev;
+                (`QE_CONFIG         + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_config;
+                (`QE_STATUS         + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_status;
             endcase
         end else begin
             if(write_status_word_to_BUS == 1'b1) begin
@@ -398,7 +398,7 @@ QE_speed_measure_FSM  QE_speed_measure_FSM_sys(
     .load_speed_buffer(load_speed_buffer)
 );
 
-assign speed_measure_enable = QE_config[`QE_SPEED_MEASURE_ENABLE];					
+assign speed_measure_enable = QE_config[`QE_SPEED_MEASURE_ENABLE];
 assign count_overflow       = (QE_speed_buffer > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
 assign speed_filter_enable  = QE_config[`QE_SPEED_FILTER_ENABLE];
 assign samples_complete     = (sample_counter == 1'b0) ? 1'b1 : 1'b0;
@@ -407,7 +407,7 @@ assign samples_complete     = (sample_counter == 1'b0) ? 1'b1 : 1'b0;
 always_ff @(posedge clk or negedge reset)
 begin
     if (!reset) begin
-        QE_speed_buffer 	    <= 1'b0;
+        QE_speed_buffer         <= 1'b0;
         QE_temp_speed_counter   <= 1'b0;
         sample_counter          <= 1'b0;
     end  else begin
@@ -457,9 +457,9 @@ end
 //
 // Code to deal with register "QE_count_buffer"
 //
-//		1. Power ON reset to zero
-//		2. Inc/Dec based on quadrature pulse/direction signals
-//		3. Load with initial value (likely to be 0) 
+//      1. Power ON reset to zero
+//      2. Inc/Dec based on quadrature pulse/direction signals
+//      3. Load with initial value (likely to be 0) 
 
 always_ff @(posedge QE_pulse or negedge reset)
 begin

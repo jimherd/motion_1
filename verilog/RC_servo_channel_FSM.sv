@@ -48,13 +48,13 @@ SOFTWARE.
 `include  "global_constants.sv"
 
 module RC_servo_channel_FSM( 
-    input  logic  clk, reset, 
-    input  logic  RC_enable,					// 1 = enable servo channel
-    input  logic  ON_time_complete,			// 1 = pulse ON time is complete
-    input  logic  RC_servo_period_0,			// 1 = specifies start of servo period
-    output logic  RC_servo_ON,					// 1 = pulse set to ON
-    output logic  RC_servo_OFF,				// 1 = pulse set to OFF
-    output logic  load_RC_servo_ON_timer	// 1 = reload pulse details
+    input  logic  clk, reset,
+    input  logic  RC_enable,                // 1 = enable servo channel
+    input  logic  ON_time_complete,         // 1 = pulse ON time is complete
+    input  logic  RC_servo_period_0,        // 1 = specifies start of servo period
+    output logic  RC_servo_ON,              // 1 = pulse set to ON
+    output logic  RC_servo_OFF,             // 1 = pulse set to OFF
+    output logic  load_RC_servo_ON_timer    // 1 = reload pulse details
 );
 
 //
@@ -84,22 +84,22 @@ always_comb begin: set_next_state
         S_RC_CS0 :
             next_state = (RC_enable == 1'b1) ? S_RC_CS1 : S_RC_CS0;  
         S_RC_CS1 :
-            next_state = (RC_servo_period_0 == 1'b1) ? S_RC_CS2 : S_RC_CS1;			
+            next_state = (RC_servo_period_0 == 1'b1) ? S_RC_CS2 : S_RC_CS1;
         S_RC_CS2 :
             next_state = S_RC_CS3;  
-            S_RC_CS3 :
+        S_RC_CS3 :
             next_state = (ON_time_complete == 1'b1) ? S_RC_CS4 : S_RC_CS3;
-            S_RC_CS4 :
-            next_state = S_RC_CS0;  	
+        S_RC_CS4 :
+            next_state = S_RC_CS0;
     endcase
 end: set_next_state
 
 //
 // Moore outputs
 
-assign RC_servo_OFF	               = (state == S_RC_CS0) || (state ==  S_RC_CS4);
-assign RC_servo_ON	               = (state == S_RC_CS3);
-assign load_RC_servo_ON_timer       = (state == S_RC_CS2); 
+assign RC_servo_OFF             = (state == S_RC_CS0) || (state ==  S_RC_CS4);
+assign RC_servo_ON              = (state == S_RC_CS3);
+assign load_RC_servo_ON_timer   = (state == S_RC_CS2); 
 
 endmodule
 

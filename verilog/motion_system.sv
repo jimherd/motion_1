@@ -40,14 +40,14 @@ import types::*;
 //
 module motion_system(   
     input  logic      CLOCK_50,
-    input  logic      async_uP_reset, 				// async reset from uP
+    input  logic      async_uP_reset,           // async reset from uP
 
-    input  logic      async_uP_start, 				// start command transaction
-    input  logic      async_uP_RW, 					// read or write command
-    input  logic      async_uP_handshake_1, 		// first handshake
-    output logic      uP_ack, uP_handshake_2, 	    // second handshake
-    inout  wire [7:0] uP_data,						// 8-bit bidirectional data bus to uP
-    output wire       uP_nFault,                    // fault line to uP
+    input  logic      async_uP_start,           // start command transaction
+    input  logic      async_uP_RW,              // read or write command
+    input  logic      async_uP_handshake_1,     // first handshake
+    output logic      uP_ack, uP_handshake_2,   // second handshake
+    inout  wire [7:0] uP_data,                  // 8-bit bidirectional data bus to uP
+    output wire       uP_nFault,                // fault line to uP
     //
     // system hardware signals
 

@@ -29,18 +29,18 @@ SOFTWARE.
 // Type : Standard three section Moore Finite State Machine structure
 //
 // Documentation :
-//		State machine diagram in system notes folder.
+//      State machine diagram in system notes folder.
 //
 // Notes
-//		
+//
 //
 // States
-//			S_E0 : Initial state - wait for "register_address_valid" signal
-//			S_E1 : 20nS delay to allow "subsystem_enable" signal to stabalise
-//			S_E2 : check "subsystem_enable"
-//			S_E3 : unit not addressed to set "nFault" to 'z
-//			S_E4 : wait for "register_address_valid" siganl to go low
-//			S_E5 : set "nFault" appropriately
+//      S_E0 : Initial state - wait for "register_address_valid" signal
+//      S_E1 : 20nS delay to allow "subsystem_enable" signal to stabalise
+//      S_E2 : check "subsystem_enable"
+//      S_E3 : unit not addressed to set "nFault" to 'z
+//      S_E4 : wait for "register_address_valid" siganl to go low
+//      S_E5 : set "nFault" appropriately
 
 `include  "global_constants.sv"
 `include  "interfaces.sv"
@@ -63,7 +63,7 @@ enum bit [3:0] {
     S_E0, S_E1, S_E2, S_E3, S_E4, S_E5
 } state, next_state;
 
-`define    S_Ex_INITIAL_STATE		S_E0
+`define    S_Ex_INITIAL_STATE    S_E0
 
 //
 // register next state

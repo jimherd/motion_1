@@ -34,17 +34,17 @@ SOFTWARE.
 
 module pwm_channel  #(parameter PWM_UNIT = 0)  (
     input  logic  clk, reset,
-    IO_bus        bus,				// internal 32-bit bus
-    output logic  pwm_signal,		// actual PWM signal
-    output logic  H_bridge_1, 		// first H-bridge signal derived from 'pwm_signal'
-    output logic  H_bridge_2		// second H-bridge signal derived from 'pwm_signal'
+    IO_bus        bus,              // internal 32-bit bus
+    output logic  pwm_signal,       // actual PWM signal
+    output logic  H_bridge_1,       // first H-bridge signal derived from 'pwm_signal'
+    output logic  H_bridge_2        // second H-bridge signal derived from 'pwm_signal'
 );
 
 // 
 // definition of first and last registers for this unit
 
-`define	FIRST_PWM_REGISTER	( `PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
-`define	LAST_PWM_REGISTER		( `PWM_STATUS + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))		
+`define	FIRST_PWM_REGISTER    ( `PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
+`define	LAST_PWM_REGISTER     ( `PWM_STATUS + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
 //
 // PWM subsystem registers
 
@@ -73,8 +73,8 @@ logic  [1:0]  H_bridge_invert_mode;
 
 //
 // initialise relevant subsystems
-//		1. FSM to run peripheral end of internal 32-bit bus
-//		2. PWM state machine
+//    1. FSM to run peripheral end of internal 32-bit bus
+//    2. PWM state machine
 //    3. H-bridge decode system
 
 logic subsystem_enable;

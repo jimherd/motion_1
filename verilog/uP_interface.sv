@@ -35,14 +35,14 @@ import types::*;
 
 module uP_interface(
     input  logic  clk, reset,
-    IO_bus.master bus,				// internal 32-bit peripheral bus
-    input  logic  uP_start, 		// ==1 to start transaction with uP
-    input  logic  uP_handshake_1,	// first handshake to uP
-    input  logic  uP_RW,				// read/write signal from uP
-    output logic  uP_ack, 			// transaction acknowledge signal to uP
-    output logic  uP_handshake_2,	// second handshake to uP
-    output logic  uP_nFault,      // fault line to uP
-    inout  [7:0]  uP_data			// 8-bit bidirectional bus to uP
+    IO_bus.master bus,              // internal 32-bit peripheral bus
+    input  logic  uP_start,         // ==1 to start transaction with uP
+    input  logic  uP_handshake_1,   // first handshake to uP
+    input  logic  uP_RW,            // read/write signal from uP
+    output logic  uP_ack,           // transaction acknowledge signal to uP
+    output logic  uP_handshake_2,   // second handshake to uP
+    output logic  uP_nFault,        // fault line to uP
+    inout  [7:0]  uP_data           // 8-bit bidirectional bus to uP
 );
 
 

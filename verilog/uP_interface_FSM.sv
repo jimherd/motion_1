@@ -51,31 +51,31 @@ SOFTWARE.
 
 module uP_interface_FSM(
     input  logic  clk, reset, 
-    input  logic  uP_soft_reset, 				// allow uP to initiate FPGA reset
+    input  logic  uP_soft_reset,            // allow uP to initiate FPGA reset
 
-    input  logic  uP_start, 					// signal from uP to initiate start of transaction
-    output logic  uP_ack,						//
+    input  logic  uP_start,                 // signal from uP to initiate start of transaction
+    output logic  uP_ack,                   //
 
-    output logic  bus_handshake_1,			// first handshake line for internal 32-bit bus
-    input  logic  bus_handshake_2,			// second handshake line for internal 32-bit bus
-    input  logic  uP_handshake_1, 			// first handshake line for external 8-bit bus to uP
-    output logic  uP_handshake_2, 			// second handshake line for external 8-bit bus to uP
+    output logic  bus_handshake_1,          // first handshake line for internal 32-bit bus
+    input  logic  bus_handshake_2,          // second handshake line for internal 32-bit bus
+    input  logic  uP_handshake_1,           // first handshake line for external 8-bit bus to uP
+    output logic  uP_handshake_2,           // second handshake line for external 8-bit bus to uP
 
-    output logic  read_uP_byte, 				// read byte from uP
-    output logic  write_uP_byte, 				//	write byte to uP
+    output logic  read_uP_byte,             // read byte from uP
+    output logic  write_uP_byte,            //	write byte to uP
 
-    output logic  read_bus_word, 				// read word from internal 32-bit bus
-    output logic  clear_uP_packet,  			//           
-    output logic  set_in_uP_byte_count, 	//
-    output logic  set_out_uP_byte_count,	//
-    output logic  set_in_bus_word_count,	//
-    input  logic  counter_zero,				// == 1 when byte counter is zero
+    output logic  read_bus_word,            // read word from internal 32-bit bus
+    output logic  clear_uP_packet,          //
+    output logic  set_in_uP_byte_count,     //
+    output logic  set_out_uP_byte_count,    //
+    output logic  set_in_bus_word_count,    //
+    input  logic  counter_zero,             // == 1 when byte counter is zero
 
     output logic  set_timeout_counter,
     output logic  dec_timeout,
     input  logic  timeout_count_zero,
 
-    output logic  register_address_valid	// defines time when subunits can decode register address
+    output logic  register_address_valid    // defines time when subunits can decode register address
 );
 //
 // set of FSM states (refer to state diagram for different sections)
@@ -96,7 +96,7 @@ enum /* logic [6:0] */ {   // section #1    // bit
 } state, next_state;
 
 //
-// register next state		
+// register next state
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin

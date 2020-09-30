@@ -33,8 +33,8 @@ SOFTWARE.
 //
 // System versions
 
-`define	MAJOR_VERSION		0
-`define	MINOR_VERSION		1
+`define	MAJOR_VERSION       0
+`define	MINOR_VERSION       1
 
 //
 // System compilation directives
@@ -65,17 +65,17 @@ SOFTWARE.
 // number of subsystems 
 
 
-    `define NOS_PWM_CHANNELS      	    2
-    `define NOS_QE_CHANNELS  			2
+    `define NOS_PWM_CHANNELS            2
+    `define NOS_QE_CHANNELS             2
     `define NOS_RC_SERVO_CHANNELS       8
     
 ///////////////////////////////////////////////////
 //
 // Registers in each unit type
 
-    `define NOS_SYS_INFO_REGISTERS	    1
-    `define NOS_PWM_REGISTERS   	    4
-    `define NOS_QE_REGISTERS   		    7
+    `define NOS_SYS_INFO_REGISTERS      1
+    `define NOS_PWM_REGISTERS           4
+    `define NOS_QE_REGISTERS            7
     `define NOS_RC_REGISTERS            (3 + `NOS_RC_SERVO_CHANNELS)
 
 
@@ -83,9 +83,9 @@ SOFTWARE.
 //
 // Register address map
     
-    `define REGISTER_BASE				0
-    `define PWM_BASE            	    `REGISTER_BASE + `NOS_SYS_INFO_REGISTERS
-    `define QE_BASE            		    ((`NOS_PWM_REGISTERS * `NOS_PWM_CHANNELS) + `PWM_BASE)
+    `define REGISTER_BASE               0
+    `define PWM_BASE                   `REGISTER_BASE + `NOS_SYS_INFO_REGISTERS
+    `define QE_BASE                     ((`NOS_PWM_REGISTERS * `NOS_PWM_CHANNELS) + `PWM_BASE)
     `define RC_BASE                     ((`NOS_QE_REGISTERS * `NOS_QE_CHANNELS) + `QE_BASE)
     `define RC_ON_TIME_BASE             (`RC_BASE + 3)
     
@@ -98,7 +98,7 @@ SOFTWARE.
 //
 // System information subsystem
 
-   `define SYS_INFO_0    	`REGISTER_BASE   // Read-only register
+    `define SYS_INFO_0        `REGISTER_BASE   // Read-only register
     
     `define SYS_INFO_0_DATA   (( `MAJOR_VERSION         <<  0) + \
                                 (`MINOR_VERSION         <<  4) + \
@@ -133,19 +133,19 @@ SOFTWARE.
 //
 // Quadrature encoder subsystem
 
-    `define QE_COUNT_BUFFER    	    0   
-    `define QE_TURN_BUFFER     	    1
-    `define QE_SPEED_BUFFER 	    2
-    `define QE_SIM_PHASE_TIME		3
-    `define QE_COUNTS_PER_REV		4
-    `define QE_CONFIG  				5
-    `define QE_STATUS  				6
+    `define QE_COUNT_BUFFER         0   
+    `define QE_TURN_BUFFER          1
+    `define QE_SPEED_BUFFER         2
+    `define QE_SIM_PHASE_TIME       3
+    `define QE_COUNTS_PER_REV       4
+    `define QE_CONFIG               5
+    `define QE_STATUS               6
 
 //
 // used in testbench files
 
-   `define QE_0	    (`QE_BASE + (0 * `NOS_QE_REGISTERS))      
-   `define QE_1	    (`QE_BASE + (1 * `NOS_QE_REGISTERS))
+   `define QE_0     (`QE_BASE + (0 * `NOS_QE_REGISTERS))      
+   `define QE_1     (`QE_BASE + (1 * `NOS_QE_REGISTERS))
    `define QE_2     (`QE_BASE + (2 * `NOS_QE_REGISTERS))
    `define QE_3     (`QE_BASE + (3 * `NOS_QE_REGISTERS))
 
@@ -153,25 +153,25 @@ SOFTWARE.
 //
 // RC Servo subsystem
 
-    `define RC_SERVO_PERIOD    	    0   
-    `define RC_SERVO_CONFIG     	1
-    `define RC_SERVO_STATUS     	2
+    `define RC_SERVO_PERIOD         0   
+    `define RC_SERVO_CONFIG         1
+    `define RC_SERVO_STATUS         2
     `define RC_SERVO_ON_TIME        3
 
     //
     // definition of configuration register bits
     
-    `define RC_SERVO_CHANNEL_0_ENABLE     0		// 1 bit 
-    `define RC_SERVO_CHANNEL_1_ENABLE     1		// 1 bit 
+    `define RC_SERVO_CHANNEL_0_ENABLE     0     // 1 bit 
+    `define RC_SERVO_CHANNEL_1_ENABLE     1     // 1 bit 
     // repeated for set of channels
     //
     
-    `define RC_SERVO_GLOBAL_ENABLE       31		// 1 bit 
+    `define RC_SERVO_GLOBAL_ENABLE       31     // 1 bit 
     
 //
 // used in testbench files
 
-    `define RC_0	(`RC_BASE)      
+    `define RC_0    (`RC_BASE)      
 
 ///////////////////////////////////////////////////
 //
@@ -186,12 +186,12 @@ SOFTWARE.
         `define NOS_READ_WORDS_FROM_SLAVE     1
     `endif
     
-   `define NOS_READ_BYTES_FROM_SLAVE     (4 * `NOS_READ_WORDS_FROM_SLAVE)
+    `define NOS_READ_BYTES_FROM_SLAVE     (4 * `NOS_READ_WORDS_FROM_SLAVE)
     //
     // Number of bytes read from and written to uP
 
     `define NOS_READ_BYTES_FROM_UP     6
-   `define NOS_WRITE_BYTES_TO_UP    (`NOS_READ_WORDS_FROM_SLAVE * 4)
+    `define NOS_WRITE_BYTES_TO_UP    (`NOS_READ_WORDS_FROM_SLAVE * 4)
     //
     // named bytes in byte packet from uP
 
@@ -227,27 +227,27 @@ SOFTWARE.
 //
 // bit definitions for PWM/H-bridge configuaration register
 
-    `define	PWM_ENABLE			 	 0
+    `define	PWM_ENABLE               0
     //
-    `define	H_BRIDGE_INT_ENABLE	    16		// 1 bit
-    `define	H_BRIDGE_EXT_ENABLE	    17		// 1 bit
-    `define	H_BRIDGE_MODE  		    18		// 2 bits
-    `define	H_BRIDGE_COMMAND		20		// 3 bits
-    `define	H_BRIDGE_SWAP			24		// 1 bit
-    `define	H_BRIDGE_DWELL_MODE	    25		// 1 bit
-    `define	H_BRIDGE_INVERT_PINS	26		// 2 bits
+    `define	H_BRIDGE_INT_ENABLE     16      // 1 bit
+    `define	H_BRIDGE_EXT_ENABLE     17      // 1 bit
+    `define	H_BRIDGE_MODE           18      // 2 bits
+    `define	H_BRIDGE_COMMAND        20      // 3 bits
+    `define	H_BRIDGE_SWAP           24      // 1 bit
+    `define	H_BRIDGE_DWELL_MODE	    25      // 1 bit
+    `define	H_BRIDGE_INVERT_PINS    26      // 2 bits
 
 //
 // bit definitions for Quadrature encoder configuaration register
 
-    `define  QE_SOURCE		       1		// 1 bit : external or internal signals
+    `define  QE_SOURCE             1    // 1 bit : external or internal signals
     `define  QE_SIM_ENABLE         2    // 1 bit : enable quadrature encoder simulator
     `define  QE_SIM_DIRECTION      3    // 1 bit : flip simulated A/B signals
     `define  QE_FLIP_AB            4    // 1 bit : flip AB signals to quadrature decoder
     
-    `define  QE_SPEED_MEASURE_ENABLE		16	// 1 bit : 
-    `define  QE_SPEED_FILTER_ENABLE		    17 // 1 bit : enables binary averaging filter
-    `define  QE_FILTER_SIZE					20 // 3 bits : sample size == value to the power 2.
+    `define  QE_SPEED_MEASURE_ENABLE        16 // 1 bit : 
+    `define  QE_SPEED_FILTER_ENABLE         17 // 1 bit : enables binary averaging filter
+    `define  QE_FILTER_SIZE                 20 // 3 bits : sample size == value to the power 2.
     
     enum bit {QE_EXTERNAL, QE_INTERNAL} QE_encoder_source;
     enum bit {QE_CW, QE_CCW} rotational_direction;
@@ -260,7 +260,7 @@ SOFTWARE.
 //
 // other constants
 
-    `define TIMEOUT_COUNT	10000
+    `define TIMEOUT_COUNT   10000
     
 
 `endif    // _global_constants_sv_

@@ -44,13 +44,13 @@ SOFTWARE.
 
 module pwm_FSM #(parameter PWM_UNIT = 0) (
     input  logic  clk, reset, 
-    input  logic  pwm_enable, 		// ==1 then run PWM machine
-    input  logic  T_on_zero, 		// ==1 when ON time complete
-    input  logic  T_period_zero,	// ==1 when period complete
-    output logic  dec_T_on, 		// decrement the ON time counter
-    output logic  dec_T_period, 	// decrement the period time counter
-    output logic  reload_times, 	// reload ON and period counters
-    output logic  pwm					// PWM output signal
+    input  logic  pwm_enable,       // ==1 then run PWM machine
+    input  logic  T_on_zero,        // ==1 when ON time complete
+    input  logic  T_period_zero,    // ==1 when period complete
+    output logic  dec_T_on,         // decrement the ON time counter
+    output logic  dec_T_period,     // decrement the period time counter
+    output logic  reload_times,     // reload ON and period counters
+    output logic  pwm               // PWM output signal
 );
 
 //

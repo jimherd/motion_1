@@ -47,7 +47,7 @@ module supervisor(
 // Code here to check system
 
 // show handshake signals on LEDs
-//		- "bus_handshake_2" is a tri-state to will show ON
+//      - "bus_handshake_2" is a tri-state to will show ON
                     
 assign led_2 = ~uP_handshake_1;
 assign led_3 = ~uP_handshake_2;

@@ -35,11 +35,11 @@ SOFTWARE.
 //		Consists of two timers. One for the PWM period and one for the PWM ON time.
 //
 // States
-//			S_COUNT0  : count hold state and wait for rising edge of pulse being counted
-//			S_COUNT1  : check direction signal
-//			S_COUNT2  : increment by 1
-//			S_COUNT3  : decrement by 1
-//			S_COUNT4	 : wait for falling edge of pulse being counted
+//          S_COUNT0  : count hold state and wait for rising edge of pulse being counted
+//          S_COUNT1  : check direction signal
+//          S_COUNT2  : increment by 1
+//          S_COUNT3  : decrement by 1
+//          S_COUNT4  : wait for falling edge of pulse being counted
 
 `include  "global_constants.sv"
 `include  "interfaces.sv"
@@ -47,11 +47,11 @@ SOFTWARE.
 module count_FSM (
     input  logic  clk, reset, 
 
-    input  logic  count_sig, 		//
-    input  logic  direction, 		// signal to define direction of count
+    input  logic  count_sig,        //
+    input  logic  direction,        // signal to define direction of count
 
-    output logic  inc_counter, 	// decrement the ON time counter
-    output logic  dec_counter  	// decrement the period time counter
+    output logic  inc_counter,      // decrement the ON time counter
+    output logic  dec_counter       // decrement the period time counter
 );
 
 //

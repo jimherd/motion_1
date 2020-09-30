@@ -54,15 +54,15 @@ SOFTWARE.
 
 module QE_generator_FSM( 
     input  logic  clk, reset,
-    input  logic  QE_sim_enable, 				// 1 = enable quadrature encoder simulator
-    input  logic  phase_cnt_4, 				// 1 = grey code of A/B inputs complete
-    input  logic  index_cnt, 					//
-    input  logic  timer_cnt_0,					//
-    output logic  inc_counters, 				// increment ON and period timers
-    output logic  clear_phase_counter, 		// clear 2 bit A/B phase counter
-    output logic  clear_pulse_counter, 		//
-    output logic  load_phase_timer, 			//
-    output logic  decrement_phase_timer		//
+    input  logic  QE_sim_enable,        // 1 = enable quadrature encoder simulator
+    input  logic  phase_cnt_4,          // 1 = grey code of A/B inputs complete
+    input  logic  index_cnt,            //
+    input  logic  timer_cnt_0,          //
+    output logic  inc_counters,         // increment ON and period timers
+    output logic  clear_phase_counter,  // clear 2 bit A/B phase counter
+    output logic  clear_pulse_counter,  //
+    output logic  load_phase_timer,     //
+    output logic  decrement_phase_timer //
 );
 //
 // set of states
@@ -104,7 +104,7 @@ always_comb begin: set_next_state
         S_QE_GEN6 :
             next_state = S_QE_GEN7;
         S_QE_GEN7 :
-            next_state = S_QE_GEN8;			
+            next_state = S_QE_GEN8;
         S_QE_GEN8 :
             next_state = (timer_cnt_0 == 1'b1) ? S_QE_GEN0 : S_QE_GEN7;  
     endcase
@@ -113,10 +113,10 @@ end: set_next_state
 //
 // Moore outputs
 
-assign inc_counters				= (state == S_QE_GEN1);
-assign clear_phase_counter		= (state == S_QE_GEN3); 
-assign clear_pulse_counter		= (state == S_QE_GEN5);
-assign load_phase_timer			= (state == S_QE_GEN6);
-assign decrement_phase_timer	= (state == S_QE_GEN7);
+assign inc_counters             = (state == S_QE_GEN1);
+assign clear_phase_counter      = (state == S_QE_GEN3); 
+assign clear_pulse_counter      = (state == S_QE_GEN5);
+assign load_phase_timer         = (state == S_QE_GEN6);
+assign decrement_phase_timer    = (state == S_QE_GEN7);
 
 endmodule

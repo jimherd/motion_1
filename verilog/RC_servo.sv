@@ -100,9 +100,9 @@ end
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
-        RC_servo_period		<= 0;
-        RC_servo_config		<= 0;
-        RC_servo_status		<= 0;
+        RC_servo_period   <= 0;
+        RC_servo_config   <= 0;
+        RC_servo_status   <= 0;
         for (int i=0; i < `NOS_RC_SERVO_CHANNELS; i=i+1) begin
             RC_on_times[i] = 0;
         end
@@ -193,7 +193,7 @@ generate
             .load_RC_servo_ON_timer(load_RC_servo_ON_timer)
         );
 
-        assign ON_time_complete = (tmp_RC_on_time_counter[Servo_channel] == 0) ? 1'b1 : 1'b0;	 
+        assign ON_time_complete = (tmp_RC_on_time_counter[Servo_channel] == 0) ? 1'b1 : 1'b0;
 
         always_ff @(posedge clk or negedge reset) begin
             if (!reset) begin
@@ -211,7 +211,7 @@ generate
                             RC_servo[Servo_channel] <= 0;
                         end
                     end
-                end			
+                end
             end
         end
     end // generate for loop

@@ -40,13 +40,13 @@ SOFTWARE.
 module quadrature_decoder(
     input  logic clk, reset,
 
-    input  logic quadA_in, 		// Synchronised quadrature input A
-    input  logic quadB_in,		// Synchronised quadrature input B
-    input  logic quadI_in,		// Synchronised quadrature input I
+    input  logic quadA_in,      // Synchronised quadrature input A
+    input  logic quadB_in,      // Synchronised quadrature input B
+    input  logic quadI_in,      // Synchronised quadrature input I
 
-    output logic count_pulse, 	// decoded pulse (X4 decoder)
-    output logic direction, 	// decoded direction signal
-    output logic index			// index pulse (used as clock in logic)
+    output logic count_pulse,   // decoded pulse (X4 decoder)
+    output logic direction,     // decoded direction signal
+    output logic index          // index pulse (used as clock in logic)
 );
 
 //
