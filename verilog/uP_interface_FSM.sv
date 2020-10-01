@@ -29,23 +29,23 @@ SOFTWARE.
 // Type : Standard three section Moore Finite State Machine structure
 //
 // Documentation :
-//		State machine diagram in system notes folder.
+//      State machine diagram in system notes folder.
 //
 // Notes
-//		State machine to control data transfer over the internal 32-bit data bus.
+//      State machine to control data transfer over the internal 32-bit data bus.
 //    Bus consists of four parts
-//			1. 32-bit bus from uP interface to peripheral subsystems
-//			2. 32-bit bus from peripheral subsystems to uP interface
-//			3. 8-bit register address bus from uP interface to peripheraal subsystems
-//			4. set of handshake signals 
+//      1. 32-bit bus from uP interface to peripheral subsystems
+//      2. 32-bit bus from peripheral subsystems to uP interface
+//      3. 8-bit register address bus from uP interface to peripheraal subsystems
+//      4. set of handshake signals 
 //
-//		The state machine is split into 6 sections as follows
-//			1. read bytes from uP
-//			2. send data onto internal 32-bit bus
-//			3  read TWO 32-bit values from addresses subsystem
-//			4. send data to uP
-//			5. complete transaction
-//			6. handle soft reset signal
+//    The state machine is split into 6 sections as follows
+//      1. read bytes from uP
+//      2. send data onto internal 32-bit bus
+//      3  read TWO 32-bit values from addresses subsystem
+//      4. send data to uP
+//      5. complete transaction
+//      6. handle soft reset signal
 //
 `include  "global_constants.sv"
 

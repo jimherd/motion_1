@@ -28,6 +28,7 @@ SOFTWARE.
 //
 module synchronizer (
     input  logic clk, reset,
+
     input  logic async_in,     // asynchronous input
     output logic sync_out      // synchronous output
 );

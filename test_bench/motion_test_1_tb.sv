@@ -127,11 +127,11 @@ endtask;
 // do_read : read a packet from the FPGA
 //
 task do_read;
-  output byte_t packet[`NOS_WRITE_BYTES_TO_UP];
-  begin
+    output byte_t packet[`NOS_WRITE_BYTES_TO_UP];
+    begin
     for (int i=0; i < `NOS_WRITE_BYTES_TO_UP; i++) begin
-		read_byte(packet[i]);
-	end;
+        read_byte(packet[i]);
+    end;
   end;
 endtask;
 
@@ -143,36 +143,36 @@ task automatic do_transaction;
   ref [31:0] status;
   begin
     do_start();
-	do_write(command, reg_address, reg_data);
-	do_read(input_packet);
-	do_end();
-	data = {input_packet[3], input_packet[2], input_packet[1], input_packet[0]};
-	status  = {input_packet[7], input_packet[6], input_packet[5], input_packet[4]};
+    do_write(command, reg_address, reg_data);
+    do_read(input_packet);
+    do_end();
+    data = {input_packet[3], input_packet[2], input_packet[1], input_packet[0]};
+    status  = {input_packet[7], input_packet[6], input_packet[5], input_packet[4]};
   end;
 endtask;
 
 motion_system uut(
-                  .CLOCK_50(clk), 
-                  .async_uP_reset(async_uP_reset), 
-                  .quadrature_A(quadrature_A), 
-                  .quadrature_B(quadrature_B), 
-                  .quadrature_I(quadrature_I),
-                  .async_uP_start(async_uP_start), 
-                  .async_uP_handshake_1(async_uP_handshake_1), 
-                  .async_uP_RW(async_uP_RW),
-                  .uP_ack(uP_ack), 
-                  .uP_handshake_2(uP_handshake_2),
-                  .uP_data(uP_data),
-                  .uP_nFault(uP_nFault),
-                  .pwm_out(pwm_out),
-                  .H_bridge_1(H_bridge_1),
-                  .H_bridge_2(H_bridge_2),
-                  .RC_servo(RC_servo),
-                  .led1(led1),
-                  .led2(led2),
-                  .led3(led3),
-                  .led4(led4),
-                  .led5(led5)
+    .CLOCK_50(clk), 
+    .async_uP_reset(async_uP_reset), 
+    .quadrature_A(quadrature_A), 
+    .quadrature_B(quadrature_B), 
+    .quadrature_I(quadrature_I),
+    .async_uP_start(async_uP_start), 
+    .async_uP_handshake_1(async_uP_handshake_1), 
+    .async_uP_RW(async_uP_RW),
+    .uP_ack(uP_ack), 
+    .uP_handshake_2(uP_handshake_2),
+    .uP_data(uP_data),
+    .uP_nFault(uP_nFault),
+    .pwm_out(pwm_out),
+    .H_bridge_1(H_bridge_1),
+    .H_bridge_2(H_bridge_2),
+    .RC_servo(RC_servo),
+    .led1(led1),
+    .led2(led2),
+    .led3(led3),
+    .led4(led4),
+    .led5(led5)
  );
   
 logic [31:0] input_value;

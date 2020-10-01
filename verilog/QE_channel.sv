@@ -43,8 +43,8 @@ module QE_channel #(QE_UNIT = 0) (
 // 
 // definition of first and last registers for this unit
 
-`define	FIRST_QE_REGISTER     (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
-`define	LAST_QE_REGISTER      ((`QE_STATUS +       (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) - 1) 
+`define   FIRST_QE_REGISTER     (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
+`define   LAST_QE_REGISTER      ((`QE_STATUS +       (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) - 1) 
 //
 // subsystem registers accessible to external system
 
@@ -63,9 +63,6 @@ uint32_t  QE_temp_speed_counter;
 
 //
 // local signals
-
-logic QE_direction, QE_pulse, index;
-logic QE_A, QE_B, QE_I;
 
 logic [31:0] data_in_reg;
 
@@ -107,9 +104,9 @@ end
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
-        QE_sim_phase_time       <= 1'b0;
-        QE_counts_per_rev       <= 1'b0;
-        QE_config               <= 1'b0;
+        QE_sim_phase_time       <= 0;
+        QE_counts_per_rev       <= 0;
+        QE_config               <= 0;
     end else begin
         if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
             if (bus.reg_address == (`QE_SIM_PHASE_TIME + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
@@ -194,12 +191,15 @@ QE_generator_FSM  QE_generator_FSM_sys(
 );
 //
 
-logic int_QE_A, int_QE_B, int_QE_I;
-logic ext_QE_A, ext_QE_B, ext_QE_I;
-
 logic [2:0] QE_sim_phase_counter;
 uint32_t    QE_sim_pulse_counter;
 uint32_t    QE_sim_phase_timer;
+
+
+logic QE_direction, QE_pulse, index;
+logic QE_A, QE_B, QE_I;
+logic ext_QE_A, ext_QE_B, ext_QE_I;
+logic int_QE_A, int_QE_B, int_QE_I;
 
 //
 // collect status data into status register
@@ -245,6 +245,7 @@ end
 assign phase_cnt_4 = (QE_sim_phase_counter == 4) ? 1'b1 : 1'b0;
 assign index_cnt   = (QE_sim_pulse_counter == QE_counts_per_rev) ? 1'b1 : 1'b0;
 assign timer_cnt_0 = (QE_sim_phase_timer == 0) ? 1'b1 : 1'b0;
+
 
 
 
@@ -315,7 +316,7 @@ begin
     end else begin
         QE_A_tmp = ext_QE_A;
         QE_B_tmp = ext_QE_B;
-        QE_I     = ext_QE_I;	
+        QE_I     = ext_QE_I;
     end
 end
 
@@ -407,22 +408,22 @@ assign samples_complete     = (sample_counter == 1'b0) ? 1'b1 : 1'b0;
 always_ff @(posedge clk or negedge reset)
 begin
     if (!reset) begin
-        QE_speed_buffer         <= 1'b0;
-        QE_temp_speed_counter   <= 1'b0;
-        sample_counter          <= 1'b0;
+        QE_speed_buffer         <= 0;
+        QE_temp_speed_counter   <= 0;
+        sample_counter          <= 0;
     end  else begin
         if (speed_measure_enable == 1'b1) begin
-            if (inc_temp_speed_counter == 1'b1) begin
+            if (inc_temp_speed_counter == 1) begin
                 QE_temp_speed_counter <= QE_temp_speed_counter + 1'b1;
             end else begin
-                if (dec_sample_count == 1'b1) begin
+                if (dec_sample_count == 1) begin
                     sample_counter = sample_counter - 1'b1;
                 end else begin
-                    if (load_speed_buffer == 1'b1) begin
+                    if (load_speed_buffer == 1) begin
                         QE_speed_buffer <= QE_temp_speed_counter;
                     end else begin
                         if (clear_all == 1'b1) begin
-                            QE_temp_speed_counter	<= 1'b0;
+                            QE_temp_speed_counter <= 1'b0;
                             if (speed_filter_enable == 1'b1) begin	   
                                 case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
                                     0       : sample_counter <=  1;
@@ -461,27 +462,50 @@ end
 //      2. Inc/Dec based on quadrature pulse/direction signals
 //      3. Load with initial value (likely to be 0) 
 
-always_ff @(posedge QE_pulse or negedge reset)
+//always_ff @(posedge QE_pulse or negedge reset)
+//begin
+//    if (!reset) begin
+//        QE_count_buffer <= 0;
+//    end  else begin
+//        if (QE_direction == 1'b1) begin
+//            QE_count_buffer <= QE_count_buffer + 1'b1; 
+//        end else begin
+//            if (QE_direction == 1'b0) begin
+//                QE_count_buffer <= QE_count_buffer - 1'b1;
+//            end else begin
+//                if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
+//                    if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
+//                        QE_count_buffer <= bus.data_out;
+//                    end
+//                end
+//            end
+//        end
+//    end
+//end
+
+logic last_QE_pulse_value;
+
+always_ff @(posedge clk or negedge reset)
 begin
     if (!reset) begin
-        QE_count_buffer <= 1'b0;
+        last_QE_pulse_value   <= 0;
+        QE_count_buffer <= 0;
     end  else begin
-        if (QE_direction == 1'b1) begin
-            QE_count_buffer <= QE_count_buffer + 1'b1; 
-        end else begin
-            if (QE_direction == 1'b0) begin
-                QE_count_buffer <= QE_count_buffer - 1'b1;
+        if ((QE_pulse == 1'b1) && (last_QE_pulse_value == 1'b0)) begin
+            last_QE_pulse_value = 1'b1;
+            if (QE_direction == 1'b1) begin
+                QE_count_buffer <= QE_count_buffer + 1'b1;
             end else begin
-                if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
-                    if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
-                        QE_count_buffer <= bus.data_out;
-                    end
-                end
+                QE_count_buffer <= QE_count_buffer - 1'b1;
+            end
+        end else begin
+            if ((QE_pulse == 1'b0) && (last_QE_pulse_value == 1'b1)) begin
+                last_QE_pulse_value = 1'b0;
             end
         end
     end
 end
-    
+            
 
 //
 // Count index quadrature pulses (1 per revolution)
@@ -499,7 +523,7 @@ count_FSM QE_index_count_FSM_sys(
     // outputs
     .inc_counter(inc_QE_turns_buffer),
     .dec_counter(dec_QE_turns_buffer)
-);	
+);
 
 always_ff @(posedge clk or negedge reset)   
 begin   
