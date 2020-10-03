@@ -212,7 +212,7 @@ always_ff @(posedge clk or negedge reset) begin
         data_in_reg <= 'z;
     end  else begin
         if(write_data_word_to_BUS == 1'b1) begin
-            case (bus.reg_address)  
+            unique case (bus.reg_address)    // force parallel case
                 (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_period;
                 (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_on;
                 (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_config;
@@ -239,10 +239,10 @@ assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
 // Decode register address to check if this subsystem is addressed
 
 always_comb begin
-    subsystem_enable = 0;
-    if (bus.register_address_valid ==1'b1) begin
+    subsystem_enable = 1'b0;
+    if (bus.register_address_valid == 1'b1) begin
         if ((bus.reg_address >= `FIRST_PWM_REGISTER) && (bus.reg_address <= `LAST_PWM_REGISTER)) begin
-            subsystem_enable = 1;
+            subsystem_enable = 1'b1;
         end 
     end
 end
@@ -263,7 +263,7 @@ end
 //
 // define 32-bit value to be written to bus
 
-assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
+assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
 
 //
 // TEMP : no error handling so drive "nFault" signal to high impedence state

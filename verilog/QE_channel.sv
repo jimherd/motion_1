@@ -142,7 +142,7 @@ always_ff @(posedge clk or negedge reset) begin
         data_in_reg <= 'z;
     end  else begin
         if(write_data_word_to_BUS == 1'b1) begin
-            case (bus.reg_address)  
+            unique case (bus.reg_address)  
                 (`QE_COUNT_BUFFER   + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_count_buffer;
                 (`QE_TURN_BUFFER    + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_turns_buffer;
                 (`QE_SPEED_BUFFER   + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_speed_buffer;
@@ -483,13 +483,18 @@ end
 //    end
 //end
 
+//
+// manipulate "QE_count_buffer"
+//  1. inc/dec based on rising edge of quadrature pulse
+//  2. pre-load with value (0 to clear)
+
 logic last_QE_pulse_value;
 
 always_ff @(posedge clk or negedge reset)
 begin
     if (!reset) begin
-        last_QE_pulse_value   <= 0;
-        QE_count_buffer <= 0;
+        last_QE_pulse_value   <= 1'b0;
+        QE_count_buffer       <= 0;
     end  else begin
         if ((QE_pulse == 1'b1) && (last_QE_pulse_value == 1'b0)) begin
             last_QE_pulse_value = 1'b1;
@@ -501,6 +506,10 @@ begin
         end else begin
             if ((QE_pulse == 1'b0) && (last_QE_pulse_value == 1'b1)) begin
                 last_QE_pulse_value = 1'b0;
+            end else begin
+                if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
+                        QE_count_buffer <= bus.data_out;
+                end
             end
         end
     end

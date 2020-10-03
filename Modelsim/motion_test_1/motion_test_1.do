@@ -61,7 +61,8 @@ add wave -label BUS_handshake_1 -position end  sim:/motion_test_1_tb/uut/intf/ha
 add wave -label BUS_handshake_2 -position end  sim:/motion_test_1_tb/uut/intf/handshake_2
 add wave -label RW -position end  sim:/motion_test_1_tb/uut/intf/RW
 add wave -label reg_addr -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/reg_address
-add wave -label BUS_data_out -radix hexadecimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/data_out
+add wave -label reg_add_valid -position end sim:/motion_test_1_tb/uut/intf/register_address_valid
+add wave -label BUS_data_out -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/data_out
 add wave -label BUS_data_in -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/data_in
 add wave -label output_packet -radix hexadecimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/output_packet
 add wave -label read_bus_word -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/read_bus_word
@@ -78,6 +79,7 @@ switch $TEST {
 		add wave -label write_word_to_BUS -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/bus_FSM_sys/write_data_word_to_BUS}
 		add wave -label T_ON_reg_CH0 -radix hexadecimal -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/T_on}
 		add wave -label {PWM_ch[0]} -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/pwm}
+        add wave -label data_in_reg -position end {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/data_in_reg}
 	}
 	QE_INT_TEST_0 {
 		add wave -divider "QE subsystem"
