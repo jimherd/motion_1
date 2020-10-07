@@ -176,11 +176,11 @@ always_ff @(posedge clk or negedge reset) begin
         if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
             if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                 T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;   // tweak to meet exact timing
-                pwm_config[0] = 1'b0;   // clear enable signal
+                pwm_config[0] <= 1'b0;   // clear enable signal
             end else begin
                 if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                     T_on <= bus.data_out - `T_ON_ADJUSTMENT;    // tweak to meet exact timing
-                    pwm_config[0] = 1'b0;   // clear enable signal
+                    pwm_config[0] <= 1'b0;   // clear enable signal
                 end else begin
                     if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                         pwm_config <= bus.data_out;
@@ -246,19 +246,6 @@ always_comb begin
         end 
     end
 end
-
-// WHY DOES THIS NOT WORK !!!!!!
-//
-//always_comb begin
-//      subsystem_enable = 0;   // default value
-//      case (bus.reg_address)  
-//         (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-//         (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-//         (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-//         (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : subsystem_enable = 1;
-//         default                                                         : subsystem_enable = 0; 
-//      endcase
-//end
 
 //
 // define 32-bit value to be written to bus

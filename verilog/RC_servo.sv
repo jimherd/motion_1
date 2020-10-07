@@ -104,7 +104,7 @@ always_ff @(posedge clk or negedge reset) begin
         RC_servo_config   <= 0;
         RC_servo_status   <= 0;
         for (int i=0; i < `NOS_RC_SERVO_CHANNELS; i=i+1) begin
-            RC_on_times[i] = 0;
+            RC_on_times[i] <= 0;
         end
     end else begin
         if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin

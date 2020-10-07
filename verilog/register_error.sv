@@ -32,30 +32,30 @@ SOFTWARE.
 
 import types::*;
 
+/////////////////////////////////////////////////
+//
+// module interface definition
 
 module register_error  ( 
     input  logic clk, reset,
     IO_bus  bus
 );
 
-logic [31:0] data_in_reg;
-
+/////////////////////////////////////////////////
 //
-// subsystem registers accessible to external system
+// local data
 
+logic [31:0] data_in_reg;
+logic reg_nFault;
+logic subsystem_enable;
 
 /////////////////////////////////////////////////
 //
-// Connection to internal system 32-bit bus
+// instantiate Finite State Machines (FSMs)
+//
+// 1. FSM to interface to on-FPGA 32-bit bus
 
 logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
-logic subsystem_enable;
-
-//
-// instantiate Finite State Machines (FSMs)
-
-//
-// FSM to interface to on-FPGA 32-bit bus
 
 bus_FSM   bus_FSM_sys(
     .clk(clk),
@@ -71,7 +71,7 @@ bus_FSM   bus_FSM_sys(
 );
 
 //
-// FSM to manage nFault error line (tri-state line)
+// 2. FSM to manage nFault error line (tri-state line)
 
 logic set_nFault_z, set_nFault_value;
 
@@ -84,6 +84,20 @@ error_processing_FSM  sys_error_processing_FSM (
     .set_nFault_value(set_nFault_value)
 );
 
+/////////////////////////////////////////////////
+//
+// check if registers address refers to this subsystem
+
+always_comb begin
+    subsystem_enable = 1'b0;
+    if (bus.register_address_valid == 1'b1) begin
+        if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) begin
+            subsystem_enable = 1'b1;
+        end
+    end
+end
+
+/////////////////////////////////////////////////
 //
 // put data onto bus 
 
@@ -103,10 +117,9 @@ always_ff @(posedge clk or negedge reset) begin
     end
 end
 
+/////////////////////////////////////////////////
 //
 // processes error onto nFault bus line
-
-logic reg_nFault;
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
@@ -124,25 +137,13 @@ always_ff @(posedge clk or negedge reset) begin
     end
 end
 
-assign bus.nFault = reg_nFault;
 
-
+/////////////////////////////////////////////////
 //
-// assess if registers numbers refer to this subsystem
-
-always_comb begin
-    subsystem_enable = 1'b0;
-    if (bus.register_address_valid == 1'b1) begin
-        if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) begin
-            subsystem_enable = 1'b1;
-        end
-    end
-end
-
-//
-// define 32-bit value to be written to bus
+// write data/control to internal 32-bit bus
 
 assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
+assign bus.nFault  = reg_nFault;
 
 
 endmodule

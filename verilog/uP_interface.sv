@@ -61,7 +61,7 @@ byte_t output_packet[`NOS_READ_BYTES_FROM_SLAVE];
 uint16_t timeout_counter;
 
 
-uP_interface_FSM uP_interface_sys (
+uP_interface_FSM uP_interface_FSM_sys (
     .clk(clk), 
     .reset(reset),  
     .bus_handshake_1(bus.handshake_1),
@@ -88,22 +88,22 @@ uP_interface_FSM uP_interface_sys (
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
-        counter                         <= 1'b0; 
-        target_count                    <= 1'b0;
-        input_packet[`CMD_REG]          <= 1'b0;
-        input_packet[`REGISTER_NUMBER]  <= 1'b0;
+        counter                         <= 0; 
+        target_count                    <= 0;
+        input_packet[`CMD_REG]          <= 0;
+        input_packet[`REGISTER_NUMBER]  <= 0;
     end else begin
         if (set_in_uP_byte_count == 1'b1) begin
             target_count <= byte_t'(`NOS_READ_BYTES_FROM_UP);
-            counter <= 1'b0;
+            counter <= 0;
         end else begin
             if (set_out_uP_byte_count == 1'b1) begin
                 target_count <= byte_t'(`NOS_WRITE_BYTES_TO_UP);
-                counter <= 1'b0;
+                counter <= 0;
             end else begin
                 if (set_in_bus_word_count == 1'b1) begin
                     target_count <= byte_t'(`NOS_READ_BYTES_FROM_SLAVE);
-                    counter <= 1'b0;
+                    counter <= 0;
                 end else begin  
                     if (read_uP_byte == 1'b1) begin
                         input_packet[counter] <= uP_data;   // uP_data_out
@@ -114,7 +114,7 @@ always_ff @(posedge clk or negedge reset) begin
                             data_out <= output_packet[counter];   // uP_data_in
                             counter <= counter + 1'b1;
                             target_count <= target_count - 1'b1;
-                            input_packet[`REGISTER_NUMBER] <= 1'b0;  // clear register address
+                            input_packet[`REGISTER_NUMBER] <= 0;  // clear register address
                         end else begin
                             if (read_bus_word == 1'b1) begin
                                 output_packet[counter+0] <= bus.data_in[7:0];
@@ -127,7 +127,7 @@ always_ff @(posedge clk or negedge reset) begin
                                 if (clear_uP_packet == 1'b1) begin
                                     output_packet[`UP_STATUS_REG] <= `RESET_CMD_DONE;
                                     target_count <= byte_t'(`NOS_READ_BYTES_FROM_UP);
-                                    counter <= 1'b0;
+                                    counter <= 0;
                                 end
                             end
                         end
@@ -141,7 +141,7 @@ end
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
-        timeout_counter <= 1'b0;
+        timeout_counter <= 0;
     end else begin
         if (set_timeout_counter) begin
             timeout_counter <= `TIMEOUT_COUNT;

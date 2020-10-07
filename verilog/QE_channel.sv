@@ -44,14 +44,14 @@ module QE_channel #(QE_UNIT = 0) (
 // definition of first and last registers for this unit
 
 `define   FIRST_QE_REGISTER     (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
-`define   LAST_QE_REGISTER      ((`QE_STATUS +       (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))) - 1) 
+`define   LAST_QE_REGISTER      (`QE_STATUS       + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
 //
 // subsystem registers accessible to external system
 
 uint32_t  QE_count_buffer;
 uint32_t  QE_turns_buffer;
 uint32_t  QE_speed_buffer;
-uint32_t  QE_sim_phase_time;
+uint32_t  QE_sim_phase_time;    
 uint32_t  QE_counts_per_rev;
 uint32_t  QE_config;
 uint32_t  QE_status;
@@ -104,9 +104,9 @@ end
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
-        QE_sim_phase_time       <= 0;
-        QE_counts_per_rev       <= 0;
-        QE_config               <= 0;
+        QE_sim_phase_time   <= 0;
+        QE_counts_per_rev   <= 0;
+        QE_config           <= 0;
     end else begin
         if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
             if (bus.reg_address == (`QE_SIM_PHASE_TIME + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
@@ -370,12 +370,13 @@ quadrature_decoder QE(
 //
 // Notes :
 //   1. If motor has stopped during a quad_A pulses then it could be 
-//    infinitely long.
-//    Therefore clamp the velocity value to a very low speed. Example below
-//    is a speed of 1mm/sec for a 70mm diameter wheel with 10MHz clock.
-//    If motor has stopped outwith a Quad_A pulse then the velocity will read
-//    as zero.
-//    uP software can detect each of these cases.
+//      infinitely long.
+//      Therefore clamp the velocity value to a very low speed. Example below
+//      is a speed of 1mm/sec for a 70mm diameter wheel with 10MHz clock.
+//      If motor has stopped outwith a Quad_A pulse then the velocity will read
+//      as zero.
+//      uP software can detect each of these cases.
+//
 //   2. The diameter of the wheel could be a settable constant.
 //
 
@@ -417,7 +418,7 @@ begin
                 QE_temp_speed_counter <= QE_temp_speed_counter + 1'b1;
             end else begin
                 if (dec_sample_count == 1) begin
-                    sample_counter = sample_counter - 1'b1;
+                    sample_counter <= sample_counter - 1'b1;
                 end else begin
                     if (load_speed_buffer == 1) begin
                         QE_speed_buffer <= QE_temp_speed_counter;
@@ -456,34 +457,6 @@ end
 //
 // count quadrature pulses.
 //
-// Code to deal with register "QE_count_buffer"
-//
-//      1. Power ON reset to zero
-//      2. Inc/Dec based on quadrature pulse/direction signals
-//      3. Load with initial value (likely to be 0) 
-
-//always_ff @(posedge QE_pulse or negedge reset)
-//begin
-//    if (!reset) begin
-//        QE_count_buffer <= 0;
-//    end  else begin
-//        if (QE_direction == 1'b1) begin
-//            QE_count_buffer <= QE_count_buffer + 1'b1; 
-//        end else begin
-//            if (QE_direction == 1'b0) begin
-//                QE_count_buffer <= QE_count_buffer - 1'b1;
-//            end else begin
-//                if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
-//                    if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
-//                        QE_count_buffer <= bus.data_out;
-//                    end
-//                end
-//            end
-//        end
-//    end
-//end
-
-//
 // manipulate "QE_count_buffer"
 //  1. inc/dec based on rising edge of quadrature pulse
 //  2. pre-load with value (0 to clear)
@@ -497,7 +470,7 @@ begin
         QE_count_buffer       <= 0;
     end  else begin
         if ((QE_pulse == 1'b1) && (last_QE_pulse_value == 1'b0)) begin
-            last_QE_pulse_value = 1'b1;
+            last_QE_pulse_value <= 1'b1;
             if (QE_direction == 1'b1) begin
                 QE_count_buffer <= QE_count_buffer + 1'b1;
             end else begin
@@ -505,7 +478,7 @@ begin
             end
         end else begin
             if ((QE_pulse == 1'b0) && (last_QE_pulse_value == 1'b1)) begin
-                last_QE_pulse_value = 1'b0;
+                last_QE_pulse_value <= 1'b0;
             end else begin
                 if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
                         QE_count_buffer <= bus.data_out;

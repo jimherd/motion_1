@@ -26,6 +26,7 @@ SOFTWARE.
 // global_constants.sv : System GLOBAL constants
 // ===================
 //
+// There are NO code or variable definitions in this file
 
 `ifndef   _global_constants_sv_
 `define   _global_constants_sv_
@@ -109,7 +110,7 @@ SOFTWARE.
 ///////////////////////////////////////////////////
 //
 // PWM subsystem
-//	
+//
 // used in testbench files
 
    `define PWM_0        (`PWM_BASE + (0 * `NOS_PWM_REGISTERS))
