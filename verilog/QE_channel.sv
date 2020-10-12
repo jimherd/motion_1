@@ -150,6 +150,7 @@ always_ff @(posedge clk or negedge reset) begin
                 (`QE_COUNTS_PER_REV + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_counts_per_rev;
                 (`QE_CONFIG         + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_config;
                 (`QE_STATUS         + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))   : data_in_reg <= QE_status;
+                default                                                             : ;
             endcase
         end else begin
             if(write_status_word_to_BUS == 1'b1) begin

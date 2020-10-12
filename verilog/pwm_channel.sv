@@ -217,6 +217,7 @@ always_ff @(posedge clk or negedge reset) begin
                 (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_on;
                 (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_config;
                 (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_status;
+                default                                                         : ;
             endcase
         end else begin
             if(write_status_word_to_BUS == 1'b1) begin

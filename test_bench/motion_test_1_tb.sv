@@ -31,9 +31,10 @@ SOFTWARE.
 `include "../verilog/global_constants.sv"
 import types::*;
 
-enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0} test_set;
+enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0,
+      register_test_1} test_set;
 
-`define TEST        PWM_TEST_1
+`define TEST        register_test_1
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -176,6 +177,8 @@ motion_system uut(
  );
   
 logic [31:0] input_value;
+
+integer i, error_count;
  
 initial begin
   // init inputs
@@ -207,6 +210,15 @@ initial begin
           #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + `RC_SERVO_PERIOD), 1000, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + 3), 50, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + `RC_SERVO_CONFIG), 32'h8000000F, data, status);
+        end
+    register_test_1 : begin    // read all 256 registers
+            error_count = 0;
+            for(i=0; i<=256; i=i+1) begin
+                #50 do_transaction(`READ_REGISTER_CMD,  i, 0, data, status);
+                #10 if (uP_nFault == 1'b0) error_count = error_count + 1;
+                #50 do_transaction(`READ_REGISTER_CMD,  0, 0, data, status);
+            end
+            $display("Total error count = %d", error_count);
         end
     default :
         $display("Test select number %d is  unknown", `TEST);

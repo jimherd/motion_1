@@ -60,7 +60,7 @@ add wave -divider "internal 32-bit bus"
 add wave -label BUS_handshake_1 -position end  sim:/motion_test_1_tb/uut/intf/handshake_1
 add wave -label BUS_handshake_2 -position end  sim:/motion_test_1_tb/uut/intf/handshake_2
 add wave -label RW -position end  sim:/motion_test_1_tb/uut/intf/RW
-add wave -label reg_addr -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/reg_address
+add wave -label reg_addr -radix Unsigned -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/reg_address
 add wave -label reg_add_valid -position end sim:/motion_test_1_tb/uut/intf/register_address_valid
 add wave -label BUS_data_out -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/data_out
 add wave -label BUS_data_in -radix decimal -position end  sim:/motion_test_1_tb/uut/uP_interface_sys/bus/data_in

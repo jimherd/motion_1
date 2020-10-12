@@ -130,8 +130,6 @@ always_ff @(posedge clk or negedge reset) begin
         end else begin
             if (set_nFault_value == 1'b1) begin
                 reg_nFault <= 1'b0;
-            end else begin
-                reg_nFault <= 1'b1;
             end
         end
     end
