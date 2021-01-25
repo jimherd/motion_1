@@ -43,7 +43,7 @@ module bus_FSM(
 //
 // set of states
 
-enum bit [4:0] {
+enum  bit [4:0]  {
     // section #1   
     S_RW0, S_RW1, S_RW2, S_RW3, S_RW4, S_RW5, S_RW6, 
     // section #2

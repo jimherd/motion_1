@@ -40,11 +40,14 @@ module pwm_channel  #(parameter PWM_UNIT = 0)  (
     output logic  H_bridge_2        // second H-bridge signal derived from 'pwm_signal'
 );
 
-// 
+/////////////////////////////////////////////////
+//
 // definition of first and last registers for this unit
 
-`define	FIRST_PWM_REGISTER    ( `PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
-`define	LAST_PWM_REGISTER     ( `PWM_STATUS + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
+`define     FIRST_PWM_REGISTER    ( `PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
+`define     LAST_PWM_REGISTER     ( `PWM_STATUS + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))
+
+/////////////////////////////////////////////////
 //
 // PWM subsystem registers
 
@@ -53,6 +56,7 @@ logic [31:0]  T_on;        // in units of 20nS
 logic [31:0]  pwm_config; 
 logic [31:0]  pwm_status;
 
+/////////////////////////////////////////////////
 //
 // Local registers
 
@@ -60,6 +64,7 @@ logic [31:0]  T_period_temp;
 logic [31:0]  T_on_temp;
 logic [31:0]  data_in_reg;
 
+/////////////////////////////////////////////////
 //
 // Local variables
 
@@ -71,11 +76,12 @@ logic         H_bridge_swap;
 logic         H_bridge_dwell_mode;
 logic  [1:0]  H_bridge_invert_mode;
 
+
+/////////////////////////////////////////////////
 //
-// initialise relevant subsystems
-//    1. FSM to run peripheral end of internal 32-bit bus
-//    2. PWM state machine
-//    3. H-bridge decode system
+// instantiate Finite State Machines (FSMs)
+//
+// 1. FSM to interface to on-FPGA 32-bit bus
 
 logic subsystem_enable;
 logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
@@ -93,6 +99,9 @@ bus_FSM   bus_FSM_sys(
     .register_address_valid(bus.register_address_valid)
 );
 
+//
+// 2. FSM to control PWM signbal generation
+
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
 logic pwm_enable;
@@ -109,7 +118,11 @@ pwm_FSM   pwm_FSM_sys(
     .reload_times(reload_times),
     .pwm(pwm) 
 );
-    
+
+/////////////////////////////////////////////////
+//
+// H-bridge decode system
+
 H_bridge  H_bridge_sys( 
     .PWM_signal(pwm),
     .int_enable(H_bridge_int_enable), 
@@ -123,6 +136,20 @@ H_bridge  H_bridge_sys(
     .H_bridge_2(H_bridge_2)
 );
 
+/////////////////////////////////////////////////
+//
+// Decode register address to check if this subsystem is addressed
+
+always_comb begin
+    subsystem_enable = 1'b0;
+    if (bus.register_address_valid == 1'b1) begin
+        if ((bus.reg_address >= `FIRST_PWM_REGISTER) && (bus.reg_address <= `LAST_PWM_REGISTER)) begin
+            subsystem_enable = 1'b1;
+        end 
+    end
+end
+
+/////////////////////////////////////////////////
 //
 // Data subsystem to calculate pulse edges
 
@@ -236,25 +263,16 @@ assign pwm_signal = pwm;   // set pwm signal value
 
 assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
 
-//
-// Decode register address to check if this subsystem is addressed
 
-always_comb begin
-    subsystem_enable = 1'b0;
-    if (bus.register_address_valid == 1'b1) begin
-        if ((bus.reg_address >= `FIRST_PWM_REGISTER) && (bus.reg_address <= `LAST_PWM_REGISTER)) begin
-            subsystem_enable = 1'b1;
-        end 
-    end
-end
 
 //
 // define 32-bit value to be written to bus
 
 assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
 
+/////////////////////////////////////////////////
 //
-// TEMP : no error handling so drive "nFault" signal to high impedence state
+// TEMP : no error handling so drive "nFault" signal to "high impedence" state.
 
 assign  bus.nFault = 'z;
 

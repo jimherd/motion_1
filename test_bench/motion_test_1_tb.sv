@@ -101,7 +101,7 @@ task read_byte;
   begin
     #50   wait(uut.uP_handshake_2 == 1'b1);
         #50 async_uP_RW = 0;      
-	#50   data = uut.uP_data;
+    #50   data = uut.uP_data;
     #50   async_uP_handshake_1 = 1;                 // send ack
     #20   wait(uut.uP_handshake_2 == 1'b0);
         #50 async_uP_RW = 0;  
@@ -218,7 +218,8 @@ initial begin
                 #10 if (uP_nFault == 1'b0) error_count = error_count + 1;
                 #50 do_transaction(`READ_REGISTER_CMD,  0, 0, data, status);
             end
-            $display("Total error count = %d", error_count);
+            $display("Registers used   = %d", (256 - error_count));
+            $display("Registers unused = %d", error_count);
         end
     default :
         $display("Test select number %d is  unknown", `TEST);

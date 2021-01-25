@@ -59,7 +59,7 @@ module error_processing_FSM (
 // Set of FSM states and initial state
 
 
-enum bit [3:0] {  
+enum /* bit [3:0] */ {  
     S_E0, S_E1, S_E2, S_E3, S_E4, S_E5
 } state, next_state;
 
