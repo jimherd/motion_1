@@ -29,76 +29,77 @@ SOFTWARE.
 // Type : Standard three section Moore Finite State Machine structure
 //
 // Documentation :
-//		State machine diagram in system notes folder.
+//      State machine diagram in system notes folder.
 //
 // Notes
-//		State machine driver for two timers - one for the ON time and
-//    one for the period time.  
-//    Typically, the period will be 20mS and there will be one state
-//    machine per servo output.
+//      State machine driver for two timers - one for the ON time and
+//      one for the period time.  
+//      Typically, the period will be 20mS and there will be one state
+//      machine per servo output.
 //
 // States
-//			S_RC_CS0  : enable hold state
-//			S_RC_CS1  : wait until start of T-period
-//			S_RC_CS2  : load servo ON timer
-//			S_RC_CS3  : wait until end of ON time
-//			S_RC_CS4  : set servo OFF
+//          S_RC_CS0  : enable hold state
+//          S_RC_CS1  : wait until start of T-period
+//          S_RC_CS2  : load servo ON timer
+//          S_RC_CS3  : wait until end of ON time
+//          S_RC_CS4  : set servo OFF
 //
 
 `include  "global_constants.sv"
 
 module RC_servo_channel_FSM( 
-               input  logic  clk, reset, 
-               input  logic  RC_enable,					// 1 = enable servo channel
-					input  logic  ON_time_complete,			// 1 = pulse ON time is complete
-					input  logic  RC_servo_period_0,			// 1 = specifies start of servo period
-               output logic  RC_servo_ON,					// 1 = pulse set to ON
-					output logic  RC_servo_OFF,				// 1 = pulse set to OFF
-					output logic  load_RC_servo_ON_timer	// 1 = reload pulse details
-               );
+    input  logic  clk, reset,
+    input  logic  RC_enable,                // 1 = enable servo channel
+    input  logic  ON_time_complete,         // 1 = pulse ON time is complete
+    input  logic  RC_servo_period_0,        // 1 = specifies start of servo period
+    output logic  RC_servo_ON,              // 1 = pulse set to ON
+    output logic  RC_servo_OFF,             // 1 = pulse set to OFF
+    output logic  load_RC_servo_ON_timer    // 1 = reload pulse details
+);
 
 //
 // set of states
-					
+
 enum bit [2:0] {  
-                     S_RC_CS0, S_RC_CS1, S_RC_CS2, S_RC_CS3, S_RC_CS4
-               } state, next_state;
+    S_RC_CS0, S_RC_CS1, S_RC_CS2, S_RC_CS3, S_RC_CS4
+} state, next_state;
 
 //
 // Register next state 
 
-always_ff @(posedge clk or negedge reset)
-      if (!reset)   begin
-         state <= S_RC_CS0;
-      end
-      else
-         state <= next_state;
-			
+always_ff @(posedge clk or negedge reset) begin
+    if (!reset)  begin
+        state <= S_RC_CS0;
+    end else begin
+        state <= next_state;
+    end
+end
+
 //
 // Next state logic
-			
+
 always_comb begin: set_next_state
-   next_state = state;
-   unique case (state)
-      S_RC_CS0 :
-         next_state = (RC_enable == 1'b1) ? S_RC_CS1 : S_RC_CS0;  
-		S_RC_CS1 :
-         next_state = (RC_servo_period_0 == 1'b1) ? S_RC_CS2 : S_RC_CS1;			
-      S_RC_CS2 :
-         next_state = S_RC_CS3;  
-		S_RC_CS3 :
-         next_state = (ON_time_complete == 1'b1) ? S_RC_CS4 : S_RC_CS3;
-		S_RC_CS4 :
-         next_state = S_RC_CS0;  	
-   endcase
+    next_state = state;
+    unique case (state)
+        S_RC_CS0 :
+            next_state = (RC_enable == 1'b1) ? S_RC_CS1 : S_RC_CS0;  
+        S_RC_CS1 :
+            next_state = (RC_servo_period_0 == 1'b1) ? S_RC_CS2 : S_RC_CS1;
+        S_RC_CS2 :
+            next_state = S_RC_CS3;  
+        S_RC_CS3 :
+            next_state = (ON_time_complete == 1'b1) ? S_RC_CS4 : S_RC_CS3;
+        S_RC_CS4 :
+            next_state = S_RC_CS0;
+    endcase
 end: set_next_state
 
 //
 // Moore outputs
-				
-assign RC_servo_OFF	               = (state == S_RC_CS0) || (state ==  S_RC_CS4);
-assign RC_servo_ON	               = (state == S_RC_CS3);
-assign load_RC_servo_ON_timer       = (state == S_RC_CS2); 
+
+assign RC_servo_OFF             = (state == S_RC_CS0) || (state ==  S_RC_CS4);
+assign RC_servo_ON              = (state == S_RC_CS3);
+assign load_RC_servo_ON_timer   = (state == S_RC_CS2); 
 
 endmodule
 

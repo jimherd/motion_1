@@ -27,23 +27,25 @@ SOFTWARE.
 // ===============
 //
 module synchronizer (
-	 input  logic clk, reset,
-    input  logic async_in, 	// asynchronous input
-	 output logic sync_out		// synchronous output
+    input  logic clk, reset,
+
+    input  logic async_in,     // asynchronous input
+    output logic sync_out      // synchronous output
 );
-  
+
 //
 // local variable
-  
+
 logic q1; // 1st stage ff output
 
 //
 // sync logic
 
-always_ff @(posedge clk or negedge reset)
+always_ff @(posedge clk or negedge reset) begin
     if (!reset) 
         {sync_out,q1} <= '0;
     else 
         {sync_out,q1} <= {q1,async_in};
-        
+end
+
 endmodule

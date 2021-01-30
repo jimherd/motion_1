@@ -31,9 +31,9 @@ SOFTWARE.
 `include  "global_constants.sv"
 
 module I_am_alive(
-                  input  logic clk, reset, 
-                  output logic led
-                  );
+   input  logic clk, reset, 
+   output logic led
+);
 
 logic [26:0] counter;
 

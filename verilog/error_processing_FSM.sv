@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2019 James Herd
+Copyright (c) 2020 James Herd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,50 +23,55 @@ SOFTWARE.
 */
 
 //
-// count_FSM.sv : up/down counter for slow pulses
-// ============
+// error_processing_FSM.sv : manage setting of nFault line
+// =======================
 //
 // Type : Standard three section Moore Finite State Machine structure
 //
 // Documentation :
-//		State machine diagram in system notes folder.
+//      State machine diagram in system notes folder.
 //
 // Notes
-//		Consists of two timers. One for the PWM period and one for the PWM ON time.
+//
 //
 // States
-//          S_COUNT0  : count hold state and wait for rising edge of pulse being counted
-//          S_COUNT1  : check direction signal
-//          S_COUNT2  : increment by 1
-//          S_COUNT3  : decrement by 1
-//          S_COUNT4  : wait for falling edge of pulse being counted
+//      S_E0 : Initial state - wait for "register_address_valid" signal
+//      S_E1 : 20nS delay to allow "subsystem_enable" signal to stabalise
+//      S_E2 : check "subsystem_enable"
+//      S_E3 : unit not addressed to set "nFault" to 'z
+//      S_E4 : wait for "register_address_valid" siganl to go low
+//      S_E5 : set "nFault" appropriately
 
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
-module count_FSM (
+module error_processing_FSM (
     input  logic  clk, reset, 
 
-    input  logic  count_sig,        //
-    input  logic  direction,        // signal to define direction of count
+    input  logic  register_address_valid,
+    input  logic  subsystem_enable,
 
-    output logic  inc_counter,      // decrement the ON time counter
-    output logic  dec_counter       // decrement the period time counter
+    output logic  set_nFault_z,
+    output logic  set_nFault_value
 );
 
 //
-// Set of FSM states
+// Set of FSM states and initial state
 
-enum bit [3:0] {  
-    S_COUNT0, S_COUNT1, S_COUNT2, S_COUNT3, S_COUNT4
+
+enum /* bit [3:0] */ {  
+    S_E0, S_E1, S_E2, S_E3, S_E4, S_E5
 } state, next_state;
+
+`define    S_Ex_INITIAL_STATE    S_E0
+
 //
 // register next state
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset)   begin
-        state <= S_COUNT0;
-    end else begin       
+        state <= `S_Ex_INITIAL_STATE;
+    end else begin         
         state <= next_state;
     end
 end
@@ -76,25 +81,27 @@ end
 
 always_comb begin: set_next_state
     unique case (state)
-        S_COUNT0:
-            if (count_sig == 0)
-                next_state = S_COUNT0;
+        S_E0:
+            if (register_address_valid == 1'b0)
+                next_state = S_E0;
             else
-                next_state = S_COUNT1;
-        S_COUNT1:
-            if (direction == 0)
-                next_state = S_COUNT2;
+                next_state = S_E1;
+        S_E1:
+            next_state = S_E2;
+        S_E2:
+            if (subsystem_enable == 1'b0)
+                next_state = S_E3;
             else
-                next_state = S_COUNT3;
-        S_COUNT2:
-            next_state = S_COUNT4;
-        S_COUNT3:
-            next_state = S_COUNT4;
-        S_COUNT4:
-            if (count_sig == 0)
-                next_state = S_COUNT0;
+                next_state = S_E4;
+        S_E3:
+            next_state = `S_Ex_INITIAL_STATE;
+        S_E4:
+            if (register_address_valid == 1'b1)
+                next_state = S_E4;
             else
-                next_state = S_COUNT4;
+                next_state = S_E5;
+        S_E5:
+            next_state = `S_Ex_INITIAL_STATE;
         default :
             next_state = state;   // default condition - next state is present state
     endcase
@@ -103,8 +110,8 @@ end: set_next_state
 //
 // set Moore outputs
 
-assign inc_counter  = (state == S_COUNT2);
-assign dec_counter  = (state == S_COUNT3);
+assign set_nFault_z      = (state == S_E3);
+assign set_nFault_value  = (state == S_E5);
 
 endmodule
 

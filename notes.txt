@@ -1,0 +1,28 @@
+#Notes.
+
+##1. layout
+
+TAB set to 4 spaces with all TABs converted to spaces.
+
+##2. "unique case"
+
+Consider the following code
+
+    case (bus.reg_address)
+        (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_period;
+        (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_on;
+        (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_config;
+        (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_status;
+    endcase
+            
+It would appear that the ModelSim compiler does not convert this to a series 
+of parallel tests, thus causing the simulation to give incorrect results.
+The "unique" word can be applied to the case statement to force it to
+implement as a series of parallel tests.
+
+    unique case (bus.reg_address)
+        (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_period;
+        (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_on;
+        (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_config;
+        (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_status;
+    endcase

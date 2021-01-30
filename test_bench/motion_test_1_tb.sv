@@ -31,9 +31,10 @@ SOFTWARE.
 `include "../verilog/global_constants.sv"
 import types::*;
 
-enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0} test_set;
+enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0,
+      register_test_1} test_set;
 
-`define TEST        QE_INT_TEST_0
+`define TEST        register_test_1
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -100,7 +101,7 @@ task read_byte;
   begin
     #50   wait(uut.uP_handshake_2 == 1'b1);
         #50 async_uP_RW = 0;      
-	#50   data = uut.uP_data;
+    #50   data = uut.uP_data;
     #50   async_uP_handshake_1 = 1;                 // send ack
     #20   wait(uut.uP_handshake_2 == 1'b0);
         #50 async_uP_RW = 0;  
@@ -127,11 +128,11 @@ endtask;
 // do_read : read a packet from the FPGA
 //
 task do_read;
-  output byte_t packet[`NOS_WRITE_BYTES_TO_UP];
-  begin
+    output byte_t packet[`NOS_WRITE_BYTES_TO_UP];
+    begin
     for (int i=0; i < `NOS_WRITE_BYTES_TO_UP; i++) begin
-		read_byte(packet[i]);
-	end;
+        read_byte(packet[i]);
+    end;
   end;
 endtask;
 
@@ -143,38 +144,41 @@ task automatic do_transaction;
   ref [31:0] status;
   begin
     do_start();
-	do_write(command, reg_address, reg_data);
-	do_read(input_packet);
-	do_end();
-	data = {input_packet[3], input_packet[2], input_packet[1], input_packet[0]};
-	status  = {input_packet[7], input_packet[6], input_packet[5], input_packet[4]};
+    do_write(command, reg_address, reg_data);
+    do_read(input_packet);
+    do_end();
+    data = {input_packet[3], input_packet[2], input_packet[1], input_packet[0]};
+    status  = {input_packet[7], input_packet[6], input_packet[5], input_packet[4]};
   end;
 endtask;
 
 motion_system uut(
-                  .CLOCK_50(clk), 
-                  .async_uP_reset(async_uP_reset), 
-                  .quadrature_A(quadrature_A), 
-                  .quadrature_B(quadrature_B), 
-                  .quadrature_I(quadrature_I),
-                  .async_uP_start(async_uP_start), 
-                  .async_uP_handshake_1(async_uP_handshake_1), 
-                  .async_uP_RW(async_uP_RW),
-                  .uP_ack(uP_ack), 
-                  .uP_handshake_2(uP_handshake_2),
-                  .uP_data(uP_data),
-                  .pwm_out(pwm_out),
-                  .H_bridge_1(H_bridge_1),
-                  .H_bridge_2(H_bridge_2),
-                  .RC_servo(RC_servo),
-                  .led1(led1),
-                  .led2(led2),
-                  .led3(led3),
-                  .led4(led4),
-                  .led5(led5)
+    .CLOCK_50(clk), 
+    .async_uP_reset(async_uP_reset), 
+    .quadrature_A(quadrature_A), 
+    .quadrature_B(quadrature_B), 
+    .quadrature_I(quadrature_I),
+    .async_uP_start(async_uP_start), 
+    .async_uP_handshake_1(async_uP_handshake_1), 
+    .async_uP_RW(async_uP_RW),
+    .uP_ack(uP_ack), 
+    .uP_handshake_2(uP_handshake_2),
+    .uP_data(uP_data),
+    .uP_nFault(uP_nFault),
+    .pwm_out(pwm_out),
+    .H_bridge_1(H_bridge_1),
+    .H_bridge_2(H_bridge_2),
+    .RC_servo(RC_servo),
+    .led1(led1),
+    .led2(led2),
+    .led3(led3),
+    .led4(led4),
+    .led5(led5)
  );
   
 logic [31:0] input_value;
+
+integer i, error_count;
  
 initial begin
   // init inputs
@@ -206,6 +210,16 @@ initial begin
           #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + `RC_SERVO_PERIOD), 1000, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + 3), 50, data, status);
           #50 do_transaction(`WRITE_REGISTER_CMD, (`RC_0 + `RC_SERVO_CONFIG), 32'h8000000F, data, status);
+        end
+    register_test_1 : begin    // read all 256 registers
+            error_count = 0;
+            for(i=0; i<=256; i=i+1) begin
+                #50 do_transaction(`READ_REGISTER_CMD,  i, 0, data, status);
+                #10 if (uP_nFault == 1'b0) error_count = error_count + 1;
+                #50 do_transaction(`READ_REGISTER_CMD,  0, 0, data, status);
+            end
+            $display("Registers used   = %d", (256 - error_count));
+            $display("Registers unused = %d", error_count);
         end
     default :
         $display("Test select number %d is  unknown", `TEST);

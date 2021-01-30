@@ -23,43 +23,39 @@ SOFTWARE.
 */
 
 //
-// SYS_info_sv :
+// register_error_sv : 
 //
-// Read only data about system
+// Detect access to a register not conected to any subsystem
 
 `include  "global_constants.sv"
 `include  "interfaces.sv"
 
 import types::*;
 
+/////////////////////////////////////////////////
+//
+// module interface definition
 
-module SYS_info  (
+module register_error  ( 
     input  logic clk, reset,
     IO_bus  bus
 );
 
+/////////////////////////////////////////////////
+//
+// local data
+
 logic [31:0] data_in_reg;
-logic        nFault;
-
-//
-// subsystem registers accessible to external system
-
-//uint32_t  SYS_info_reg_0;
-//
-// internal registers
-
-// local signals
-//
-
+logic reg_nFault;
+logic subsystem_enable;
 
 /////////////////////////////////////////////////
 //
-// Connection to internal system 32-bit bus
+// instantiate Finite State Machines (FSMs)
+//
+// 1. FSM to interface to on-FPGA 32-bit bus
 
 logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
-logic subsystem_enable;
-
-//logic register_address_valid;
 
 bus_FSM   bus_FSM_sys(
     .clk(clk),
@@ -68,27 +64,52 @@ bus_FSM   bus_FSM_sys(
     .handshake_2(bus.handshake_2),
     .handshake_1(bus.handshake_1),
     .RW(bus.RW),
-    .read_word_from_BUS(read_word_from_BUS),
+    .read_word_from_BUS(read_word_from_BUS), 
     .write_data_word_to_BUS(write_data_word_to_BUS),
     .write_status_word_to_BUS(write_status_word_to_BUS),
     .register_address_valid(bus.register_address_valid)
 );
 
-
 //
-// put data onto bus
+// 2. FSM to manage nFault error line (tri-state line)
+
+logic set_nFault_z, set_nFault_value;
+
+error_processing_FSM  sys_error_processing_FSM (
+    .clk(clk),
+    .reset(reset),
+    .register_address_valid(bus.register_address_valid),  
+    .subsystem_enable(subsystem_enable),
+    .set_nFault_z(set_nFault_z),
+    .set_nFault_value(set_nFault_value)
+);
+
+/////////////////////////////////////////////////
+//
+// check if registers address refers to this subsystem
+
+always_comb begin
+    subsystem_enable = 1'b0;
+    if (bus.register_address_valid == 1'b1) begin
+        if ((bus.reg_address >= `FIRST_ILLEGAL_REGISTER) && (bus.reg_address <= `LAST_REGISTER)) begin
+            subsystem_enable = 1'b1;
+        end
+    end
+end
+
+/////////////////////////////////////////////////
+//
+// put data onto bus 
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
         data_in_reg <= 'z;
     end  else begin
         if(write_data_word_to_BUS == 1'b1) begin
-            if (bus.reg_address == `SYS_INFO_0 ) begin
-                data_in_reg <= `SYS_INFO_0_DATA;
-            end
+            data_in_reg <= 32'h55555555;
         end else begin
             if(write_status_word_to_BUS == 1'b1) begin
-                data_in_reg <= ~`SYS_INFO_0_DATA;
+                data_in_reg <= 32'hAAAAAAAA;
             end else begin
                 data_in_reg <= 'z;
             end
@@ -96,26 +117,31 @@ always_ff @(posedge clk or negedge reset) begin
     end
 end
 
+/////////////////////////////////////////////////
 //
-// assess if registers numbers refer to this subsystem
+// processes error onto nFault bus line
 
-always_comb begin
-    subsystem_enable = 1'b0;
-    if (bus.register_address_valid == 1'b1) begin
-        if ( (bus.reg_address >= `REGISTER_BASE) && (bus.reg_address < `PWM_BASE)) begin
-            subsystem_enable = 1'b1;
+always_ff @(posedge clk or negedge reset) begin
+    if (!reset) begin
+        reg_nFault <= 'z;
+    end  else begin
+        if(set_nFault_z == 1'b1) begin
+            reg_nFault <= 'z;
+        end else begin
+            if (set_nFault_value == 1'b1) begin
+                reg_nFault <= 1'b0;
+            end
         end
     end
 end
 
+
+/////////////////////////////////////////////////
 //
-// define 32-bit value to be written to bus
+// write data/control to internal 32-bit bus
 
-assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
+assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
+assign bus.nFault  = reg_nFault;
 
-//
-// TEMP : no error handling so drive "nFault" signal to high impedence state
-
-assign  bus.nFault = 'z;
 
 endmodule
