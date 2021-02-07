@@ -205,7 +205,7 @@ logic int_QE_A, int_QE_B, int_QE_I;
 //
 // collect status data into status register
 
-assign QE_status = {QE_I, QE_B, QE_A ,ext_QE_I, ext_QE_B, ext_QE_A};
+assign QE_status = {QE_direction, QE_pulse, QE_I, QE_B, QE_A};
 
 //
 // Run quadrature encoder simulation - driven by state machine
@@ -481,8 +481,10 @@ begin
             if ((QE_pulse == 1'b0) && (last_QE_pulse_value == 1'b1)) begin
                 last_QE_pulse_value <= 1'b0;
             end else begin
-                if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
+                if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
+                    if (bus.reg_address == (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
                         QE_count_buffer <= bus.data_out;
+                    end
                 end
             end
         end
@@ -524,7 +526,7 @@ begin
 end
 
 //
-// TEMP : no error handling so drive "nFault" signal to high impedence state
+// TEMP : no error handling so drive "nFault" signal to "high impedence" state
 
 assign  bus.nFault = 'z;
 

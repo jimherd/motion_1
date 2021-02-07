@@ -29,10 +29,10 @@ SOFTWARE.
 // 4x decoder : 4 pulses per A/B cycle.
 // Generates a single pulse for each edge of A and B signals.
 //
-// No need to synchronise as this is done on input
+// No need to synchronise (extra 2 delays) as this is done on input
 //
 // Notes
-//		The output 'index' is used as a 'clock' edge in later logic.  This will show up
+//    The output 'index' is used as a 'clock' edge in later logic.  This will show up
 //    as a warning in Quartus.  
 
 `include  "global_constants.sv"

@@ -55,6 +55,12 @@ SOFTWARE.
  // transaction
 
  //`define INCLUDE_32_BIT_STATUS_RETURN
+ 
+//
+// uncomment to skip disabling of PWM channel when pulse width is changed.
+// Testing required as may cause race condition
+
+`define  ENABLE_PWM_DISABLE_WHEN_WIDTH_CHANGED
 
 //
 // System constants

@@ -203,11 +203,15 @@ always_ff @(posedge clk or negedge reset) begin
         if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
             if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                 T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;   // tweak to meet exact timing
-                pwm_config[0] <= 1'b0;   // clear enable signal
+                `ifdef ENABLE_PWM_DISABLE_WHEN_WIDTH_CHANGED
+                    pwm_config[0] <= 1'b0;   // clear enable signal
+                `endif
             end else begin
                 if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                     T_on <= bus.data_out - `T_ON_ADJUSTMENT;    // tweak to meet exact timing
-                    pwm_config[0] <= 1'b0;   // clear enable signal
+                    `ifdef ENABLE_PWM_DISABLE_WHEN_WIDTH_CHANGED
+                        pwm_config[0] <= 1'b0;   // clear enable signal
+                    `endif
                 end else begin
                     if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
                         pwm_config <= bus.data_out;
