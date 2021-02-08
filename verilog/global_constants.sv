@@ -232,20 +232,22 @@ SOFTWARE.
     enum bit       {BACKWARD=1'b0, FORWARD=1'b1} motor_directions;
     
 //
-// bit definitions for PWM/H-bridge configuaration register
+// bit definitions/positions for 32-bit PWM/H-bridge configuaration register
 
-    `define	PWM_ENABLE               0
+    `define  PWM_ENABLE               0      // 1 bit
     //
-    `define	H_BRIDGE_INT_ENABLE     16      // 1 bit
-    `define	H_BRIDGE_EXT_ENABLE     17      // 1 bit
-    `define	H_BRIDGE_MODE           18      // 2 bits
-    `define	H_BRIDGE_COMMAND        20      // 3 bits
-    `define	H_BRIDGE_SWAP           24      // 1 bit
-    `define	H_BRIDGE_DWELL_MODE	    25      // 1 bit
-    `define	H_BRIDGE_INVERT_PINS    26      // 2 bits
+    `define  H_BRIDGE_INT_ENABLE     16      // 1 bit
+    `define  H_BRIDGE_EXT_ENABLE     17      // 1 bit
+    `define  H_BRIDGE_MODE           18      // 2 bits
+    `define  H_BRIDGE_COMMAND        20      // 3 bits
+    `define  H_BRIDGE_SWAP           24      // 1 bit
+    `define  H_BRIDGE_DWELL_MODE     25      // 1 bit
+    `define  H_BRIDGE_INVERT_PINS    26      // 2 bits
 
 //
-// bit definitions for Quadrature encoder configuaration register
+// bit definitions/positions for 32-bit Quadrature encoder configuaration register
+
+    `define  QE_ENABLE             0    // 1-bit
 
     `define  QE_SOURCE             1    // 1 bit : external or internal signals
     `define  QE_SIM_ENABLE         2    // 1 bit : enable quadrature encoder simulator

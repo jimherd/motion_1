@@ -45,6 +45,7 @@ module QE_channel #(QE_UNIT = 0) (
 
 `define   FIRST_QE_REGISTER     (`QE_COUNT_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
 `define   LAST_QE_REGISTER      (`QE_STATUS       + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))
+
 //
 // subsystem registers accessible to external system
 
@@ -72,6 +73,7 @@ logic [31:0] data_in_reg;
 
 logic data_avail, read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
 logic subsystem_enable;
+logic QE_enable;
 
 bus_FSM   bus_FSM_sys(
     .clk(clk),
@@ -129,6 +131,7 @@ end
 
 logic  QE_source, QE_sim_enable, QE_sim_direction, QE_flip_AB;
 
+assign QE_enable        = QE_config[`QE_ENABLE];
 assign QE_source        = QE_config[`QE_SOURCE];
 assign QE_sim_enable    = QE_config[`QE_SIM_ENABLE];
 assign QE_sim_direction = QE_config[`QE_SIM_DIRECTION];
@@ -248,8 +251,6 @@ assign index_cnt   = (QE_sim_pulse_counter == QE_counts_per_rev) ? 1'b1 : 1'b0;
 assign timer_cnt_0 = (QE_sim_phase_timer == 0) ? 1'b1 : 1'b0;
 
 
-
-
 always_comb
 begin
     int_QE_A = 1'b0;
@@ -335,14 +336,14 @@ synchronizer sync_QE_A(
     .async_in(async_ext_QE_A),
     .sync_out(ext_QE_A)
 );
-                        
+
 synchronizer sync_QE_B(
     .clk(clk),
     .reset(reset),
     .async_in(async_ext_QE_B),
     .sync_out(ext_QE_B)
 );
-                        
+
 synchronizer sync_QE_I(
     .clk(clk),
     .reset(reset),
@@ -406,7 +407,10 @@ assign count_overflow       = (QE_speed_buffer > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0
 assign speed_filter_enable  = QE_config[`QE_SPEED_FILTER_ENABLE];
 assign samples_complete     = (sample_counter == 1'b0) ? 1'b1 : 1'b0;
 
-                    
+//
+// Write code for registers "QE_speed_buffer" and "QE_temp_speed_buffer"
+//
+
 always_ff @(posedge clk or negedge reset)
 begin
     if (!reset) begin
@@ -456,11 +460,14 @@ begin
 end
 
 //
+// Write code for register "QE_count_buffer"
+// 
 // count quadrature pulses.
 //
 // manipulate "QE_count_buffer"
-//  1. inc/dec based on rising edge of quadrature pulse
-//  2. pre-load with value (0 to clear)
+//  1. Resetload with value (0 to clear)
+//  2. inc/dec based on rising edge of quadrature pulse
+//  3. Load with 32-bit value
 
 logic last_QE_pulse_value;
 
@@ -472,10 +479,12 @@ begin
     end  else begin
         if ((QE_pulse == 1'b1) && (last_QE_pulse_value == 1'b0)) begin
             last_QE_pulse_value <= 1'b1;
-            if (QE_direction == 1'b1) begin
-                QE_count_buffer <= QE_count_buffer + 1'b1;
-            end else begin
-                QE_count_buffer <= QE_count_buffer - 1'b1;
+            if (QE_enable == 1'b1) begin
+                if (QE_direction == 1'b1) begin
+                    QE_count_buffer <= QE_count_buffer + 1'b1;
+                end else begin
+                    QE_count_buffer <= QE_count_buffer - 1'b1;
+                end
             end
         end else begin
             if ((QE_pulse == 1'b0) && (last_QE_pulse_value == 1'b1)) begin
@@ -490,7 +499,7 @@ begin
         end
     end
 end
-            
+
 
 //
 // Count index quadrature pulses (1 per revolution)
@@ -510,16 +519,27 @@ count_FSM QE_index_count_FSM_sys(
     .dec_counter(dec_QE_turns_buffer)
 );
 
+//
+// write code for register "QE_turns_bufffer"
+//
+
 always_ff @(posedge clk or negedge reset)   
 begin   
     if (!reset) begin
         QE_turns_buffer <= 1'b0;
     end else begin
-        if(inc_QE_turns_buffer) begin
-            QE_turns_buffer <= QE_turns_buffer + 1'b1; 
-        end else begin
-            if(dec_QE_turns_buffer) begin
-                QE_turns_buffer <= QE_turns_buffer - 1'b1;
+        if (QE_enable == 1'b1) begin
+            if(inc_QE_turns_buffer) begin
+                QE_turns_buffer <= QE_turns_buffer + 1'b1; 
+            end else begin
+                if(dec_QE_turns_buffer) begin
+                    QE_turns_buffer <= QE_turns_buffer - 1'b1;
+                end
+            end
+            if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
+                if (bus.reg_address == (`QE_TURN_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
+                    QE_turns_buffer <= bus.data_out;
+                end
             end
         end
     end
