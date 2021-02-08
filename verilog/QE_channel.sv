@@ -528,17 +528,18 @@ begin
     if (!reset) begin
         QE_turns_buffer <= 1'b0;
     end else begin
-        if (QE_enable == 1'b1) begin
-            if(inc_QE_turns_buffer) begin
-                QE_turns_buffer <= QE_turns_buffer + 1'b1; 
-            end else begin
-                if(dec_QE_turns_buffer) begin
-                    QE_turns_buffer <= QE_turns_buffer - 1'b1;
-                end
-            end
-            if ((read_word_from_BUS == 1'b1) && (bus.RW == 1'b1)) begin
-                if (bus.reg_address == (`QE_TURN_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS)))) begin
-                    QE_turns_buffer <= bus.data_out;
+        if (   (read_word_from_BUS == 1'b1) 
+            && (bus.RW == 1'b1)
+            && (bus.reg_address == (`QE_TURN_BUFFER + (`QE_BASE + (QE_UNIT * `NOS_QE_REGISTERS))))) begin
+                QE_turns_buffer <= bus.data_out;
+        end else begin
+            if (QE_enable == 1'b1) begin
+                if(inc_QE_turns_buffer) begin
+                    QE_turns_buffer <= QE_turns_buffer + 1'b1; 
+                end else begin
+                    if(dec_QE_turns_buffer) begin
+                        QE_turns_buffer <= QE_turns_buffer - 1'b1;
+                    end
                 end
             end
         end
