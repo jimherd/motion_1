@@ -208,7 +208,8 @@ logic int_QE_A, int_QE_B, int_QE_I;
 //
 // collect status data into status register
 
-assign QE_status = {QE_direction, QE_pulse, QE_I, QE_B, QE_A};
+//assign QE_status = {QE_direction, QE_pulse, QE_I, QE_B, QE_A};
+
 
 //
 // Run quadrature encoder simulation - driven by state machine
@@ -365,10 +366,10 @@ quadrature_decoder QE(
     .direction(QE_direction), 
     .index(index)
 );
-        
+
 /////////////////////////////////////////////////
 //
-// encoder pulse counter 
+// encoder speed measurement system
 //
 // Notes :
 //   1. If motor has stopped during a quad_A pulses then it could be 
@@ -387,6 +388,10 @@ logic speed_measure_enable, count_overflow, speed_filter_enable, samples_complet
 
 byte_t sample_counter;
 
+//
+// CONTROL structure bases on a finite state machine
+//
+
 QE_speed_measure_FSM  QE_speed_measure_FSM_sys( 
     .clk(clk), 
     .reset(reset), 
@@ -402,62 +407,90 @@ QE_speed_measure_FSM  QE_speed_measure_FSM_sys(
     .load_speed_buffer(load_speed_buffer)
 );
 
+//
+// DATA structure
+//
+
 assign speed_measure_enable = QE_config[`QE_SPEED_MEASURE_ENABLE];
 assign count_overflow       = (QE_speed_buffer > `MAX_SPEED_COUNT) ? 1'b1 : 1'b0;
 assign speed_filter_enable  = QE_config[`QE_SPEED_FILTER_ENABLE];
-assign samples_complete     = (sample_counter == 1'b0) ? 1'b1 : 1'b0;
+assign samples_complete     = (sample_counter == 0) ? 1'b1 : 1'b0;
+
+assign QE_status = {sample_counter, 5'b00000, QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE]};
 
 //
-// Write code for registers "QE_speed_buffer" and "QE_temp_speed_buffer"
+// Write code for variable "QE_temp_speed_counter"
 //
-
 always_ff @(posedge clk or negedge reset)
 begin
     if (!reset) begin
-        QE_speed_buffer         <= 0;
-        QE_temp_speed_counter   <= 0;
-        sample_counter          <= 0;
+        QE_temp_speed_counter <= 0;
     end  else begin
-        if (speed_measure_enable == 1'b1) begin
-            if (inc_temp_speed_counter == 1) begin
-                QE_temp_speed_counter <= QE_temp_speed_counter + 1'b1;
+        if (inc_temp_speed_counter == 1'b1) begin
+            QE_temp_speed_counter <= QE_temp_speed_counter + 1'b1;
+        end else begin
+            if (clear_all == 1'b1) begin
+                QE_temp_speed_counter <= 0;
             end else begin
-                if (dec_sample_count == 1) begin
-                    sample_counter <= sample_counter - 1'b1;
-                end else begin
-                    if (load_speed_buffer == 1) begin
-                        QE_speed_buffer <= QE_temp_speed_counter;
-                    end else begin
-                        if (clear_all == 1'b1) begin
-                            QE_temp_speed_counter <= 1'b0;
-                            if (speed_filter_enable == 1'b1) begin	   
-                                case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
-                                    0       : sample_counter <=  1;
-                                    1       : sample_counter <=  2;
-                                    2       : sample_counter <=  4;
-                                    3       : sample_counter <=  8;
-                                    4       : sample_counter <= 16;
-                                    default : sample_counter <=  1;
-                                endcase;
-                            end
-                        end else begin
-                            if (do_average == 1'b1) begin
-                                case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
-                                    0       : QE_temp_speed_counter <= QE_temp_speed_counter;
-                                    1       : QE_temp_speed_counter <= QE_temp_speed_counter << 1;
-                                    2       : QE_temp_speed_counter <= QE_temp_speed_counter << 2;
-                                    3       : QE_temp_speed_counter <= QE_temp_speed_counter << 3;
-                                    4       : QE_temp_speed_counter <= QE_temp_speed_counter << 4;
-                                    default : QE_temp_speed_counter <= QE_temp_speed_counter;
-                                endcase;
-                            end
-                        end
-                    end
+                if (do_average == 1'b1) begin
+                    unique case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE]) 
+                            3'd0   : QE_temp_speed_counter <= QE_temp_speed_counter >> 1;
+                            3'd1   : QE_temp_speed_counter <= QE_temp_speed_counter >> 2;
+                            3'd2   : QE_temp_speed_counter <= QE_temp_speed_counter >> 3;
+                            3'd3   : QE_temp_speed_counter <= QE_temp_speed_counter >> 4;
+                            3'd4   : QE_temp_speed_counter <= QE_temp_speed_counter >> 5;
+                        default    : QE_temp_speed_counter <= QE_temp_speed_counter;
+                    endcase
                 end
             end
         end
     end
 end
+
+//
+// Write code for variable "sample_counter"
+//
+always_ff @(posedge clk or negedge reset)
+begin
+    if (!reset) begin
+        sample_counter <= 0;
+    end  else begin
+        if (dec_sample_count == 1'b1) begin
+            sample_counter <= sample_counter - 1'b1;
+        end else begin
+            if ((clear_all == 1'b1) && (speed_filter_enable == 1'b1))  begin
+                case (QE_config[(`QE_FILTER_SIZE + 2):`QE_FILTER_SIZE])
+                        0   : sample_counter <=  2;
+                        1   : sample_counter <=  4;
+                        2   : sample_counter <=  8;
+                        3   : sample_counter <= 16;
+                        4   : sample_counter <= 32;
+                    default : sample_counter <=  1;
+                endcase;
+            end
+        end
+    end
+end
+
+//
+// Write code for variable "QE_speed_buffer"
+//
+
+always_ff @(posedge clk or negedge reset)
+begin
+    if (!reset) begin
+        QE_speed_buffer <= 0;
+    end  else begin
+        if (load_speed_buffer == 1'b1) begin
+            QE_speed_buffer <= QE_temp_speed_counter;
+        end
+    end
+end
+
+// end of encoder speed measurement system
+// 
+/////////////////////////////////////////////////
+
 
 //
 // Write code for register "QE_count_buffer"

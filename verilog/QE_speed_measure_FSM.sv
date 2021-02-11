@@ -28,26 +28,26 @@ SOFTWARE.
 // Type : Standard three section Moore Finite State Machine structure
 //
 // Documentation :
-//		State machine diagram in system notes folder.
+//      State machine diagram in system notes folder.
 //
 // Notes
-//			A high speed counter is enabled during the "A" pulse of a quadrature
+//       A high speed counter is enabled during the "A" pulse of a quadrature
 //       encoder.  Therefore the higher the count, the slower the speed.
 //       there is a check on the value getting too large  which implies that
 //       the attached motor has stopped.
 //
 // States
-//			S_MV0  : enable hold state
-//			S_MV1  : initialise subsystem
-//			S_MV2  : wait for rising edge of quadrature encoder A signal
-//			S_MV3  : if count has overflowed then restart. Implies motor has stopped
-//			S_MV4  : increment temporary speed count register
-//			S_MV5  : wait for falling edge of quadrature encoder A signal
-//			S_MV6  : check to see if filter mode has been enabled
-//			S_MV7  : decrement filter sample count
-//			S_MV8  : check for end of set of samples
-//			S_MV9  : divide speed count by number of filter samples (2,4,8,16)
-//			S_MV10 : load speed register with values in temmporary 
+//          S_MV0  : enable hold state
+//          S_MV1  : initialise subsystem
+//          S_MV2  : wait for rising edge of quadrature encoder A signal
+//          S_MV3  : if count has overflowed then restart. Implies motor has stopped
+//          S_MV4  : increment temporary speed count register
+//          S_MV5  : wait for falling edge of quadrature encoder A signal
+//          S_MV6  : check to see if filter mode has been enabled
+//          S_MV7  : decrement filter sample count
+//          S_MV8  : check for end of set of samples
+//          S_MV9  : divide speed count by number of filter samples (2,4,8,16)
+//          S_MV10 : load speed register with values in temmporary 
 //
 
 `include  "global_constants.sv"
@@ -70,7 +70,7 @@ module QE_speed_measure_FSM(
 //
 // set of states
 
-enum bit [4:0] {  
+enum {  
     S_MV0, S_MV1, S_MV2, S_MV3, S_MV4,
     S_MV5, S_MV6, S_MV7, S_MV8, S_MV9, S_MV10
 } state, next_state;
@@ -89,10 +89,10 @@ end
 // next state logic
 
 always_comb begin: set_next_state
-   next_state = state;   // default condition is next state is present state
+   next_state = state;   // default condition :: next state is present state
     unique case (state)
         S_MV0 :
-            next_state = (speed_measure_enable == TRUE) ? S_MV1 : S_MV0; 
+            next_state = (speed_measure_enable == 1'b1) ? S_MV1 : S_MV0; 
         S_MV1 :
             next_state = S_MV2;
         S_MV2 :

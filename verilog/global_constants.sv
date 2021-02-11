@@ -247,22 +247,22 @@ SOFTWARE.
 //
 // bit definitions/positions for 32-bit Quadrature encoder configuaration register
 
-    `define  QE_ENABLE             0    // 1-bit
+    `define  QE_ENABLE                   0   // 1-bit
 
-    `define  QE_SOURCE             1    // 1 bit : external or internal signals
-    `define  QE_SIM_ENABLE         2    // 1 bit : enable quadrature encoder simulator
-    `define  QE_SIM_DIRECTION      3    // 1 bit : flip simulated A/B signals
-    `define  QE_FLIP_AB            4    // 1 bit : flip AB signals to quadrature decoder
+    `define  QE_SOURCE                   1   // 1 bit : external or internal signals
+    `define  QE_SIM_ENABLE               2   // 1 bit : enable quadrature encoder simulator
+    `define  QE_SIM_DIRECTION            3   // 1 bit : flip simulated A/B signals
+    `define  QE_FLIP_AB                  4   // 1 bit : flip AB signals to quadrature decoder
     
-    `define  QE_SPEED_MEASURE_ENABLE        16 // 1 bit : 
-    `define  QE_SPEED_FILTER_ENABLE         17 // 1 bit : enables binary averaging filter
-    `define  QE_FILTER_SIZE                 20 // 3 bits : sample size == value to the power 2.
+    `define  QE_SPEED_MEASURE_ENABLE    16   // 1 bit : 
+    `define  QE_SPEED_FILTER_ENABLE     17   // 1 bit : enables binary averaging filter
+    `define  QE_FILTER_SIZE             20   // 3 bits : sample size == value to the power 2.
     
     enum bit {QE_EXTERNAL, QE_INTERNAL} QE_encoder_source;
     enum bit {QE_CW, QE_CCW} rotational_direction;
     enum bit {NO, YES} condition;
     
-    `define MAX_SPEED_COUNT 2000000
+    `define MAX_SPEED_COUNT 200000000
     
     enum bit {FALSE, TRUE} bool_states;
     
