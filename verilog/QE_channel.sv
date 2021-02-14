@@ -389,7 +389,7 @@ logic speed_measure_enable, count_overflow, speed_filter_enable, samples_complet
 byte_t sample_counter;
 
 //
-// CONTROL structure bases on a finite state machine
+// CONTROL subsystem based on a finite state machine
 //
 
 QE_speed_measure_FSM  QE_speed_measure_FSM_sys( 
@@ -408,7 +408,7 @@ QE_speed_measure_FSM  QE_speed_measure_FSM_sys(
 );
 
 //
-// DATA structure
+// DATA subsystem
 //
 
 assign speed_measure_enable = QE_config[`QE_SPEED_MEASURE_ENABLE];

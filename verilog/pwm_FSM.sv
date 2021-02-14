@@ -29,16 +29,18 @@ SOFTWARE.
 // Type : Standard three section Moore Finite State Machine structure
 //
 // Documentation :
-//		State machine diagram in system notes folder.
+//      State machine diagram in system notes folder.
 //
 // Notes
-//		Consists of two timers. One for the PWM period and one for the PWM ON time.
+//      Consists of two timers. One for the PWM period and one for the PWM ON time.
 //
 // States
-//			S_PWM_GEN0  : enable hold state
-//			S_PWM_GEN1  : 
-//			S_PWM_GEN2  : 
-//			S_PWM_GEN3  : 
+//      S_PWM_GEN0  : enable hold state
+//      S_PWM_GEN1  : setup 
+//      S_PWM_GEN2  : generate ON time
+//      S_PWM_GEN3  : generate OFF time
+//      S_PWM_GEN4  : special case - generate 100% ON time
+//      S_PWM_GEN5  : special case - generate 100% OFF time
 
 `include  "global_constants.sv"
 
@@ -47,6 +49,9 @@ module pwm_FSM #(parameter PWM_UNIT = 0) (
     input  logic  pwm_enable,       // ==1 then run PWM machine
     input  logic  T_on_zero,        // ==1 when ON time complete
     input  logic  T_period_zero,    // ==1 when period complete
+    input  logic  T_on_MAX,         // ==1 when ON time equals period
+    input  logic  T_on_MIN,         // ==1 when ON time is zero
+    
     output logic  dec_T_on,         // decrement the ON time counter
     output logic  dec_T_period,     // decrement the period time counter
     output logic  reload_times,     // reload ON and period counters
@@ -56,8 +61,8 @@ module pwm_FSM #(parameter PWM_UNIT = 0) (
 //
 // Set of FSM states
 
-enum bit [2:0] {  
-    S_PWM_GEN0, S_PWM_GEN1, S_PWM_GEN2, S_PWM_GEN3
+enum  {  
+    S_PWM_GEN0, S_PWM_GEN1, S_PWM_GEN2, S_PWM_GEN3, S_PWM_GEN4, S_PWM_GEN5
 } state, next_state;
 //
 // register next state
@@ -75,28 +80,47 @@ end
 always_comb begin: set_next_state
     unique case (state)
         S_PWM_GEN0:
-            if (pwm_enable == 0)
-                next_state = S_PWM_GEN0;
-            else
-                next_state = S_PWM_GEN1;
+            next_state = (pwm_enable == 1'b1) ? S_PWM_GEN1 : S_PWM_GEN0;
         S_PWM_GEN1 :
-                next_state = S_PWM_GEN2;
+            if (T_on_MIN == 1'b1) 
+                next_state = S_PWM_GEN5;       // generate continuous LOW PWM signal
+            else 
+                if (T_on_MAX == 1'b1)
+                    next_state = S_PWM_GEN4;   // generate continuous HIGH PWM signal
+                else
+                    next_state = S_PWM_GEN2;   // generate normal PWM signal
         S_PWM_GEN2:
-            if (pwm_enable == 0)
+            if (pwm_enable == 1'b0)
                 next_state = S_PWM_GEN0;
             else 
-                if (T_on_zero)
+                if ((T_on_zero == 1'b1) && (pwm_enable == 1'b1))
                     next_state = S_PWM_GEN3;
                 else
                     next_state = S_PWM_GEN2; 
         S_PWM_GEN3:
-            if (pwm_enable == 0)
+            if (pwm_enable == 1'b0)
                 next_state = S_PWM_GEN0;
             else
-                if (T_period_zero)
+                if ((T_period_zero == 1'b1)  && (pwm_enable == 1'b1))
                     next_state = S_PWM_GEN0; 
                 else
                     next_state = S_PWM_GEN3;
+        S_PWM_GEN4:
+            if (pwm_enable == 1'b0)
+                next_state = S_PWM_GEN0;
+            else
+                if ((T_period_zero == 1'b1) && (pwm_enable == 1'b1))
+                    next_state = S_PWM_GEN0; 
+                else
+                    next_state = S_PWM_GEN4;
+        S_PWM_GEN5:
+            if (pwm_enable == 1'b0)
+                next_state = S_PWM_GEN0;
+            else
+                if ((T_period_zero == 1'b1) && (pwm_enable == 1'b1))
+                    next_state = S_PWM_GEN0; 
+                else
+                    next_state = S_PWM_GEN5;
         default :
             next_state = state;   // default condition - next state is present state
     endcase
@@ -106,11 +130,55 @@ end: set_next_state
 // set Moore outputs
 
 assign dec_T_on     = (state == S_PWM_GEN2);
-assign dec_T_period = (state == S_PWM_GEN2) || (state == S_PWM_GEN3);
+assign dec_T_period = (state == S_PWM_GEN2) || (state == S_PWM_GEN3) || (state == S_PWM_GEN4) || (state == S_PWM_GEN5);
 assign reload_times = (state == S_PWM_GEN1);
-assign pwm          = (state == S_PWM_GEN2);
+
+//
+// Cope with special case where PWM is at 100% and needs to be kept on during states 0 and 1.
+
+always_comb begin
+    if ( ((state == S_PWM_GEN0) && (pwm_enable == 1'b1) && (T_on_MAX == 1'b1)) ||
+         ((state == S_PWM_GEN1) && (pwm_enable == 1'b1) && (T_on_MAX == 1'b1)) ||
+         (state == S_PWM_GEN2)  ||  (state == S_PWM_GEN4) )
+            pwm = 1;
+    else
+            pwm = 0;
+end
 
 endmodule
+
+
+
+
+//always_comb begin: set_next_state
+//    unique case (state)
+//        S_PWM_GEN0:
+//            if (pwm_enable == 0)
+//                next_state = S_PWM_GEN0;
+//            else
+//                next_state = S_PWM_GEN1;
+//        S_PWM_GEN1 :
+//                next_state = S_PWM_GEN2;
+//        S_PWM_GEN2:
+//            if (pwm_enable == 0)
+//                next_state = S_PWM_GEN0;
+//            else 
+//                if (T_on_zero)
+//                    next_state = S_PWM_GEN3;
+//                else
+//                    next_state = S_PWM_GEN2; 
+//        S_PWM_GEN3:
+//            if (pwm_enable == 0)
+//                next_state = S_PWM_GEN0;
+//            else
+//                if (T_period_zero)
+//                    next_state = S_PWM_GEN0; 
+//                else
+//                    next_state = S_PWM_GEN3;
+//        default :
+//            next_state = state;   // default condition - next state is present state
+//    endcase
+//end: set_next_state
 
 
 

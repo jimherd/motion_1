@@ -79,9 +79,7 @@ logic  [1:0]  H_bridge_invert_mode;
 
 /////////////////////////////////////////////////
 //
-// instantiate Finite State Machines (FSMs)
-//
-// 1. FSM to interface to on-FPGA 32-bit bus
+// Connection to internal system 32-bit bus
 
 logic subsystem_enable;
 logic read_word_from_BUS, write_data_word_to_BUS, write_status_word_to_BUS;
@@ -102,22 +100,7 @@ bus_FSM   bus_FSM_sys(
 //
 // 2. FSM to control PWM signbal generation
 
-logic T_period_zero, T_on_zero;
-logic dec_T_on, dec_T_period, reload_times;
-logic pwm_enable;
-logic pwm; 
 
-pwm_FSM   pwm_FSM_sys(
-    .clk(clk),
-    .reset(reset),
-    .pwm_enable(pwm_enable),
-    .T_on_zero(T_on_zero), 
-    .T_period_zero(T_period_zero),
-    .dec_T_on(dec_T_on), 
-    .dec_T_period(dec_T_period), 
-    .reload_times(reload_times),
-    .pwm(pwm) 
-);
 
 /////////////////////////////////////////////////
 //
@@ -149,9 +132,116 @@ always_comb begin
     end
 end
 
+//
+// data subsystem to talk to 32-bit internal bus interface
+//
+// get data from bus. If read command then ignore data word.
+// Clear PWM_enable signal if period or on timings are changed otherwise
+// system can get into an infinite loop.
+
+always_ff @(posedge clk or negedge reset) begin
+    if (!reset) begin
+        T_period   <= 0;
+        T_on       <= 0;
+        pwm_config <= 0;
+    end else begin
+        if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
+            if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
+                T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;   // tweak to meet exact timing
+                `ifdef ENABLE_PWM_DISABLE_WHEN_WIDTH_CHANGED
+                    pwm_config[0] <= 1'b0;   // clear enable signal
+                `endif
+            end else begin
+                if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
+                    if (bus.data_out > 0) 
+                        T_on <= bus.data_out - `T_ON_ADJUSTMENT;    // tweak to meet exact timing
+                    else
+                        T_on <= bus.data_out;
+                    `ifdef ENABLE_PWM_DISABLE_WHEN_WIDTH_CHANGED
+                        pwm_config[0] <= 1'b0;   // clear enable signal
+                    `endif
+                end else begin
+                    if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
+                        pwm_config <= bus.data_out;
+                    end
+                end
+            end
+        end
+    end
+end
+
+//
+// put data onto bus
+
+always_ff @(posedge clk or negedge reset) begin
+    if (!reset) begin
+        data_in_reg <= 'z;
+    end  else begin
+        if(write_data_word_to_BUS == 1'b1) begin
+            unique case (bus.reg_address)    // force parallel case
+                (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_period;
+                (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_on;
+                (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_config;
+                (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_status;
+                default                                                         : ;
+            endcase
+        end else begin
+            if(write_status_word_to_BUS == 1'b1) begin
+                data_in_reg <= pwm_status;
+            end else begin
+                data_in_reg <= 'z;
+            end
+        end
+    end
+end
+
+//
+// define 32-bit value to be written to bus
+
+assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
+
+
+
+
+
+
 /////////////////////////////////////////////////
 //
-// Data subsystem to calculate pulse edges
+// PWM signal gerenation system
+//
+logic T_period_zero, T_on_zero;
+logic dec_T_on, dec_T_period, reload_times;
+logic pwm_enable;
+logic pwm; 
+logic T_on_MAX,  T_on_MIN;
+
+//
+// CONTROL subsystem based on a finite state machine
+//
+
+pwm_FSM   pwm_FSM_sys(
+    .clk(clk),
+    .reset(reset),
+    .pwm_enable(pwm_enable),
+    .T_on_zero(T_on_zero), 
+    .T_period_zero(T_period_zero),
+    .T_on_MAX(T_on_MAX),
+    .T_on_MIN(T_on_MIN),
+    .dec_T_on(dec_T_on), 
+    .dec_T_period(dec_T_period), 
+    .reload_times(reload_times),
+    .pwm(pwm) 
+);
+
+assign T_period_zero =  (T_period_temp == 0) ? 1'b1 : 1'b0;
+assign T_on_zero     =  (T_on_temp == 0)     ? 1'b1 : 1'b0;
+
+assign T_on_MAX = (T_on >= (T_period - 3)) ? 1'b1 : 1'b0;
+assign T_on_MIN = (T_on <= `T_ON_MINIMUM) ? 1'b1 : 1'b0;
+
+//
+// DATA subsystem to calculate pulse edges
+//
 
 always_ff @(posedge clk or negedge reset) begin
     if (!reset) begin
@@ -182,47 +272,6 @@ always_ff @(posedge clk or negedge reset) begin
 end 
 
 //
-// check for counters reaching zero
-
-assign T_period_zero =  (T_period_temp == 0) ? 1'b1 : 1'b0;
-assign T_on_zero     =  (T_on_temp == 0)     ? 1'b1 : 1'b0;
-
-//
-// data subsystem to talk to 32-bit internal bus interface
-//
-// get data from bus. If read command then ignore data word.
-// Clear PWM_enable signal if period or on timings are changed otherwise
-// system can get into an infinite loop.
-
-always_ff @(posedge clk or negedge reset) begin
-    if (!reset) begin
-        T_period   <= 0;
-        T_on       <= 0;
-        pwm_config <= 0;
-    end else begin
-        if ((read_word_from_BUS == 1'b1) && (bus.RW == 1)) begin
-            if (bus.reg_address == (`PWM_PERIOD + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-                T_period <= bus.data_out - `T_PERIOD_ADJUSTMENT;   // tweak to meet exact timing
-                `ifdef ENABLE_PWM_DISABLE_WHEN_WIDTH_CHANGED
-                    pwm_config[0] <= 1'b0;   // clear enable signal
-                `endif
-            end else begin
-                if (bus.reg_address == (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-                    T_on <= bus.data_out - `T_ON_ADJUSTMENT;    // tweak to meet exact timing
-                    `ifdef ENABLE_PWM_DISABLE_WHEN_WIDTH_CHANGED
-                        pwm_config[0] <= 1'b0;   // clear enable signal
-                    `endif
-                end else begin
-                    if (bus.reg_address == (`PWM_CONFIG + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))) begin
-                        pwm_config <= bus.data_out;
-                    end
-                end
-            end
-        end
-    end
-end
-
-//
 // decode configuration register bits
 
 assign  pwm_enable           = pwm_config[`PWM_ENABLE];
@@ -235,30 +284,7 @@ assign  H_bridge_swap        = pwm_config[`H_BRIDGE_SWAP];
 assign  H_bridge_dwell_mode  = pwm_config[`H_BRIDGE_DWELL_MODE];
 assign  H_bridge_invert_mode = pwm_config[(`H_BRIDGE_INVERT_PINS + 1) : `H_BRIDGE_INVERT_PINS];
 
-//
-// put data onto bus
 
-always_ff @(posedge clk or negedge reset) begin
-    if (!reset) begin
-        data_in_reg <= 'z;
-    end  else begin
-        if(write_data_word_to_BUS == 1'b1) begin
-            unique case (bus.reg_address)    // force parallel case
-                (`PWM_PERIOD  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_period;
-                (`PWM_ON_TIME + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= T_on;
-                (`PWM_CONFIG  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_config;
-                (`PWM_STATUS  + (`PWM_BASE + (PWM_UNIT * `NOS_PWM_REGISTERS)))  : data_in_reg <= pwm_status;
-                default                                                         : ;
-            endcase
-        end else begin
-            if(write_status_word_to_BUS == 1'b1) begin
-                data_in_reg <= pwm_status;
-            end else begin
-                data_in_reg <= 'z;
-            end
-        end
-    end
-end
 
 assign pwm_signal = pwm;   // set pwm signal value
 
@@ -269,10 +295,6 @@ assign pwm_status = {pwm, {15{1'b0}}, pwm_config[15:0]};
 
 
 
-//
-// define 32-bit value to be written to bus
-
-assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
 
 /////////////////////////////////////////////////
 //
@@ -281,3 +303,10 @@ assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
 assign  bus.nFault = 'z;
 
 endmodule
+
+//assign T_period_zero =  (T_period_temp == 0) ? 1'b1 : 1'b0;
+//assign T_on_zero     =  (T_on_temp == 0)     ? 1'b1 : 1'b0;
+//assign T_on_MAX = (T_on >= T_period) ? 1'b1 : 1'b0;
+//assign T_on_MIN = (T_on ==0) ? 1'b1 : 1'b0;
+
+

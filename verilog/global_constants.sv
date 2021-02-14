@@ -135,6 +135,8 @@ SOFTWARE.
 
     `define T_PERIOD_ADJUSTMENT  3
     `define T_ON_ADJUSTMENT      1
+    
+    `define T_ON_MINIMUM         3  // smallest pwm ON pulse (60nS)
 
 ///////////////////////////////////////////////////
 //

@@ -26,6 +26,7 @@ Robot motion control board uses an Altera MAX 10 device to provide low level fea
 * ModelSim Starter Edition 10.5b
 * MBED STUDIO V1.0
 * MBED OS 6
+* FIZZIM  (to draw Finite State Machine diagrams)
 
 ## Authors
 
