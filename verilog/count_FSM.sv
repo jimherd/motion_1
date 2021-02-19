@@ -29,10 +29,10 @@ SOFTWARE.
 // Type : Standard three section Moore Finite State Machine structure
 //
 // Documentation :
-//		State machine diagram in system notes folder.
+//      State machine diagram in system notes folder.
 //
 // Notes
-//		Consists of two timers. One for the PWM period and one for the PWM ON time.
+//      Consists of two timers. One for the PWM period and one for the PWM ON time.
 //
 // States
 //          S_COUNT0  : count hold state and wait for rising edge of pulse being counted

@@ -26,6 +26,8 @@ SOFTWARE.
 // QE_channel_sv : Implement a single quadrature encoder channel
 // =============
 // 
+// Includes ability to generate simulated quadrature signals
+//
 
 `include  "global_constants.sv"
 `include  "interfaces.sv"
@@ -171,160 +173,6 @@ end
 // define 32-bit value to be written to bus
 
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
-
-
-/////////////////////////////////////////////////
-//
-// Subsystem to organise generation of simulated quadrature encoder signals
-
-logic inc_counters, clear_phase_counter, clear_pulse_counter, load_phase_timer , decrement_phase_timer;
-logic  phase_cnt_4, index_cnt, timer_cnt_0;
-
-QE_generator_FSM  QE_generator_FSM_sys( 
-    .clk(clk),
-    .reset(reset),
-    .QE_sim_enable(QE_sim_enable),
-    .phase_cnt_4(phase_cnt_4), 
-    .index_cnt(index_cnt), 
-    .timer_cnt_0(timer_cnt_0),
-    .inc_counters(inc_counters), 
-    .clear_phase_counter(clear_phase_counter), 
-    .clear_pulse_counter(clear_pulse_counter), 
-    .load_phase_timer(load_phase_timer), 
-    .decrement_phase_timer(decrement_phase_timer)
-);
-//
-
-logic [2:0] QE_sim_phase_counter;
-uint32_t    QE_sim_pulse_counter;
-uint32_t    QE_sim_phase_timer;
-
-
-logic QE_direction, QE_pulse, index;
-logic QE_A, QE_B, QE_I;
-logic ext_QE_A, ext_QE_B, ext_QE_I;
-logic int_QE_A, int_QE_B, int_QE_I;
-
-//
-// collect status data into status register
-
-//assign QE_status = {QE_direction, QE_pulse, QE_I, QE_B, QE_A};
-
-
-//
-// Run quadrature encoder simulation - driven by state machine
-
-always_ff @(posedge clk or negedge reset)
-begin
-    if (!reset) begin
-        QE_sim_phase_counter <= 1'b0;
-        QE_sim_pulse_counter <= 1'b0;
-        QE_sim_phase_timer   <= 1'b0;
-    end  else begin
-        if (inc_counters == 1'b1) begin
-            QE_sim_phase_counter <= QE_sim_phase_counter + 1'b1;
-            QE_sim_pulse_counter <= QE_sim_pulse_counter + 1'b1;
-            int_QE_I <= 1'b0;
-        end else begin
-            if (clear_phase_counter == 1'b1) begin
-                QE_sim_phase_counter <= 1'b0;
-                int_QE_I <= 1'b0;
-            end else begin
-                if (clear_pulse_counter == 1'b1) begin
-                    QE_sim_pulse_counter <= 1'b0;
-                    int_QE_I <= 1'b1;
-                end else begin
-                    if (load_phase_timer == 1'b1) begin
-                        QE_sim_phase_timer <= QE_sim_phase_time;
-                    end else begin
-                        if (decrement_phase_timer == 1'b1) begin
-                            QE_sim_phase_timer <= QE_sim_phase_timer - 1'b1;
-                        end
-                    end
-                end
-            end
-        end
-    end	
-end
-
-assign phase_cnt_4 = (QE_sim_phase_counter == 4) ? 1'b1 : 1'b0;
-assign index_cnt   = (QE_sim_pulse_counter == QE_counts_per_rev) ? 1'b1 : 1'b0;
-assign timer_cnt_0 = (QE_sim_phase_timer == 0) ? 1'b1 : 1'b0;
-
-
-always_comb
-begin
-    int_QE_A = 1'b0;
-    int_QE_B = 1'b0;
-    if (QE_sim_direction == QE_CW) begin
-        case (QE_sim_phase_counter)
-            2'b00 : begin
-                int_QE_A = 1'b0;
-                int_QE_B = 1'b0;
-            end
-            2'b01 : begin
-                int_QE_A = 1'b1;
-                int_QE_B = 1'b0;
-            end
-            2'b10 : begin
-                int_QE_A = 1'b1;
-                int_QE_B = 1'b1;
-            end
-            2'b11 : begin
-                int_QE_A = 1'b0;
-                int_QE_B = 1'b1;
-            end
-            default begin
-                int_QE_A = 1'b0;
-                int_QE_B = 1'b0;
-            end
-        endcase
-    end else begin
-        case (QE_sim_phase_counter)
-            2'b00 : begin
-                int_QE_A = 1'b0;
-                int_QE_B = 1'b0;
-            end
-            2'b01 : begin
-                int_QE_A = 1'b0;
-                int_QE_B = 1'b1;
-            end
-            2'b10 : begin
-                int_QE_A = 1'b1;
-                int_QE_B = 1'b1;
-            end
-            2'b11 : begin
-                int_QE_A = 1'b1;
-                int_QE_B = 1'b0;
-            end
-            default begin
-                int_QE_A = 1'b0;
-                int_QE_B = 1'b0;
-            end
-        endcase
-    end	
-end
-
-logic  QE_A_tmp, QE_B_tmp, QE_I_tmp;
-
-always_comb
-begin
-    QE_A_tmp = 1'b0;
-    QE_B_tmp = 1'b0;
-    QE_I     = 1'b0;
-    if (QE_source == QE_INTERNAL) begin
-        QE_A_tmp = int_QE_A;
-        QE_B_tmp = int_QE_B;
-        QE_I     = int_QE_I;
-    end else begin
-        QE_A_tmp = ext_QE_A;
-        QE_B_tmp = ext_QE_B;
-        QE_I     = ext_QE_I;
-    end
-end
-
-assign QE_A = (QE_flip_AB == NO) ? QE_A_tmp : QE_B_tmp;
-assign QE_B = (QE_flip_AB == NO) ? QE_B_tmp : QE_A_tmp;
 
 
 /////////////////////////////////////////////////
@@ -578,6 +426,159 @@ begin
         end
     end
 end
+
+/////////////////////////////////////////////////
+//
+// Subsystem to organise generation of simulated quadrature encoder signals
+
+logic inc_counters, clear_phase_counter, clear_pulse_counter, load_phase_timer , decrement_phase_timer;
+logic  phase_cnt_4, index_cnt, timer_cnt_0;
+
+QE_generator_FSM  QE_generator_FSM_sys( 
+    .clk(clk),
+    .reset(reset),
+    .QE_sim_enable(QE_sim_enable),
+    .phase_cnt_4(phase_cnt_4), 
+    .index_cnt(index_cnt), 
+    .timer_cnt_0(timer_cnt_0),
+    .inc_counters(inc_counters), 
+    .clear_phase_counter(clear_phase_counter), 
+    .clear_pulse_counter(clear_pulse_counter), 
+    .load_phase_timer(load_phase_timer), 
+    .decrement_phase_timer(decrement_phase_timer)
+);
+//
+
+logic [2:0] QE_sim_phase_counter;
+uint32_t    QE_sim_pulse_counter;
+uint32_t    QE_sim_phase_timer;
+
+
+logic QE_direction, QE_pulse, index;
+logic QE_A, QE_B, QE_I;
+logic ext_QE_A, ext_QE_B, ext_QE_I;
+logic int_QE_A, int_QE_B, int_QE_I;
+
+//
+// collect status data into status register
+
+//assign QE_status = {QE_direction, QE_pulse, QE_I, QE_B, QE_A};
+
+
+//
+// Run quadrature encoder simulation - driven by state machine
+
+always_ff @(posedge clk or negedge reset)
+begin
+    if (!reset) begin
+        QE_sim_phase_counter <= 1'b0;
+        QE_sim_pulse_counter <= 1'b0;
+        QE_sim_phase_timer   <= 1'b0;
+    end  else begin
+        if (inc_counters == 1'b1) begin
+            QE_sim_phase_counter <= QE_sim_phase_counter + 1'b1;
+            QE_sim_pulse_counter <= QE_sim_pulse_counter + 1'b1;
+            int_QE_I <= 1'b0;
+        end else begin
+            if (clear_phase_counter == 1'b1) begin
+                QE_sim_phase_counter <= 1'b0;
+                int_QE_I <= 1'b0;
+            end else begin
+                if (clear_pulse_counter == 1'b1) begin
+                    QE_sim_pulse_counter <= 1'b0;
+                    int_QE_I <= 1'b1;
+                end else begin
+                    if (load_phase_timer == 1'b1) begin
+                        QE_sim_phase_timer <= QE_sim_phase_time;
+                    end else begin
+                        if (decrement_phase_timer == 1'b1) begin
+                            QE_sim_phase_timer <= QE_sim_phase_timer - 1'b1;
+                        end
+                    end
+                end
+            end
+        end
+    end	
+end
+
+assign phase_cnt_4 = (QE_sim_phase_counter == 4) ? 1'b1 : 1'b0;
+assign index_cnt   = (QE_sim_pulse_counter == QE_counts_per_rev) ? 1'b1 : 1'b0;
+assign timer_cnt_0 = (QE_sim_phase_timer == 0) ? 1'b1 : 1'b0;
+
+
+always_comb
+begin
+    int_QE_A = 1'b0;
+    int_QE_B = 1'b0;
+    if (QE_sim_direction == QE_CW) begin
+        case (QE_sim_phase_counter)
+            2'b00 : begin
+                int_QE_A = 1'b0;
+                int_QE_B = 1'b0;
+            end
+            2'b01 : begin
+                int_QE_A = 1'b1;
+                int_QE_B = 1'b0;
+            end
+            2'b10 : begin
+                int_QE_A = 1'b1;
+                int_QE_B = 1'b1;
+            end
+            2'b11 : begin
+                int_QE_A = 1'b0;
+                int_QE_B = 1'b1;
+            end
+            default begin
+                int_QE_A = 1'b0;
+                int_QE_B = 1'b0;
+            end
+        endcase
+    end else begin
+        case (QE_sim_phase_counter)
+            2'b00 : begin
+                int_QE_A = 1'b0;
+                int_QE_B = 1'b0;
+            end
+            2'b01 : begin
+                int_QE_A = 1'b0;
+                int_QE_B = 1'b1;
+            end
+            2'b10 : begin
+                int_QE_A = 1'b1;
+                int_QE_B = 1'b1;
+            end
+            2'b11 : begin
+                int_QE_A = 1'b1;
+                int_QE_B = 1'b0;
+            end
+            default begin
+                int_QE_A = 1'b0;
+                int_QE_B = 1'b0;
+            end
+        endcase
+    end	
+end
+
+logic  QE_A_tmp, QE_B_tmp, QE_I_tmp;
+
+always_comb
+begin
+    QE_A_tmp = 1'b0;
+    QE_B_tmp = 1'b0;
+    QE_I     = 1'b0;
+    if (QE_source == QE_INTERNAL) begin
+        QE_A_tmp = int_QE_A;
+        QE_B_tmp = int_QE_B;
+        QE_I     = int_QE_I;
+    end else begin
+        QE_A_tmp = ext_QE_A;
+        QE_B_tmp = ext_QE_B;
+        QE_I     = ext_QE_I;
+    end
+end
+
+assign QE_A = (QE_flip_AB == NO) ? QE_A_tmp : QE_B_tmp;
+assign QE_B = (QE_flip_AB == NO) ? QE_B_tmp : QE_A_tmp;
 
 //
 // TEMP : no error handling so drive "nFault" signal to "high impedence" state

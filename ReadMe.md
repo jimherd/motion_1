@@ -24,9 +24,10 @@ Robot motion control board uses an Altera MAX 10 device to provide low level fea
 
 * Quartus Prime Lite 19.1
 * ModelSim Starter Edition 10.5b
-* MBED STUDIO V1.0
+* MBED STUDIO V1.x
 * MBED OS 6
-* FIZZIM  (to draw Finite State Machine diagrams)
+* FIZZIM   - to draw Finite State Machine diagrams
+* WaveDrom - to draw signal waveforms
 
 ## Authors
 
