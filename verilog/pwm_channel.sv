@@ -106,6 +106,8 @@ bus_FSM   bus_FSM_sys(
 //
 // H-bridge decode system
 
+logic pwm; 
+
 H_bridge  H_bridge_sys( 
     .PWM_signal(pwm),
     .int_enable(H_bridge_int_enable), 
@@ -212,7 +214,6 @@ assign bus.data_in = (subsystem_enable == 1'b1) ? data_in_reg : 'z;
 logic T_period_zero, T_on_zero;
 logic dec_T_on, dec_T_period, reload_times;
 logic pwm_enable;
-logic pwm; 
 logic T_on_MAX,  T_on_MIN;
 
 //

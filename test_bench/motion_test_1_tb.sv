@@ -31,10 +31,10 @@ SOFTWARE.
 `include "../verilog/global_constants.sv"
 import types::*;
 
-enum {PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0,
+enum {RW_TEST_0, PWM_TEST_0, PWM_TEST_1, QE_TEST_0, RC_SERVO_TEST_0, QE_INT_TEST_0,
       register_test_1} test_set;
 
-`define TEST        register_test_1
+`define TEST        RW_TEST_0
 
 `define READ_REGISTER_CMD   0
 `define WRITE_REGISTER_CMD  1
@@ -84,7 +84,7 @@ endtask
 task write_byte;
   input [7:0] data;
   begin
-    #50   uP_data_out = data;	
+    #50   uP_data_out = data;
         #50 async_uP_RW = 1;    
     #52   async_uP_handshake_1 = 1'b1;
     #50   wait(uut.uP_handshake_2 == 1'b1);
@@ -187,6 +187,12 @@ initial begin
   do_init();
   // select test sequence
   case(`TEST)
+    RW_TEST_0 : begin  // read/write/read/write test sequence on QE subsystem to verify bus waveforms
+            do_transaction(`READ_REGISTER_CMD,  9, 0, data, status);
+            do_transaction(`WRITE_REGISTER_CMD, 14, 32'hF8, data, status);
+            do_transaction(`READ_REGISTER_CMD,  10, 0, data, status);
+            do_transaction(`WRITE_REGISTER_CMD, 14, 32'hF0, data, status);
+        end
     PWM_TEST_0 : begin   // simple single transaction test
             input_value = $urandom();
             do_transaction(`WRITE_REGISTER_CMD, (`PWM_0 + `PWM_PERIOD), input_value, data, status);

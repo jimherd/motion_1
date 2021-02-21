@@ -175,6 +175,11 @@ end
 assign bus.data_in = (subsystem_enable) ? data_in_reg : 'z;
 
 
+logic QE_direction, QE_pulse, index;
+logic QE_A, QE_B, QE_I;
+logic ext_QE_A, ext_QE_B, ext_QE_I;
+logic int_QE_A, int_QE_B, int_QE_I;
+
 /////////////////////////////////////////////////
 //
 // synchronise external quadrature signals - A, B, and I
@@ -454,10 +459,6 @@ uint32_t    QE_sim_pulse_counter;
 uint32_t    QE_sim_phase_timer;
 
 
-logic QE_direction, QE_pulse, index;
-logic QE_A, QE_B, QE_I;
-logic ext_QE_A, ext_QE_B, ext_QE_I;
-logic int_QE_A, int_QE_B, int_QE_I;
 
 //
 // collect status data into status register

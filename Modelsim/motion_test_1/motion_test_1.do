@@ -26,9 +26,9 @@
 #
 set RUN_TIME  25000ns
 
-# options : PWM_TEST_0, PWM_TEST_1, QE_INT_TEST_0, RC_SERVO_TEST_0
+# options : RW_TEST_0, PWM_TEST_0, PWM_TEST_1, QE_INT_TEST_0, RC_SERVO_TEST_0
 
-set     TEST     PWM_TEST_1
+set     TEST     RW_TEST_0
 
 project open C:/jth/HW_new_robot/Quartus_projects/motion_1/Modelsim/motion_test_1
 #
@@ -73,6 +73,10 @@ add wave -label counter_zero -position end  sim:/motion_test_1_tb/uut/uP_interfa
 # waves to be viewed that are specific to each test
 #
 switch $TEST {
+    RW_TEST_0 {
+        add wave -divider "Bus signals from QE subsystem"
+        add wave -label QE0_subsystem_enable -position end  {sim:/motion_test_1_tb/uut/QE_encoder[0]/QE_ch/subsystem_enable}
+    }
     PWM_TEST_1 {
         add wave -divider "PWM subsystem"
         add wave -label PWM0_subsystem_enable -position end  {sim:/motion_test_1_tb/uut/PWM_H_bridge[0]/pwm_ch/subsystem_enable}
